@@ -1,0 +1,6 @@
+**Cybele::Aplication Serverについて**
+
+**1.SKIN**
+  Cybeleサーバでは、SKINが使えます。
+  SKINの選択はconfigファイルで行います(cbl.conf)
+  このSKINでは、URLにてindex.htmlがない場合、イメージ、音楽などの再生を行います。

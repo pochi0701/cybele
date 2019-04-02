@@ -1,0 +1,61 @@
+==文字列関数==
+**[[JavaScript|目次]]**
+
+wizdLive内部では文字コードとしてutf-8を想定しています。
+しかしながら便利のためwindows版でファイル名だけはSJISで扱えるようにしています。
+内部SJISとして利用することも可能ですが
+SJISに起因する問題には対応していません。
+
+**charToInt(ch)**
+　文字を整数に変換する
+
+**String.indexOf(search)**
+　文字列の出現位置を返す
+　見つからなければ-1が返る
+
+**String.substring(lo,len)**
+　stringのloからlen文字分の部分文字列を返す
+
+**String.charAt(pos)**
+　文字列のpos位置の1文字を返す。全角文字非対応
+
+**String.charCodeAt(pos)**
+　文字列のpos位置の文字コードを返す。全角文字非対応
+
+**String.fromCharCode(char)**
+　指定された文字コードに対応する文字を返す。全角文字非対応
+
+**String.split(separator)**
+　separatorで指定された文字で文字列を分解し配列として返す
+　結合にはArray.joinを使う
+
+**String.replace(before,after)**
+　指定文字列中のbeforeの文字をafterに置換する
+
+**String.preg_replace(pattern,replace)**
+　patternで指定された正規表現文字列をreplaceに変換する。
+　patternは配列指定可
+
+**String.addSlashes()**
+　文字列中の特殊文字(~~~" ' \~~~)をエスケープする
+
+**String.toLowerCase()**
+　文字列中のアスキー文字を小文字に変換する
+
+**String.toUpperCase()**
+　文字列中のアスキー文字を大文字に変換する
+
+**String.nkfConv(Format)**
+　StringをFormatで示される文字コードに変換します。
+　入力文字列
+　　省略：自動
+　　W:utf-8
+　　S:SJIS
+　　E:EUC
+　出力文字列
+　　省略:SJIS
+　　w:utf-8
+　　s:SJIS
+　　e:EUC
+　下のコードはtitleをutf-8からSJISに変換した値を返す
+　　title.nkfconv("Ws");

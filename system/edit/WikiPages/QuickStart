@@ -1,0 +1,30 @@
+**Cybele::Aplication Server**
+
+**1.Install**
+  適当な場所にファイルを解凍または移動してください。
+　Windows版ではCybele.exeのある場所がサーバのルートパスとなります。
+　Linux版ではなるべくフルパス設定がいいので、cbl.convにパスを記載してください。
+　直下のlocalmediaがドキュメントルートとなります。
+
+**2.Start**
+  Cybele.exeを起動してください。
+  Windows版では既存のブラウザが起動しメニュー画面が表示されます。
+　Linux版ではブラウザからhttp://IPアドレス:8000または同じPCなら
+  [[http://localhost:8000|http://localhost:8000]]を開いてください。
+
+**3.shutdown**
+  メニューからツールを選んでshutdownを押すと終了します。
+　またはwindows版ではタスクトレイのアイコンから右クリックでEXITを選択してください。
+
+**4.Programming**
+  メニューのEdittingは左画面がファイルツリー表示となっています。
+　ドキュメントルートから下にjssファイル(サーバ向けJavaScript)が配置されます。
+　Actionからファイル作成を選びtest.jssと名前を付けて保存してください。
+　次にtest.jssをクリックします。右側にエディタが開くので
+  <?
+       print("HELLO WORLD!");
+  ?>
+　と入力してください。エディタ左上のSaveボタンを押して保存します。
+　次にその隣のView Fileボタンを押してください。
+　アプリケーションが表示されます。
+　内臓関数はActionの[[http://localhost:8000/system/edit/wiki.jss?page=JavaScript|Wiki]]からJavaScript解説に記載してあります。

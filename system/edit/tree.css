@@ -1,0 +1,22 @@
+body{
+    line-height: 120%;
+    background: #FFFFF8;
+}
+img{
+    height: 1em;
+}
+a.lnk {
+  display: block;
+  text-align: left;
+  text-decoration: none;
+  color: #00A;
+}
+a.lnkf {
+  display: block;
+  text-align: left;
+  text-decoration: none;
+  color: #A00;
+}
+a.lnk:hover {
+  background: #A0A0FF;
+}

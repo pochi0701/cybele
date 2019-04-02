@@ -1,0 +1,27 @@
+body{
+    line-height: 120%;
+    background: url(/earth.jpg);
+    color: #FFF;
+}
+img{
+    height: 1em;
+}
+a:link { color: #CCFFFF ; text-decoration: none ; }
+a:visited { color: #AAFFFF ; text-decoration: none ; }
+a:hover { color: #00FFFF ; text-decoration: none ; }
+a:active { color: #00FFFF ; text-decoration: none ; }
+a.lnk {
+  display: block;
+  text-align: left;
+  text-decoration: none;
+  color: #FFF;
+}
+a.lnkf {
+  display: block;
+  text-align: left;
+  text-decoration: none;
+  color: #FFF;
+}
+a.lnk:hover {
+  color: #00FFFF ;
+}

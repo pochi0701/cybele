@@ -1,0 +1,18 @@
+==数値演算関数==
+**[[JavaScript|目次]]**
+
+
+**Math.rand()**
+　乱数を返す
+
+**Math.randInt(min, max)**
+　minからmaxの間の整数の乱数を返す
+
+**Integer.parseInt(str)**
+　文字から数値への変換
+
+**Integer.valueOf(str)**
+　１文字を数値に変換
+
+**その他色々**
+　pending

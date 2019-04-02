@@ -1,0 +1,58 @@
+==その他==
+**[[JavaScript|目次]]**
+
+
+**print(text)**
+　テキストを表示する。この表示を行うかhere documentを表示した後では
+　headerは変更出来ない。
+
+**String.toDateString(format)**
+ファイル日付を時間を示す文字列に変換
+
+**exec(jsCode)**
+　与えられたコードを実行
+
+**eval(jsCode)**
+　与えられたコードを評価し結果を返す
+
+**trace()**
+　現在の変数をダンプする
+
+**Object.dump()**
+　変数の内容をダンプする
+
+**Object.clone()**
+　Objectをコピーする
+
+**Object.keys(obj)**
+　objのインデックス一覧をオブジェクトに変換して返す
+
+**header(str)**
+　strをhttpヘッダとして登録する
+
+**String.getLocalAddress()**
+　ローカルIPV4アドレスを返す
+
+**command(path)**
+　指定のOSコマンドを実行する。実行権限はcybeleを起動した
+　ユーザの権限となる
+
+**htmlspecialchars(uri)**
+　uriの特殊文字をエスケープする
+
+**encodeURI(uri)**
+　uriをエンコードする
+
+**setCookie(name,value,expire)**
+name=valueで指定されたクッキーを発行する。
+有効期限はexpireで指定された時間(秒)
+０ならブラウザが開いている間のみ有効
+これ以前にprintする命令が出ていれば無効
+
+**session_start()**
+セッションを開始する。setCookieを使うので
+これ以前にprintする命令が出ていれば無効
+
+**shutdown(password)**
+全プログラムを終了させる。passwordはconfファイルで
+指定する。指定してない場合起動しない。
