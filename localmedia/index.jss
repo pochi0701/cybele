@@ -29,7 +29,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">Cybele</a>
+      <a class="navbar-brand" href="/" target="_top">Cybele</a>
     </div>
     <!-- 3.リストの配置 -->
     <div class="collapse navbar-collapse" id="nav-menu-1">

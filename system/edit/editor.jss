@@ -259,7 +259,7 @@ if        (ext == "js" || ext == "jss"){
     <pre id="editor"><?print(htmlspecialchars(code));?></pre>
 
     <!-- SCRIPTS //-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.9/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.3/ace.js"></script>
     <script type="text/javascript">
       <!--
       var editor = ace.edit("editor");
