@@ -689,6 +689,12 @@ void scShutDown(CScriptVar *c, void *userdata) {
 //        Form1->ExitFlag = 1;
         //閉じる(POSTしないとこのスレッドで終了しようとするのでスレッド待ちで無限ループ）
         //PostMessage(Form1->Handle,WM_CLOSE,0,0);
+		//CCybeleTrayWnd::OnAppExit();
+		//PostMessage(theApp.pWnd->m_hWnd, WM_CLOSE, 0, 0);
+		CWnd* pMain = (CWnd*)AfxGetApp()->m_pMainWnd;
+		HWND hWnd = pMain->m_hWnd;
+
+		PostMessage(hWnd, WM_CLOSE, 0, 0);
 #endif
     }
 }

@@ -97,8 +97,10 @@ var base  = "<? print( base ); ?>";
 var me    = "<? print( me ); ?>";
 function viewCode(path) {
     var root = "<? print(_SERVER.DOCUMENT_ROOT); ?>";
-    var pos = path.indexOf(path,root);
-    path = "http://<?print(_SERVER.HTTP_HOST);?>"+path.substring(root.length,path.length);
+    var pos = path.indexOf(root);
+    var tmp = path.substring(pos+root.length);
+    path = "http://<?print(_SERVER.HTTP_HOST);?>"+tmp;
+    //同じ結果が同じタブに表示されるようにターゲットをパス名とする
     myWin = window.open(path,path);
 }
 function editCode(url) {
@@ -181,13 +183,6 @@ function view() {
     return false;
 }
 
-function memo() {
-    var W1;
-    W1=window.open("","_blank");
-    W1.location.href= "data:text/html, <html contenteditable>";
-    return false;
-}
-
 function logout() {
     //$_SESSION = array(); //すべてのセッション変数を初期化
     //session_destroy(); //セッションを破棄
@@ -208,7 +203,7 @@ function sea() {
 <div class="container">
   <div class="btn-toolbar">
     <div class="btn-group">
-    <button class="btn btn-default dropdown-toggle btn-small" data-toggle="dropdown">Action <span class="caret"></span></button>
+    <button class="btn btn-default dropdown-toggle btn-small" data-toggle="dropdown">Menu<span class="caret"></span></button>
     <ul class="dropdown-menu">
     <li><a href="#" onClick="myreload(0);">再読込</a></li>
     <li><a href="#" onClick="createDir();">フォルダ作成</a></li>
@@ -219,12 +214,13 @@ function sea() {
     <li><a href="#" onClick="dl();">ダウンロード</a></li>
     <li><a href="#" onClick="todo();">Todo</a></li>
     <li><a href="#" onClick="view();">グラフィック表示</a></li>
-    <li><a href="wiki.jss" target="_blank">Ｗｉｋｉ</a></li>
-    <li><a href="env.jss" target="_blank">環境変数</a></li>
+    <li><a href="wiki.jss" target="_wiki">Ｗｉｋｉ</a></li>
+    <li><a href="env.jss" target="_env">環境変数</a></li>
+    <li><a href="sql.jss" target="_sqlEditor">DB Browser</a></li>
     <li><a href="#" onClick="myreload(1);">全表示</a></li>
     <li><a href="#" onClick="sea();">検索</a></li>
     <li><a href="#" onClick="expt();return false;">エクスポート</a></li>
-    <li><a href="#" onClick="memo();return false;">メモ</a></li>
+    <li><a href="memoEdit.html" target="_memoEdit">メモ</a></li>
     <li><a href="/" target="_top">Home</a></li>
     <li class="divider"></li>
     <li><a href="#" onClick="logout();">ログアウト</a></li>
@@ -273,10 +269,10 @@ function sea() {
                   print("<a href=\"#\" type=\"button\" data-toggle=\"dropdown\" class=\"dropdown-toggle\">["+basename(file)+"]</span></a>\n");
                   print("<ul class=\"dropdown-menu\">\n");
                       print("     <li><a href=\""+url1+"\" >open</a></li>\n");
-                      print("     <li><a href=\"#\" onClick='deleteFile(\""+url2+"\",\""+basename(file)+"\");'>Delete</a></li>\n");
                       print("     <li><a href=\"#\" onClick='renameFile(\""+url3+"\",\""+basename(file)+"\");'>Rename</a></li>\n");
-                      print("     <li class=\"divider\"></li>\n");
-                      print("     <li><a href=\"#\">Separated link</a></li>\n");
+                      print("     <li><a href=\"#\" onClick='deleteFile(\""+url2+"\",\""+basename(file)+"\");'>Delete</a></li>\n");
+                      //print("     <li class=\"divider\"></li>\n");
+                      //print("     <li><a href=\"#\">Separated link</a></li>\n");
                   print(" </ul>\n");
                   print("</div>\n");
                   print( "</td></tr>\n");
@@ -323,12 +319,12 @@ function sea() {
                       print("<div class=\"btn-group\">\n");
                       print("<a href=\"#\" type=\"button\" data-toggle=\"dropdown\" class=\"dropdown-toggle\">"+basename(file)+"</span></a>\n");
                       print("<ul class=\"dropdown-menu\">\n");
-                      print("     <li><a href=\"#\" onClick='viewtCode(\""+url1+"\");'>View</a></li>\n");
+                      print("     <li><a href=\"#\" onClick='viewCode(\""+url1+"\");'>View</a></li>\n");
                       print("     <li><a href=\"#\" onClick='"+wte+"'>Edit</a></li>\n");
-                      print("     <li><a href=\"#\" onClick='deleteFile(\""+url2+"\",\""+basename(file)+"\");'>Delete</a></li>\n");
                       print("     <li><a href=\"#\" onClick='renameFile(\""+url3+"\",\""+basename(file)+"\");'>Rename</a></li>\n");
-                      print("     <li class=\"divider\"></li>\n");
-                      print("     <li><a href=\"#\">Separated link</a></li>\n");
+                      print("     <li><a href=\"#\" onClick='deleteFile(\""+url2+"\",\""+basename(file)+"\");'>Delete</a></li>\n");
+                      //print("     <li class=\"divider\"></li>\n");
+                      //print("     <li><a href=\"#\">Separated link</a></li>\n");
                       print(" </ul>\n");
                       print("</div>\n");
 
@@ -336,8 +332,8 @@ function sea() {
 
                       //print "<td>".date("m/d H:i:s", filemtime($filePath))."</td>"; 
                       //print "<td align=\"right\">".size_num_read(filesize($filePath))."</td>";
-                      //print( "<td><a href=\"#\" onClick='deleteFile(\""+url2+"\",\""+basename(file)+"\");' title=\"Delete File\"><i class=\"fa fa-trash-o fa-lg\"></i></a></td>");
                       //print( "<td><a href=\"#\" onClick='renameFile(\""+url3+"\",\""+basename(file)+"\");' title=\"REname File\"><i class=\"fa fa-pencil-square-o fa-lg\"></i></a></td>");
+                      //print( "<td><a href=\"#\" onClick='deleteFile(\""+url2+"\",\""+basename(file)+"\");' title=\"Delete File\"><i class=\"fa fa-trash-o fa-lg\"></i></a></td>");
                       print( "</td></tr>\n");
                   }
               }

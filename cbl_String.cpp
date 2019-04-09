@@ -1568,27 +1568,29 @@ wString wString::htmlspecialchars(void)
 wString wString::uri_encode(void)
 {
     unsigned int is;
+	unsigned char datum;
     wString dst;
     char work[8];
     // 引数チェック
     for ( is = 0 ; is < len ; is++){
+		datum = (unsigned char)String[is];
         /* ' '(space) はちと特別扱いにしないとまずい */
-        if ( String[is] == ' ' ){
+        if ( datum == ' ' ){
             dst += "%20";
             /* エンコードしない文字全員集合 */
             //        }else if ( strchr("!$()*,-./:;?@[]^_`{}~", String[is]) != NULL ){
-        }else if ( strchr("!$()*,-.:;/?@[]^_`{}~", String[is]) != NULL ){
-            dst += String[is];
+        }else if ( strchr("!$()*,-.:;/?@[]^_`{}~", datum) != NULL ){
+            dst += datum;
             /* アルファベットと数字はエンコードせずそのまま */
-        }else if ( isalnum( String[is] ) ){
-            dst += String[is];
+        }else if ( isalnum(datum) ){
+            dst += datum;
         }
         /* \マークはエンコード */
-        else if ( String[is] == '\\' ){
+        else if (datum == '\\' ){
             dst += "%5c";
             /* それ以外はすべてエンコード */
         }else{
-            ::sprintf(work,"%%%2X",(unsigned char)String[is]);
+            ::sprintf(work,"%%%2X", datum);
             dst += work;
         }
     }

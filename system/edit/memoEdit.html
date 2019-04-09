@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja" contenteditable="">
+<head>
+  <meta charset="utf-8">
+  <title>memoEdit</title>
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+  <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+  <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script>
+document.onkeydown = function (e) {if (event.ctrlKey ){
+  if      (event.keyCode == 88 ){event.keyCode = 0;document.execCommand('delete',false,null);return false;}
+  else if (event.keyCode == 66 ){event.keyCode = 0;document.execCommand('bold',false,null);return false;}
+  else if (event.keyCode == 85 ){event.keyCode = 0;document.execCommand('underline',false,null);return false;}
+  else if (event.keyCode == 73 ){event.keyCode = 0;document.execCommand('italic',false,null);return false;}
+  else if (event.keyCode == 72 ){event.keyCode = 0;document.execCommand('heading',false,'h3');return false;}
+  else if (event.keyCode == 75 ){event.keyCode = 0;document.execCommand('insertHtml',false,window.getSelection().toString());return false;}
+}}
+document.onkeypress = function (e) {if (e != null && (e.ctrlKey || e.metaKey)){
+  if      (e.which == 120){document.execCommand('delete',false,null);return false;}
+  else if (e.which == 98 ){document.execCommand('bold',false,null);return false;}
+  else if (e.which == 117){document.execCommand('underline',false,null);return false;}
+  else if (e.which == 105){test();document.execCommand('italic',false,null);return false;}
+  else if (e.which == 104){document.execCommand('heading',false,'h3');return false;}
+  else if (e.which == 107){document.execCommand('insertHtml',false,window.getSelection().toString());return false;}
+}}
+</script></head>
+<body style="padding-top:53px;">
+<div class="text-center">
+</div>
+<div class="container">
+  <!-- 1.ナビゲーションバーの設定 -->
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <!-- 2.ヘッダ情報 -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nav-menu-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/" target="_top">MemoEditor</a>
+    </div>
+    <!-- 3.リストの配置 -->
+    <div class="collapse navbar-collapse" id="nav-menu-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li ><a href="/" target="_top">Home</a></li>
+      </ul>
+    </div>
+  </nav>
+</div>
+Usage:<br>
+&nbsp;^x:Delete<br>
+&nbsp;^b:Bold<br>
+&nbsp;^u:Underline<br>
+&nbsp;^i:Italic<br>
+&nbsp;^h:&lt;h3&gt;:<br>
+&nbsp;^k:Remove Tag:<br>
+</body>
+</html>
