@@ -97,10 +97,8 @@ var base  = "<? print( base ); ?>";
 var me    = "<? print( me ); ?>";
 function viewCode(path) {
     var root = "<? print(_SERVER.DOCUMENT_ROOT); ?>";
-    var pos = path.indexOf(root);
-    var tmp = path.substring(pos+root.length);
-    path = "http://<?print(_SERVER.HTTP_HOST);?>"+tmp;
-    //同じ結果が同じタブに表示されるようにターゲットをパス名とする
+    var pos = path.indexOf(path,root);
+    path = "http://<?print(_SERVER.HTTP_HOST);?>"+path.substring(root.length,path.length);
     myWin = window.open(path,path);
 }
 function editCode(url) {
@@ -319,7 +317,7 @@ function sea() {
                       print("<div class=\"btn-group\">\n");
                       print("<a href=\"#\" type=\"button\" data-toggle=\"dropdown\" class=\"dropdown-toggle\">"+basename(file)+"</span></a>\n");
                       print("<ul class=\"dropdown-menu\">\n");
-                      print("     <li><a href=\"#\" onClick='viewCode(\""+url1+"\");'>View</a></li>\n");
+                      print("     <li><a href=\"#\" onClick='viewCode(\""+filePathe+"\");'>View</a></li>\n");
                       print("     <li><a href=\"#\" onClick='"+wte+"'>Edit</a></li>\n");
                       print("     <li><a href=\"#\" onClick='renameFile(\""+url3+"\",\""+basename(file)+"\");'>Rename</a></li>\n");
                       print("     <li><a href=\"#\" onClick='deleteFile(\""+url2+"\",\""+basename(file)+"\");'>Delete</a></li>\n");

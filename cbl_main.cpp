@@ -34,7 +34,7 @@
 #include  "cbl_tools.h"
 #include  "cbl_String.h"
 //#include  "const.h"
-#include  "cb_db.h"
+#include  "cbl_db.h"
 static char Application[256];
 static void print_help(void);
 #ifdef linux

@@ -18,7 +18,7 @@
             _SESSION["uid"]=uid;
             _SESSION["grd"]=grd;
         }else{
-            header("Location: http://www.yahoo.co.jp/");
+            header("Location: uncertification.html");
         }
     }else if( _SESSION["uid"] != undefined ){
         uid = _SESSION["uid"];
@@ -26,7 +26,7 @@
         pwd = _SESSION["pwd"];
         grd = _SESSION["grd"];
     }else{
-        header("Location: http://neon.cx/");
+        header("Location: uncertification.html");
     }
     var list = eval(database.SQL("select lesson.id as id,lesson.grade as grade,lesson.title as title,movie.title as movie,lesson.movieid as mid from lesson,movie where grade="+grd+" and lesson.movieid=movie.id"));
     //id,grade,title,movie(filename),movieid

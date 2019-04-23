@@ -583,7 +583,9 @@ void wString::LoadFromCSV(const wString& str)
 int isNumber(char* str)
 {
     for( int i = strlen(str)-1; i >= 0 ; i-- ){
-        if( (! isdigit(str[i]) ) && str[i] != '.' ){
+		BYTE ch = str[i];
+        if( (! isdigit(ch) ) 
+			&& ch != '.' ){
             return 0;
         }
     }
@@ -596,8 +598,8 @@ int isNumber(char* str)
 void wString::LoadFromCSV(const char* FileName)
 {
     int  fd;
-    char s[1024];
-    char t[1024];
+	char s[1024] = { 0 };
+	char t[1024] = { 0 };
     int ret;
     int first=1;
     fd = myopen(FileName, O_RDONLY | O_BINARY, S_IREAD );
@@ -1691,7 +1693,7 @@ void wString::headerInit(size_t content_length, int expire, const char* mime_typ
     //utc = gmtime(&timer);
     struct tm utc;
     gmtime_r(&timer,&utc);
-    char work[80];
+	char work[80] = { 0 };
     char you[7][4]={"Sun", "Mon","Tue", "Wed", "Thu", "Fri", "Sat"};
     char mon[12][4]={"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     ::sprintf( work, "%s, %d %s %d %02d:%02d:%02d",

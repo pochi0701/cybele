@@ -1566,7 +1566,7 @@ SOCKET sock_connect(char *host, int port)
 /********************************************************************************/
 void convert_language_code(const char *in, char *out, size_t len, int in_flag, int out_flag)
 {
-    char       nkf_option[8];
+	char       nkf_option[8] = { 0 };
     memset(nkf_option, '\0', sizeof(nkf_option));
     //=====================================================================
     // in_flag, out_flagをみて、libnkfへのオプションを組み立てる。
@@ -1855,7 +1855,7 @@ int  mp3::mp3_id3v2_tag_read(const char *mp3_filename )
 {
     int fd;
     unsigned char       buf[1024];
-    unsigned char       buf2[1024];
+	unsigned char       buf2[1024] = { 0 };
     unsigned char       *frame;
     off_t               len;
     struct _copy_list {

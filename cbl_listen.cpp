@@ -182,7 +182,7 @@ void thread_process(ACCESS_INFO& ac_in)
 {
     int        access_check_ok;
     int        i;
-    char       client_addr_str[32];
+	char       client_addr_str[32] = { 0 };
     char       client_address[4];
     char       masked_client_address[4];
     char       work1[32];

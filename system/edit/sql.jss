@@ -34,13 +34,14 @@
         _SESSION.tables = tables;
     }
     var result = undefined;
+    var orgstr = undefined;
 
     //結果の取得
     if( sql2.length > 0 ){
         database = DBConnect(databases[db_id]);
-        var result = eval(database.SQL(sql2));
+        orgstr = database.SQL(sql2);
+        result = eval(orgstr);
         database.DBDisConnect();
-        print( result );
     }
 ?>
 <!DOCTYPE html>
@@ -116,7 +117,7 @@ function make_hidden(name, value, formname) {
                          print( '<a data-toggle="collapse" id= "menu'+i+'" href=".collapse-menu'+i+'" onclick="setDatabase('+i+');">'+databases[i]+'</a>\n');
                          print( '<ul class="collapse '+(db_id==i?'in':'')+' collapse-menu'+i+'">\n');
                          for( var j=0 ; j < tables[i][j].length ; j++ ){ 
-                             print( '<li><a href="#">'+tables[i][j]+'</a></li>\n');
+                             print( '<li>'+tables[i][j]+'</li>\n');
                          }                     
                          print( '</ul>\n');
                          print( '</li>\n');
@@ -158,6 +159,8 @@ function make_hidden(name, value, formname) {
                        }
                        print( '</tbody>\n');
                        print( '</table>\n');
+                    }else{
+                       print( "RESULT:"+orgstr );
                     }
                 ?>
            </div>
