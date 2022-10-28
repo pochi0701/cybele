@@ -33,7 +33,8 @@ if        (ext == "js" || ext == "jss"){
 <html>
 <head>
   <title><? print(basename(path)); ?></title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script type="text/javascript">
     <!--
     var hidden = false;
@@ -46,7 +47,7 @@ if        (ext == "js" || ext == "jss"){
 //    }
     function saveCode() {
         var txt=editor.getValue();
-        parent.up.saveData(document.forma.path.value,txt,0);
+        saveData(document.forma.path.value,txt,0);
         var frm = document.getElementsByTagName('form')[0];
         frm.code.value = txt;
         frm.submit();
@@ -62,7 +63,7 @@ if        (ext == "js" || ext == "jss"){
         //path = "http://127.0.0.1:8000"+path.substring(root.length,path.length);
         
         var txt=editor.getValue();
-        parent.up.saveData(document.forma.path.value,txt,0);
+        saveData(document.forma.path.value,txt,0);
         var frm = document.getElementsByTagName('form')[0];
         frm.code.value = txt;
         frm.submit();
@@ -71,11 +72,8 @@ if        (ext == "js" || ext == "jss"){
         parent.left.myreload();
         tabRewrite();
     }
-    function checkCode() {
-        parent.tmp.location.href="check.jss?target="+document.forma.path.value;
-    }
     function tabRewrite(){
-        var list = parent.up.fileList();
+        var list = fileList();
         for( var i = 0 ; i < list.length ; i++ ){
             var pop = document.getElementById("e"+i);
             if( pop ){
@@ -91,9 +89,9 @@ if        (ext == "js" || ext == "jss"){
     }
     function popCode(idx){
         pushCode(0);
-        var list = parent.up.fileList();
+        var list = fileList();
         url = list[idx].url;
-        var txt = parent.up.fileData(idx);
+        var txt = fileData(idx);
         //このコードのタイプを設定
         //alert( url2ext(url));
         editor.getSession().setMode(url2ext(url));
@@ -119,15 +117,15 @@ if        (ext == "js" || ext == "jss"){
         //var editor = ace.edit("editor");
         var txt=editor.getValue();
         if( mode == 0 ){
-            parent.up.saveData(document.forma.path.value,txt,1-mode);
+            saveData(document.forma.path.value,txt,1-mode);
         }
         else
         {
             //このコードのタイプを設定
             editor.getSession().setMode("<? print(fileType); ?>");
             //タブを作るためにセーブ
-            parent.up.saveData("<? print(encodeURI(path));?>",txt,0);
-            var list = parent.up.fileList();
+            saveData("<? print(encodeURI(path));?>",txt,0);
+            var list = fileList();
             /* 親ノード */
             var parentObj=document.getElementById("searchLists");
             for( var i in list){
@@ -170,7 +168,7 @@ if        (ext == "js" || ext == "jss"){
     function myClose()
     {
         pushCode(0);
-        var list = parent.up.fileList();
+        var list = fileList();
         for( var i in list){
             if( document.forma.path.value == list[i].url && list[i].change ){
                 if( ! window.confirm(url2base(list[i].url)+"は変更されています。破棄してよろしいですか？") ){
@@ -178,8 +176,8 @@ if        (ext == "js" || ext == "jss"){
                 }
             }
         }
-        parent.up.removeData(document.forma.path.value);
-        list = parent.up.fileList();
+        removeData(document.forma.path.value);
+        list = fileList();
         if( list.length == 0 ){
             location.href=encodeURI("wiki.jss?page=NeonEditor");
         }else{
@@ -206,20 +204,77 @@ if        (ext == "js" || ext == "jss"){
     {
         location.href=encodeURI("./indent.jss?filename="+document.forma.path.value);
     }
+    function saveData(url,datum,flag)
+    {
+        var elm = localStorage.getItem('ctl');
+        var list;
+        var change = false;
+        var pivot=0;
+        if( elm != undefined ){
+           list = JSON.parse(elm);
+           pivot = list.length;
+        }else{
+           list = [];
+        }
+        for( var i in list ){
+            if( list[i].url == url ){
+                pivot = i;
+                break;
+            }
+        }
+        //データ登録
+        if( url.length>0 ){
+            var dat = localStorage.getItem('d'+pivot);
+            if( flag && pivot < list.length ){
+                change =   ( dat != datum ) || list[pivot].change;
+            }
+            localStorage.setItem("d"+pivot,datum);
+            list[pivot] = {"url":url,"change":change};
+            localStorage.setItem('ctl',JSON.stringify(list));
+        }
+    }
+    function removeData(url)
+    {
+        var elm = localStorage.getItem('ctl');
+        var list = JSON.parse(elm);
+        var cnt = list.length;
+        for( var i in list ){
+            if( list[i].url == url ){
+                list.splice(i,1);
+                localStorage.setItem('ctl',JSON.stringify(list));
+                //移動
+                for( var j = i; j < cnt-1 ; j++ ){
+                    //こうしないと数値にならない
+                    var k = 1+parseInt(j,10);
+                    localStorage.setItem('d'+j,localStorage.getItem('d'+k));
+                }
+                localStorage.setItem('d'+(cnt-1),undefined);
+                return;
+            }
+        }
+    }
+    function fileList() {
+        
+        var elm = localStorage.getItem('ctl');
+        if( elm != null ){
+            return JSON.parse(elm);
+        }else{
+            return [];
+        }
+    }
+    
+    function fileData(idx) {
+        var data = localStorage.getItem('d'+idx);
+        return data;
+    }
     // -->
     </script>
+    
+    
     <!-- Bootstrap -->
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-      <style>
-        @media (min-width:767px){
-          .dropdown:hover > .dropdown-menu{
-            display: block;
-          }
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link rel ="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <style type="text/css" media="screen">
       <!--
       html,body { height:100%; }
@@ -248,18 +303,17 @@ if        (ext == "js" || ext == "jss"){
     <form name="forma" action="save.jss" method="post" target="tmp">
       <input type="hidden" name="code" />
       <input type="hidden" name="path" style="width:20em;" value="<? print(encodeURI(path)); ?>" />
-<!--      <a href="#" onclick="loadCode();" title="Load File(L)" accesskey="L"><i class="fa fa-cloud-download fa-lg"></i></a> //-->
       <a href="#" onclick="saveCode();" title="Save File(S)" accesskey="S"><i class="fa fa-cloud-upload fa-lg"></i></a>
       <a href="#" onclick="viewCode();" title="View File(V)" accesskey="V"><i class="fa fa-television fa-lg"></i></a>
-      <a href="#" onclick="checkCode();" title="Check File(G)" accesskey="G"><i class="fa fa-check fa-lg"></i></a>
-      <a href="#" onclick="indent();" title="indent(i)" accesskey="I"><i class="fa fa-indent fa-lg"></i></a>
+      <a href="#" onclick="mytree();" title="expand" accesskey="H"><i class="fa fa-expand fa-lg"></i></a>
       <a href="#" onclick="myClose();" title="close" accesskey="T"><i class="fa fa-times fa-lg"></i></a>
-      <a href="#" onclick="mytree();" title="expand" accesskey="H"><i class="fa fa-expand  fa-lg"></i></a>    </form>
+    </form>
     <div id="searchLists"></div>
     <pre id="editor"><?print(htmlspecialchars(code));?></pre>
 
     <!-- SCRIPTS //-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.3/ace.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.7.1/ace.js"></script>
     <script type="text/javascript">
       <!--
       var editor = ace.edit("editor");

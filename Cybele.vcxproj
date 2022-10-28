@@ -22,33 +22,33 @@
     <ProjectGuid>{F6B9E161-85ED-4EB6-9A37-90C20DAF1B3F}</ProjectGuid>
     <RootNamespace>Cybele</RootNamespace>
     <Keyword>MFCProj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>Cybele</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseOfMfc>Static</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>Dynamic</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>Static</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
@@ -79,11 +79,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)\</OutDir>
+    <EnableManagedIncrementalBuild>true</EnableManagedIncrementalBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -98,10 +100,10 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
@@ -128,7 +130,7 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <SDLCheck>true</SDLCheck>
@@ -155,8 +157,8 @@
     <ClCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
@@ -182,9 +184,11 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -192,63 +196,39 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AboutDlg.cpp" />
-    <ClCompile Include="alt_time.cpp" />
-    <ClCompile Include="cbl_db.cpp" />
-    <ClCompile Include="cbl_script.cpp" />
-    <ClCompile Include="Cybele.cpp" />
-    <ClCompile Include="CybeleTrayWnd.cpp" />
-    <ClCompile Include="dirent.cpp" />
-    <ClCompile Include="dregex.cpp" />
-    <ClCompile Include="libnkf.cpp" />
-    <ClCompile Include="ssdp.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="TinyJS.cpp" />
-    <ClCompile Include="TinyJS_Functions.cpp" />
-    <ClCompile Include="TinyJS_MathFunctions.cpp" />
-    <ClCompile Include="TrayWnd.cpp">
-      <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</SDLCheck>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</MultiProcessorCompilation>
-    </ClCompile>
-    <ClCompile Include="utf8tbl.cpp" />
-    <ClCompile Include="cbl_base64.cpp" />
-    <ClCompile Include="cbl_cgi.cpp" />
-    <ClCompile Include="cbl_http.cpp" />
-    <ClCompile Include="cbl_listen.cpp" />
-    <ClCompile Include="cbl_main.cpp" />
-    <ClCompile Include="cbl_param.cpp" />
-    <ClCompile Include="cbl_proxy.cpp" />
-    <ClCompile Include="cbl_send_file.cpp" />
-    <ClCompile Include="cbl_String.cpp" />
-    <ClCompile Include="cbl_tools.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="AboutDlg.h" />
-    <ClInclude Include="alt_time.h" />
-    <ClInclude Include="const.h" />
-    <ClInclude Include="Cybele.h" />
-    <ClInclude Include="CybeleTrayWnd.h" />
-    <ClInclude Include="define.h" />
-    <ClInclude Include="dirent.h" />
-    <ClInclude Include="node.hpp" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="TrayWnd.h" />
-    <ClInclude Include="cbl.h" />
-    <ClInclude Include="cbl_String.h" />
-    <ClInclude Include="cbl_tools.h" />
+    <ClCompile Include="source\AboutDlg.cpp" />
+    <ClCompile Include="source\alt_time.cpp" />
+    <ClCompile Include="source\cbl_base64.cpp" />
+    <ClCompile Include="source\cbl_cgi.cpp" />
+    <ClCompile Include="source\cbl_db.cpp" />
+    <ClCompile Include="source\cbl_http.cpp" />
+    <ClCompile Include="source\cbl_listen.cpp" />
+    <ClCompile Include="source\cbl_main.cpp" />
+    <ClCompile Include="source\cbl_param.cpp" />
+    <ClCompile Include="source\cbl_proxy.cpp" />
+    <ClCompile Include="source\cbl_script.cpp" />
+    <ClCompile Include="source\cbl_send_file.cpp" />
+    <ClCompile Include="source\cbl_String.cpp" />
+    <ClCompile Include="source\cbl_tools.cpp" />
+    <ClCompile Include="source\Cybele.cpp" />
+    <ClCompile Include="source\CybeleTrayWnd.cpp" />
+    <ClCompile Include="source\dirent.cpp" />
+    <ClCompile Include="source\dregex.cpp" />
+    <ClCompile Include="source\libnkf.cpp" />
+    <ClCompile Include="source\ssdp.cpp" />
+    <ClCompile Include="source\stdafx.cpp" />
+    <ClCompile Include="source\TinyJS.cpp" />
+    <ClCompile Include="source\TinyJS_Functions.cpp" />
+    <ClCompile Include="source\TinyJS_MathFunctions.cpp" />
+    <ClCompile Include="source\TrayWnd.cpp" />
+    <ClCompile Include="source\utf8tbl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Cybele.ico" />
@@ -258,6 +238,29 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Cybele.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\AboutDlg.h" />
+    <ClInclude Include="source\alt_time.h" />
+    <ClInclude Include="source\cbl.h" />
+    <ClInclude Include="source\cbl_db.h" />
+    <ClInclude Include="source\cbl_http.h" />
+    <ClInclude Include="source\cbl_String.h" />
+    <ClInclude Include="source\cbl_tools.h" />
+    <ClInclude Include="source\config.h" />
+    <ClInclude Include="source\const.h" />
+    <ClInclude Include="source\Cybele.h" />
+    <ClInclude Include="source\CybeleTrayWnd.h" />
+    <ClInclude Include="source\define.h" />
+    <ClInclude Include="source\dirent.h" />
+    <ClInclude Include="source\dregex.h" />
+    <ClInclude Include="source\node.hpp" />
+    <ClInclude Include="source\Resource.h" />
+    <ClInclude Include="source\stdafx.h" />
+    <ClInclude Include="source\TinyJS.h" />
+    <ClInclude Include="source\TinyJS_Functions.h" />
+    <ClInclude Include="source\TinyJS_MathFunctions.h" />
+    <ClInclude Include="source\TrayWnd.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

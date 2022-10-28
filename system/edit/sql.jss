@@ -2,16 +2,22 @@
     session_start();
     var database;
     var sql2 = _POST.sql;
-    var db_id = _POST.id;
+    var db_id = _POST.db_id;
     var databases;
     var tables;
     var text;
-    databases = _SESSION.databases;
+    var selectdb;
+
+    database = DBConnect("_SYSTEM");
+    text = database.SQL("show databases");
+    databases = eval(text);
+    database.DBDisConnect();
+    //databases = _SESSION.databases;
     if( db_id == undefined ){
         db_id = _SESSION.db_id;
         if( db_id == undefined ){
            _SESSION.db_id  = 1;
-           db_id = _SESSION.db_id;          
+           db_id = _SESSION.db_id;
         }
     }else{
         _SESSION.db_id = db_id;
@@ -44,129 +50,202 @@
         database.DBDisConnect();
     }
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <title>menu</title>
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Cache-Control" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-  <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
-  <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-  <script>
-  function setDatabase(db){
-      make_hidden("id",db,"SQL");
-  }
-/**
- * make_hidden : hiddenを作成する : Version 1.2
- */
-function make_hidden(name, value, formname) {
-    var q = document.createElement('input');
-    q.type = 'hidden';
-    q.name = name;
-    q.value = value;
-    if (formname) {
-    	if ( document.forms[formname] == undefined ){
-    		console.error( "ERROR: form " + formname + " is not exists." );
-    	}
-    	document.forms[formname].appendChild(q);
-    } else {
-    	document.forms[0].appendChild(q);
-    }
-}
-  </script>
-</head>
-<body style="padding-top:53px;">
-<div class="text-center">
-</div>
-<div class="container">
-  <!-- 1.ナビゲーションバーの設定 -->
-  <nav class="navbar navbar-inverse navbar-fixed-top">
-    <!-- 2.ヘッダ情報 -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nav-menu-1">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="/" target="_top">DBBrowser</a>
-    </div>
-    <!-- 3.リストの配置 -->
-    <div class="collapse navbar-collapse" id="nav-menu-1">
-      <ul class="nav navbar-nav navbar-right">
-        <li ><a href="/" target="_top">Home</a></li>
-      </ul>
-    </div>
-  </nav>
-</div>
-
-<div class="container">
-	<div class="row">
-		<div class="col-md-2">
-		    Databases<br/>
-            <ul>
-              <?
-                 for( var i = 0 ; i < databases.length ; i++ ){
-                     if( tables[i].length > 0){
-                         print( '<li>\n');
-                         print( '<a data-toggle="collapse" id= "menu'+i+'" href=".collapse-menu'+i+'" onclick="setDatabase('+i+');">'+databases[i]+'</a>\n');
-                         print( '<ul class="collapse '+(db_id==i?'in':'')+' collapse-menu'+i+'">\n');
-                         for( var j=0 ; j < tables[i][j].length ; j++ ){ 
-                             print( '<li>'+tables[i][j]+'</li>\n');
-                         }                     
-                         print( '</ul>\n');
-                         print( '</li>\n');
-                     }
-                 }
-              ?>
-            </ul>
-		</div>
-		<div class="col-md-10">
-           <h3>SQL Browser</h3>
-           <form  name="SQL" method="post">
-                <!-- SQL入力エリア -->
-                <div class="form-group">
-                <label>Input SQL</label>
-                <textarea class="form-control" rows="6" name="sql"><?print( sql2 );?></textarea>
-                </div>
-                <!-- 送信ボタン -->
-                <button type="submit" class="btn btn-default">Execute SQL</button>
-           </form>
-           <div>
-               <? 
-                   if( result !== undefined ){
-                       var rset = Object.keys(result[0]);
-                       print( '<table class="table">\n');
-                       print( '<thead>\n<tr>\n');
-                       print( '<th>#</th>\n');
-                       for( var col = 0 ; col< rset.length ; col++ ){
-                           print( '<th>'+rset[col]+'</th>\n');
-                       }
-                       print( '</tr>\n</thead>\n');
-                       print( '<tbody>\n');
-                       for( var row = 0 ; row < result.length ; row++ ){
-                           print( '<tr>\n');
-                           print( '<th>'+(row+1)+'</th>\n');
-                           for( var col = 0 ; col < rset.length ; col++ ){
-                               print( '<td>'+result[row][rset[col]]+'</td>\n');
-                           }
-                           print( '</tr>\n');
-                       }
-                       print( '</tbody>\n');
-                       print( '</table>\n');
-                    }else{
-                       print( "RESULT:"+orgstr );
+    <meta charset="utf-8">
+    <title>DB-Browser</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+    <!--
+        var databases=[<?for(i=1;i<databases.length;i++){print((i>1)?',':'');print('"'+databases[i]+'"');}?>];
+        var tables=[<?
+                    for(i=1;i<databases.length;i++){
+                        print((i>1)?',':'');
+                        print('[');
+                        for(j=0;j<tables[i].length;j++){
+                            print((j>0)?',':'');
+                            print( '"'+tables[i][j]+'"');
+                        }
+                        print(']');
                     }
-                ?>
-           </div>
-		</div>
-	</div>
-</div>
+                    ?>];
+        var selected = <?print(db_id);?>;
+        function selectChange(event) {
+            var num = document.getElementById("database").value;
+            document.getElementById("db_id").value = num
+            selectDatabase(num);
+        }
+        function selectDatabase(num){
+            selected = num;
+            var contents = '<ul class="list-group">';
+            for( j = 0 ; j < tables[num-1].length ; j++){
+                contents += '<li class="list-group-item" onclick="listTable('+(num-1)+','+j+');">'+tables[num-1][j]+'</li>';
+            }
+            contents += '</ul>';
+            document.getElementById("selected").innerHTML = contents;
+        }
+        function OnFileSelect( inputElement ){
+            var filepath = inputElement.value;
+            document.getElementById("sql").value = "create table TABLE_NAME from "+filepath+";";
+        }
+        function listTable(dbidx,tableidx)
+        {
+            document.getElementById("sql").value = "select * from "+tables[dbidx][tableidx]+" limit 3;";
+        }
+        function setDatabase(db) {
+            make_hidden("id", db, "SQL");
+        }
+        var toggle = 0;
+        function disp(txt) {
+            if (toggle == 0) {
+                document.getElementById("dat").innerHTML = txt;
+            }
+            else {
+                document.getElementById("dat").innerHTML = "";
+            }
+            toggle = 1 - toggle;
+        }
+
+        /**
+         * make_hidden : hiddenを作成する : Version 1.2
+         */
+        function make_hidden(name, value, formname) {
+            var q = document.createElement('input');
+            q.type = 'hidden';
+            q.name = name;
+            q.value = value;
+            if (formname) {
+                if (document.forms[formname] == undefined) {
+                    console.error("ERROR: form " + formname + " is not exists.");
+                }
+                document.forms[formname].appendChild(q);
+            } else {
+                document.forms[0].appendChild(q);
+            }
+        }
+        var hpt = '<table class="table table-striped table-bordered">';
+        hpt += '<thead><tr><th>効果</th><th>コマンド</th></tr></thead><tbody>';
+        hpt += '<tr><td>データベース一覧</td><td>SHOW DATABASES;</td></tr>';
+        hpt += '<tr><td>テーブル一覧</td><td>SHOW TABLES;</td></tr>';
+        hpt += '<tr><td>テーブル構造表示</td><td>DESC table_name;</td></tr>';
+        hpt += '<tr><td>データベース作成</td><td>CREATE DATABASE database_name;</td></tr>';
+        hpt += '<tr><td>テーブル作成</td><td>CREATE TABLE table_name(column_name1 number/string,...);</td></tr>';
+        hpt += '<tr><td>テーブル作成(CSVから)</td><td>CREATE TABLE table_name FROM FILE_PATH;</td></tr>';
+        hpt += '<tr><td>データベース使用</td><td>USE database_name;</td></tr>';
+        hpt += '<tr><td>データベース削除</td><td>DROP DATABASE database_name;</td></tr>';
+        hpt += '<tr><td>テーブル削除</td><td>DROP TABLE table_name;</td></tr>';
+        hpt += '<tr><td>テーブル項目追加</td><td>ALTER TABLE TABLENAME ADD (COLUMN1 definition1,COLUMN2 definition2..);</td></tr>';
+        hpt += '<tr><td>テーブル名変更</td><td>ALTER TABLE TABLENAME MODIFY (COLUMN1 definition1,COLUMN2 definition2..);</td></tr>';
+        hpt += '<tr><td>テーブル項目削除</td><td>ALTER TABLE TABLENAME DROP (COLUMN1, COLUMN2..);</td></tr>';
+        hpt += '<tr><td>テーブル名変更</td><td>ALTER TABLE TABLENAME RENAME TO NEWTABLENAME;</td></tr>';
+        hpt += '<tr><td>テーブル項目名変更</td><td>ALTER TABLE TABLENAME RENAME COLUMN OLDCOLUMN TO NEWCOLUMN;</td></tr>';
+        hpt += '</tbody></table>';
+        //-->
+        function loadFinished(){
+            selectDatabase(selected);
+        }
+        window.onload = loadFinished;
+    </script>
+</head>
+<body>
+    <!-- 1.ナビゲーションバーの設定 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/" target="_top">DBBrowser</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse flex-grow-1 text-right" id="myNavbar">
+                <ul class="navbar-nav ms-auto flex-nowrap">
+                    <li><a href="/" class="nav-link m-2 menu-item" target="_top">Home</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-5">
+            <label for="formFile" class="form-label">DBにするCSV</label>
+            <input class="form-control" type="file" id="formFile" accept="text/csv" onchange="OnFileSelect( this );">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                Databases<br />
+                <select id="database" class="form-select" aria-label="databases" onchange="selectChange(event);">
+                    <?
+                    for( var i = 0 ; i < databases.length ; i++ ){
+                        if( tables[i].length > 0){
+                            print( '<option value="'+i+'"'+((i==db_id)?' selected':'')+'>'+databases[i]+'</option>\n' );
+                        }
+                    }
+                    ?>
+                </select>
+                <p id="selected"></p>
+            </div>
+            <div class="col-md-10">
+                <h3>SQL Browser</h3>
+                <form name="SQL" method="post">
+                    <!-- SQL入力エリア -->
+                    <div class="form-group">
+                        <label>Input SQL</label>
+                        <textarea class="form-control" rows="6" id="sql" name="sql"><?print( sql2 );?></textarea>
+                    </div>
+                    <input type="hidden" id="db_id" name="db_id" value="<?print(db_id);?>">
+                    <!-- 送信ボタン -->
+                    <button type="submit" class="btn btn-primary">Execute SQL</button>
+                </form>
+                <div>
+                    <?
+                    //2次元テーブルの時
+                    if( result !== undefined ){
+                        var rset = Object.keys(result[0]);
+                        print( '<table class="table table-striped table-bordered">\n');
+                        if( rset.length > 0 ){
+                            print( '<thead>\n<tr>\n');
+                            print( '<th>#</th>\n');
+                            for( var col = 0 ; col< rset.length ; col++ ){
+                                print( '<th>'+rset[col]+'</th>\n');
+                            }
+                            print( '</tr>\n</thead>\n');
+                            print( '<tbody>\n');
+                            for( var row = 0 ; row < result.length ; row++ ){
+                                print( '<tr>\n');
+                                print( '<th>'+(row+1)+'</th>\n');
+                                for( var col = 0 ; col < rset.length ; col++ ){
+                                    print( '<td>'+result[row][rset[col]]+'</td>\n');
+                                }
+                                print( '</tr>\n');
+                            }
+                        }
+                        else
+                        {
+                            print( '<thead><tr><th>#</th><th>Items</th></tr></thead>\n' );
+                            print( '<tbody>\n');
+                            for( var row = 0 ; row < result.length ; row++ ){
+                                print( '<tr><th>'+(row+1)+'</th><td>'+result[row]+'</td></tr>\n');
+                            }
+                        }
+                        print( '</tbody>\n');
+                        print( '</table>\n');
+                    }else{
+                        print( "RESULT:"+orgstr );
+                    }
+                    ?>
+                </div>
+            </div>
+            <p id="dat"></p>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <input type="button" class="btn btn-primary" value="HELP" onClick="disp(hpt)">
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 

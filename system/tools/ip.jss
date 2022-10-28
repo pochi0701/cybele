@@ -14,10 +14,8 @@
 		<meta http-equiv="Pragma" content="no-cache">
 		<meta SYABAS-BACKGROUND="home_back.jpg">
 		<meta SYABAS-COMPACT=OFF>
-    <script src="src/jquery.min.js"></script>
-    <script type="text/javascript" src="src/jquery.qrcode.min.js"></script>
-    <script type="text/javascript" src="src/jquery.qrcode.js"></script>
-    <script type="text/javascript" src="src/qrcode.js"></script>
+    <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
 <!--[if lt IE 7.]>
 	<script defer type="text/javascript" src="pngfix.js"></script>
 <![endif]-->
@@ -25,7 +23,7 @@
 <body>
 <?
 la = getLocalAddress();
-ga = loadFromFile("http://neon.cx/raspberry/ip.php");
+ga = loadFromFile("http://neon.cx/cybele/ip.php");
 ?>
 Local Address<br/>
 <? print(la+":8000/"); ?><br/>
@@ -37,10 +35,10 @@ Global Address<br/>
 <? print(ga+":8000/"); ?><br/>
 <div id="qrcodeCanvas2"></div>
 <script>
-	jQuery('#qrcodeCanvas').qrcode({
+	jQuery('#qrcodeCanvas').qrcode({width: 96, height: 96,
 		text	: "http://<? print(la+":8000/"); ?>"
 	});	
-	jQuery('#qrcodeCanvas2').qrcode({
+	jQuery('#qrcodeCanvas2').qrcode({width: 96, height: 96,
 		text	: "http://<? print(ga+":8000/"); ?>"
 	});	
 </script>

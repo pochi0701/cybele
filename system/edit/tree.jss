@@ -66,28 +66,17 @@ if( sf == ""){
    sf = "/";
 }
 var me=_SERVER.SCRIPT_NAME;
-?><!DOCTYPE html>
-<html>
+?><!doctype html>
+<html lang="ja">
 <head>
-<title>file tree - <? print(sf); ?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no">
-<meta name="format-detection" content="telephone=no" />
-<meta name="apple-mobile-web-app-capable" content="yes" />  
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">  
-<meta http-equiv="Cache-Control" content="no-cache">
-<!-- Bootstrap -->
-<link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-  <style>
-    @media (min-width:767px){
-      .dropdown:hover > .dropdown-menu{
-        display: block;
-      }
-    }
-</style>
-<script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
-<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <meta charset="utf-8">
+  <title>file tree - <? print(sf); ?></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+  <link rel ="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+  <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script> 
+  <!-- Bootstrap -->
 <script type="text/javascript">
 <!--
 var root  = "<? print( root ); ?>";
@@ -99,6 +88,13 @@ function viewCode(path) {
     var root = "<? print(_SERVER.DOCUMENT_ROOT); ?>";
     var pos = path.indexOf(path,root);
     path = "http://<?print(_SERVER.HTTP_HOST);?>"+path.substring(root.length,path.length);
+    myWin = window.open(path,path);
+}
+function QRCode(path) {
+    var root = "<? print(_SERVER.DOCUMENT_ROOT); ?>";
+    var pos = path.indexOf(path,root);
+    var path2 = path.substring(root.length,path.length);
+    path = "qrcode.jss?url="+path2;
     myWin = window.open(path,path);
 }
 function editCode(url) {
@@ -134,14 +130,14 @@ function renameFile(url,file) {
     return false;
 }
 function createDir() {
-    var msg = window.prompt("作成するフォルダ名を入力してください");
+    var msg = window.prompt("作成するフォルダ名を入力してください","フォルダ名");
     if( msg != null && window.confirm("フォルダ"+msg+"を"+rootu+"に作成します。よろしいですか？") ){
         location.href=me+"?dirName="+msg+"&root="+rootn;
     }
     return false;
 }
 function createFile() {
-    var msg = window.prompt("作成するファイル名を入力してください");
+    var msg = window.prompt("作成するファイル名を入力してください","ファイル名");
     if( msg != null && window.confirm("ファイル"+msg+"を"+rootu+"に作成します。よろしいですか？") ){
         location.href=me+"?FileName="+msg+"&root="+rootn;
     }
@@ -199,41 +195,32 @@ function sea() {
 </head>
 <body>
 <div class="container">
-  <div class="btn-toolbar">
-    <div class="btn-group">
-    <button class="btn btn-default dropdown-toggle btn-small" data-toggle="dropdown">Menu<span class="caret"></span></button>
+  <div class="dropdown">
+    <button class="btn btn-default btn-outline-primary dropdown-toggle btn-small" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      Menu<span class="caret">
+    </button>
     <ul class="dropdown-menu">
-    <li><a href="#" onClick="myreload(0);">再読込</a></li>
-    <li><a href="#" onClick="createDir();">フォルダ作成</a></li>
-    <li><a href="#" onClick="createFile();">ファイル作成</a></li>
-<?
-    print( "    <li><a href=\"upload.jss?folder="+root+"/\" target=\"_blank\">アップロード</a></li>" );
-?>
-    <li><a href="#" onClick="dl();">ダウンロード</a></li>
-    <li><a href="#" onClick="todo();">Todo</a></li>
-    <li><a href="#" onClick="view();">グラフィック表示</a></li>
-    <li><a href="wiki.jss" target="_wiki">Ｗｉｋｉ</a></li>
-    <li><a href="env.jss" target="_env">環境変数</a></li>
-    <li><a href="sql.jss" target="_sqlEditor">DB Browser</a></li>
-    <li><a href="#" onClick="myreload(1);">全表示</a></li>
-    <li><a href="#" onClick="sea();">検索</a></li>
-    <li><a href="#" onClick="expt();return false;">エクスポート</a></li>
-    <li><a href="memoEdit.html" target="_memoEdit">メモ</a></li>
-    <li><a href="/" target="_top">Home</a></li>
-    <li class="divider"></li>
-    <li><a href="#" onClick="logout();">ログアウト</a></li>
+    <li><a class="dropdown-item" href="#" onClick="myreload(0);">再読込</a></li>
+    <li><a class="dropdown-item" href="#" onClick="createDir();">フォルダ作成</a></li>
+    <li><a class="dropdown-item" href="#" onClick="createFile();">ファイル作成</a></li>
+    <li><a class="dropdown-item" href="#" onClick="dl();">ダウンロード</a></li>
+    <li><a class="dropdown-item" href="#" onClick="view();">グラフィック表示</a></li>
+    <li><a class="dropdown-item" href="wiki.jss" target="_wiki">Ｗｉｋｉ</a></li>
+    <li><a class="dropdown-item" href="env.jss" target="_env">環境変数</a></li>
+    <li><a class="dropdown-item" href="sql.jss" target="_sqlEditor">DB Browser</a></li>
+    <li><a class="dropdown-item" href="#" onClick="expt();return false;">エクスポート</a></li>
+    <li><a class="dropdown-item" href="memoEdit.html" target="_memoEdit">メモ</a></li>
+    <li><a class="dropdown-item" href="/" target="_top">Home</a></li>
     </ul>
-    </div>
   </div>
   [<?print(sf);?>]
-  <div id="tree">
   <table>
 <?
   //親ディレクトリ
   var filePath = dirname(root);
   if ( filePath != ""  && filePath.indexOf(base)>=0 ){
       var url = "?root="+encodeURI(filePath);
-      print( "<tr><td><a href=\""+url+"\" class=\"lnk\">[<i class=\"fa fa-angle-double-up fa-lg\"></i>]</a></td><td></td><td></td></tr>\n");
+      print( "<tr><td><a href=\""+url+"\">[<i class=\"fas fa-angle-double-up fa-lg\"></i>]</a></td><td></td><td></td></tr>\n");
   }
   //ディレクトリの場合
   if (dir_exists(root)) {
@@ -257,18 +244,18 @@ function sea() {
                   var url1 = "?root="+filePathe;
                   var url2 = "?root="+encodeURI(root)+"&del="+filePathe;
                   var url3 = "?root="+encodeURI(root)+"&renf="+filePathe;
-                  //print( "<tr><td><a href=\""+url1+"\" class=\"lnk\" title=\""+title+"\">["+basename(file)+"]</a></td>");
+                  //print( "<tr><td><a href=\""+url1+"\" title=\""+title+"\">["+basename(file)+"]</a></td>");
                   //print( "<td>".stat.date."</td>";
                   //print "<td></td>"
                   //print( "<td><a href=\"#\" onClick='deleteFile(\""+url2+"\",\""+basename(file)+"\");' title=\"Delete Folder\"><i class=\"fa fa-trash-o fa-lg\"></i></a></td>");
                   //print( "<td><a href=\"#\" onClick='renameFile(\""+url3+"\",\""+basename(file)+"\");' title=\"Rename Folder\"><i class=\"fa fa-pencil-square-o fa-lg\"></i></a></td></tr>\n");
                   print("<tr><td>\n");
-                  print("<div class=\"btn-group\">\n");
-                  print("<a href=\"#\" type=\"button\" data-toggle=\"dropdown\" class=\"dropdown-toggle\">["+basename(file)+"]</span></a>\n");
+                  print("<div class=\"dropdown\">\n");
+                  print("<a href=\"#\" data-bs-toggle=\"dropdown\" class=\"dropdown-item\">["+basename(file)+"]</a>\n");
                   print("<ul class=\"dropdown-menu\">\n");
-                      print("     <li><a href=\""+url1+"\" >open</a></li>\n");
-                      print("     <li><a href=\"#\" onClick='renameFile(\""+url3+"\",\""+basename(file)+"\");'>Rename</a></li>\n");
-                      print("     <li><a href=\"#\" onClick='deleteFile(\""+url2+"\",\""+basename(file)+"\");'>Delete</a></li>\n");
+                      print("     <li><a class=\"dropdown-item\" href=\""+url1+"\" >open</a></li>\n");
+                      print("     <li><a class=\"dropdown-item\"href=\"#\" onClick='renameFile(\""+url3+"\",\""+basename(file)+"\");'>Rename</a></li>\n");
+                      print("     <li><a class=\"dropdown-item\"href=\"#\" onClick='deleteFile(\""+url2+"\",\""+basename(file)+"\");'>Delete</a></li>\n");
                       //print("     <li class=\"divider\"></li>\n");
                       //print("     <li><a href=\"#\">Separated link</a></li>\n");
                   print(" </ul>\n");
@@ -314,20 +301,18 @@ function sea() {
                           wte = "viewDataSound(\""+filePathf+"\");";
                       }
                       print("<tr><td>\n");
-                      print("<div class=\"btn-group\">\n");
-                      print("<a href=\"#\" type=\"button\" data-toggle=\"dropdown\" class=\"dropdown-toggle\">"+basename(file)+"</span></a>\n");
+                      print("<div class=\"dropdown\">\n");
+                      print("<a href=\"#\" data-bs-toggle=\"dropdown\" class=\"dropdown-item\">"+basename(file)+"</a>\n");
                       print("<ul class=\"dropdown-menu\">\n");
-                      print("     <li><a href=\"#\" onClick='viewCode(\""+filePathe+"\");'>View</a></li>\n");
-                      print("     <li><a href=\"#\" onClick='"+wte+"'>Edit</a></li>\n");
-                      print("     <li><a href=\"#\" onClick='renameFile(\""+url3+"\",\""+basename(file)+"\");'>Rename</a></li>\n");
-                      print("     <li><a href=\"#\" onClick='deleteFile(\""+url2+"\",\""+basename(file)+"\");'>Delete</a></li>\n");
+                      print("     <li><a class=\"dropdown-item\" href=\"#\" onClick='"+wte+"'>Edit</a></li>\n");
+                      print("     <li><a class=\"dropdown-item\" href=\"#\" onClick='viewCode(\""+filePathe+"\");'>View</a></li>\n");
+                      print("     <li><a class=\"dropdown-item\" href=\"#\" onClick='renameFile(\""+url3+"\",\""+basename(file)+"\");'>Rename</a></li>\n");
+                      print("     <li><a class=\"dropdown-item\" href=\"#\" onClick='deleteFile(\""+url2+"\",\""+basename(file)+"\");'>Delete</a></li>\n");
+                      print("     <li><a class=\"dropdown-item\" href=\"#\" onClick='QRCode(\""+filePathe+"\");'>QRCode</a></li>\n");
                       //print("     <li class=\"divider\"></li>\n");
                       //print("     <li><a href=\"#\">Separated link</a></li>\n");
                       print(" </ul>\n");
                       print("</div>\n");
-
-
-
                       //print "<td>".date("m/d H:i:s", filemtime($filePath))."</td>"; 
                       //print "<td align=\"right\">".size_num_read(filesize($filePath))."</td>";
                       //print( "<td><a href=\"#\" onClick='renameFile(\""+url3+"\",\""+basename(file)+"\");' title=\"REname File\"><i class=\"fa fa-pencil-square-o fa-lg\"></i></a></td>");
@@ -343,5 +328,6 @@ function sea() {
 ?>
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="source\AboutDlg.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\alt_time.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cbl_base64.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cbl_cgi.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cbl_db.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cbl_http.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cbl_listen.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cbl_main.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cbl_param.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cbl_proxy.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cbl_script.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cbl_send_file.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cbl_String.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cbl_tools.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Cybele.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CybeleTrayWnd.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\dirent.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\dregex.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\libnkf.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ssdp.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\stdafx.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\TinyJS.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\TinyJS_Functions.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\TinyJS_MathFunctions.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\TrayWnd.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\utf8tbl.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Cybele.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\Cybele.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\Cybele.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="header">
+      <UniqueIdentifier>{61b0c837-6547-467f-a492-bbebf40b2ba1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{c13ad4fe-79c4-4bc4-9bc0-beed526cd019}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\AboutDlg.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\alt_time.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\cbl.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\cbl_db.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\cbl_http.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\cbl_String.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\cbl_tools.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\config.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\const.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Cybele.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CybeleTrayWnd.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\define.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\dirent.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\dregex.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\node.hpp">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\stdafx.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\TinyJS.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\TinyJS_Functions.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\TinyJS_MathFunctions.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\TrayWnd.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Resource.h">
+      <Filter>header</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

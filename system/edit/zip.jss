@@ -2,12 +2,12 @@
 function createZip(addr,file)
 {
     //この中にファイルを全部入れておく。サブディレクトリなどあってもOK
-    tempDir = "/tmp";//作業用ディレクトリ;
+    tempDir = _SERVER.DOCUMENT_ROOT;//作業用ディレクトリ;
     //ここにzipファイルを作ります
     filepath = tempDir+"/"+file;//生成するzipファイルのパス;
-    //このコマンドを
     //command = "zip -r  {$filepath} {$addr}";
-    cmd = "tar zcvf "+filepath+" "+ addr +" 1>/dev/null 2>/dev/null";
+    //cmd = "tar zcvf "+filepath+" "+ addr +" 1>/dev/null 2>/dev/null";
+    cmd = "tar zcvf "+filepath+" "+ addr;
     //実行します
     command(cmd);
     return filepath;

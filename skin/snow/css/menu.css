@@ -1,6 +1,6 @@
 body{
-    line-height: 120%;
-    background: url(/earth.jpg);
+    line-height: 140%;
+    background: url(/image/white.png);
     color: #FFF;
 }
 img{
@@ -13,15 +13,17 @@ a:active { color: #00FFFF ; text-decoration: none ; }
 a.lnk {
   display: block;
   text-align: left;
-  text-decoration: none;
-  color: #FFF;
+  text-decoration: bold;
+  text-shadow: 1px 1px 2px pink;
+  color: #000;
 }
 a.lnkf {
   display: block;
   text-align: left;
-  text-decoration: none;
-  color: #FFF;
+  text-decoration: bold;
+  text-shadow: 1px 1px 2px pink;
+  color: #000;
 }
 a.lnk:hover {
-  color: #00FFFF ;
+  color: #fff ;
 }
