@@ -53,91 +53,131 @@
 #ifdef linux
 int _daylight = 0;                  // Non-zero if daylight savings time is used
 #endif
-////long _dstbias = 0;                  // Offset for Daylight Saving Time
+//long _dstbias = 0;                  // Offset for Daylight Saving Time
 #ifdef linux
 long _timezone = 0;                 // Difference in seconds between GMT and local time
-char *_tzname[2] = {(char*)"GMT", (char*)"GMT"};  // Standard/daylight savings time zone names
+char* _tzname[2] = { (char*)"GMT", (char*)"GMT" };  // Standard/daylight savings time zone names
 #endif
 
-const char *_days[] = {
-  "Sunday", "Monday", "Tuesday", "Wednesday",
-  "Thursday", "Friday", "Saturday"
-};
+/// <summary>
+/// 曜日の表現
+/// </summary>
+//const char* _days[] = {
+//  "Sunday", "Monday", "Tuesday", "Wednesday",
+//  "Thursday", "Friday", "Saturday"
+//};
 
-const char *_days_abbrev[] = {
-  "Sun", "Mon", "Tue", "Wed",
-  "Thu", "Fri", "Sat"
-};
+/// <summary>
+/// 曜日の省略表現
+/// </summary>
+//const char* _days_abbrev[] = {
+//  "Sun", "Mon", "Tue", "Wed",
+//  "Thu", "Fri", "Sat"
+//};
 
-const char *_months[] = {
-  "January", "February", "March",
-  "April", "May", "June",
-  "July", "August", "September",
-  "October", "November", "December"
-};
+/// <summary>
+/// 月の表現
+/// </summary>
+//const char* _months[] = {
+//  "January", "February", "March",
+//  "April", "May", "June",
+//  "July", "August", "September",
+//  "October", "November", "December"
+//};
 
-const char *_months_abbrev[] = {
-  "Jan", "Feb", "Mar",
-  "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep",
-  "Oct", "Nov", "Dec"
-};
+/// <summary>
+/// 月の省略表現
+/// </summary>
+//const char* _months_abbrev[] = {
+//  "Jan", "Feb", "Mar",
+//  "Apr", "May", "Jun",
+//  "Jul", "Aug", "Sep",
+//  "Oct", "Nov", "Dec"
+//};
 
+/// <summary>
+/// 月ごとの日数
+/// </summary>
 const int _ytab[2][12] = {
   {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
   {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 };
 
-struct tm *gmtime_r(const time_t *timer, struct tm *tmbuf) {
-  time_t time = *timer;
-  unsigned long dayclock, dayno;
-  int year = EPOCH_YR;
 
-  dayclock = (unsigned long) time % SECS_DAY;
-  dayno = (unsigned long) time / SECS_DAY;
+/// <summary>
+/// 格納されている時刻へのポインター。
+/// 時刻は、世界協定時刻 (UTC: Coordinated Universal Time) の 1970 年 1 月 1 日の深夜 00:00:00 から経過した時間 (秒単位) を表します。
+/// </summary>
+/// <param name="timer"></param>
+/// <param name="tmbuf"></param>
+/// <returns>tm 型の構造体へのポインター。 返された構造体の各フィールドには、sourceTime 引数を現地時刻ではなく UTC で評価した値が格納されています。
+/// </returns>
+struct tm* gmtime_r(const time_t* timer, struct tm* tmbuf) {
+	time_t time = *timer;
+	int year = EPOCH_YR;
 
-  tmbuf->tm_sec = dayclock % 60;
-  tmbuf->tm_min = (dayclock % 3600) / 60;
-  tmbuf->tm_hour = dayclock / 3600;
-  tmbuf->tm_wday = (dayno + 4) % 7; // Day 0 was a thursday
-  while (dayno >= (unsigned long) YEARSIZE(year)) {
-    dayno -= YEARSIZE(year);
-    year++;
-  }
-  tmbuf->tm_year = year - YEAR0;
-  tmbuf->tm_yday = dayno;
-  tmbuf->tm_mon = 0;
-  while (dayno >= (unsigned long) _ytab[LEAPYEAR(year)][tmbuf->tm_mon]) {
-    dayno -= _ytab[LEAPYEAR(year)][tmbuf->tm_mon];
-    tmbuf->tm_mon++;
-  }
-  tmbuf->tm_mday = dayno + 1;
-  tmbuf->tm_isdst = 0;
+	auto dayclock = (unsigned long)time % SECS_DAY;
+	auto dayno = (unsigned long)time / SECS_DAY;
+
+	tmbuf->tm_sec = dayclock % 60;
+	tmbuf->tm_min = (dayclock % 3600) / 60;
+	tmbuf->tm_hour = dayclock / 3600;
+	tmbuf->tm_wday = (dayno + 4) % 7; // Day 0 was a thursday
+	while (dayno >= (unsigned long)YEARSIZE(year)) {
+		dayno -= YEARSIZE(year);
+		year++;
+	}
+	tmbuf->tm_year = year - YEAR0;
+	tmbuf->tm_yday = dayno;
+	tmbuf->tm_mon = 0;
+	while (dayno >= (unsigned long)_ytab[LEAPYEAR(year)][tmbuf->tm_mon]) {
+		dayno -= _ytab[LEAPYEAR(year)][tmbuf->tm_mon];
+		tmbuf->tm_mon++;
+	}
+	tmbuf->tm_mday = dayno + 1;
+	tmbuf->tm_isdst = 0;
 #ifdef linux
-  tmbuf->tm_gmtoff = 0;
-  tmbuf->tm_zone = "UTC";
+	tmbuf->tm_gmtoff = 0;
+	tmbuf->tm_zone = "UTC";
 #endif
-  return tmbuf;
+	return tmbuf;
 }
 
-struct tm *localtime_r(const time_t *timer, struct tm *tmbuf) {
-  time_t t;
+/// <summary>
+/// timer に格納されているデータを 現地時間（日本時間）に変換し、tm構造体に格納します。
+/// timerに格納されているデータは一般にtime関数を使って取得します。
+/// </summary>
+/// <param name="timer">時間データの格納元</param>
+/// <param name="tmbuf"></param>
+/// <returns></returns>
+struct tm* localtime_r(const time_t* timer, struct tm* tmbuf) {
+	time_t t;
 
-  t = *timer - _timezone;
-  return gmtime_r(&t, tmbuf);
+	t = *timer - _timezone;
+	return gmtime_r(&t, tmbuf);
 }
 
-wString asctimew(const struct tm *tm) {
-  wString buf;
-  buf.resize(ASCBUFSIZE);
-  strftime(buf.c_str(), ASCBUFSIZE, "%c\n", tm);
-  return buf;
+/// <summary>
+/// asctime() 関数は、time により指される構造体として格納された時間を、文字ストリングに変換します。
+/// </summary>
+/// <param name="tm">変換する時間を表す構造体</param>
+/// <returns>変換した文字列</returns>
+wString asctimew(const struct tm* tm) {
+	wString buf;
+	buf.resize(ASCBUFSIZE);
+	strftime(buf.c_str(), ASCBUFSIZE, "%c\n", tm);
+	return buf;
 }
 
-wString ctimew(const time_t *timer) {
-    struct tm tmbuf;
-    localtime_r(timer,&tmbuf);
-    return asctimew(&tmbuf);
+/// <summary>
+/// 時間から文字ストリングへの変換
+/// </summary>
+/// <param name="timer">変換する時間</param>
+/// <returns>変換した文字列</returns>
+wString ctimew(const time_t* timer) {
+	struct tm tmbuf;
+	localtime_r(timer, &tmbuf);
+	return asctimew(&tmbuf);
 }
 
 //char *_strdate(char *s) {

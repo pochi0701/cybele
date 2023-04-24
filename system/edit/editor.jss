@@ -11,11 +11,11 @@ if (file_exists(path)) {
 }
 //ファイルタイプ生成
 ext = extractFileExt(path);
-if        (ext == "js" || ext == "jss"){
+if        (ext == "js" ){
     fileType = "ace/mode/javascript";
 } else if (ext == "css") {
     fileType = "ace/mode/css";
-} else if (ext == "htm" || ext == "html" ){
+} else if (ext == "htm" || ext == "html" || ext == "jss"){
     fileType = "ace/mode/html";
 } else if (ext == ".rb") {
     fileType = "ace/mode/ruby";
@@ -25,6 +25,8 @@ if        (ext == "js" || ext == "jss"){
     fileType = "ace/mode/xml";
 } else if (ext == "php") {
     fileType = "ace/mode/php";
+} else if (ext == "md") {
+    fileType = "ace/mode/markdown";
 } else {
     fileType = "ace/mode/text";
 }
@@ -312,8 +314,8 @@ if        (ext == "js" || ext == "jss"){
     <pre id="editor"><?print(htmlspecialchars(code));?></pre>
 
     <!-- SCRIPTS //-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.7.1/ace.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.17.0/ace.min.js"></script>
     <script type="text/javascript">
       <!--
       var editor = ace.edit("editor");

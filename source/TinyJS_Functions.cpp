@@ -50,8 +50,10 @@ void js_print(CScriptVar* v, void* userdata) {
 	wString str = v->getParameter("text")->getString();
 	//printする前にヘッダを出力
 	//headerCheckPrint(js->socket, &(js->printed), js->headerBuf,1);
+    //出力すべきデータがない時にHeader出さないと再送されてループする
+	// ここでこのコードは必要。<?print();?>セミコロンがないとうまくいかない
 	js->FlushBuf();
-	int num = send(js->socket, str.c_str(), str.length(), 0);
+    int num = send(js->socket, str.c_str(), str.length(), 0);
 	if (num < 0) {
 		debug_log_output("Script Write Error at js_print");
 	}
@@ -545,6 +547,7 @@ void scLoadFromFile(CScriptVar* c, void* userdata) {
 	wString data;
 	data.LoadFromFile(path);
 	c->getReturnVar()->setString(data);
+	c->getReturnVar()->setString(data);
 }
 //CSV内容取得
 void scLoadFromCSV(CScriptVar* c, void* userdata) {
@@ -635,10 +638,10 @@ void scSessionStart(CScriptVar* c, void* userdata) {
 	if (jssessid != "undefined") {
 		if (session->count(jssessid) > 0) {
 			wString data = (*session)[jssessid];
-			js->execute("var _SESSION=" + data + ";", 1);
+			js->execute("var _SESSION=" + data + ";", ExecuteModes::ON_SERVER);
 		}
 		else {
-			js->execute("var _SESSION={};", 1);
+			js->execute("var _SESSION={};", ExecuteModes::ON_SERVER);
 		}
 	}
 	else {
@@ -662,7 +665,12 @@ void scSessionStart(CScriptVar* c, void* userdata) {
 	}
 	c->getReturnVar()->setInt(ret);
 }
-//SetCookie
+
+/// <summary>
+/// ブラウザへのCookieの設定
+/// </summary>
+/// <param name="c"></param>
+/// <param name="userdata"></param>
 void scSetCookie(CScriptVar* c, void* userdata) {
 	CTinyJS* js = (CTinyJS*)userdata;
 	wString str;
@@ -698,15 +706,16 @@ void scShutDown(CScriptVar* c, void* userdata) {
 		//ループ抜ける
 		loop_flag = 0;
 #ifndef linux
-		//        //問い合わせしない
-		//        Form1->ExitFlag = 1;
-				//閉じる(POSTしないとこのスレッドで終了しようとするのでスレッド待ちで無限ループ）
-				//PostMessage(Form1->Handle,WM_CLOSE,0,0);
-				//CCybeleTrayWnd::OnAppExit();
-				//PostMessage(theApp.pWnd->m_hWnd, WM_CLOSE, 0, 0);
+		///問い合わせしない
+		//Form1->ExitFlag = 1;
+		//閉じる(POSTしないとこのスレッドで終了しようとするのでスレッド待ちで無限ループ）
+		//PostMessage(Form1->Handle,WM_CLOSE,0,0);
+		//CCybeleTrayWnd::OnAppExit();
+		//PostMessage(theApp.pWnd->m_hWnd, WM_CLOSE, 0, 0);
 		CWnd* pMain = (CWnd*)AfxGetApp()->m_pMainWnd;
 		HWND hWnd = pMain->m_hWnd;
 
+		// WindowsはWM_CLOSEで終了
 		PostMessage(hWnd, WM_CLOSE, 0, 0);
 #endif
 	}

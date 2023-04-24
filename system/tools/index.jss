@@ -17,7 +17,7 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse flex-grow-1 text-right" id="myNavbar">
+            <div class="collapse navbar-collapse flex-grow-1 text-end" id="myNavbar">
                 <ul class="navbar-nav ms-auto flex-nowrap">
                     <li><a href="/" class="nav-link m-2 menu-item" target="_top">Home</a></li>
                 </ul>

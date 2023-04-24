@@ -17,7 +17,7 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse flex-grow-1 text-right" id="myNavbar">
+            <div class="collapse navbar-collapse flex-grow-1 text-end" id="myNavbar">
                 <ul class="navbar-nav ms-auto flex-nowrap">
                     <li><a href="/" class="nav-link m-2 menu-item" target="_top">Home</a></li>
                 </ul>
@@ -41,7 +41,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
     <script>
         var repl  = "<?print(getLocalAddress());?>:8000"
-        var setup = <?print(loadFromFile("setup.json"));?>;
+        var setup = <?print(loadFromFile("data/setup.json"));?>;
         var contents="";
         for( i = 0 ; i < setup.length;i++){
             if( setup[i].url.indexOf('%LOCALADDRESS%') >= 0 ){

@@ -1,0 +1,34 @@
+[
+  {
+    "url": "/system/edit/",
+    "image": "<img src=\"images/edit.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "/?",
+    "image": "<img src=\"images/menu.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "sample/lesson/",
+    "image": "<img src=\"images/lesson.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "sample/multimedia/musicPlayer/?",
+    "image": "<img src=\"images/music.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "sample/bandaid/",
+    "image": "<img src=\"images/game.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "/system/tools/",
+    "image": "<img src=\"images/tools.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "/system/edit/help.html",
+    "image": "<img src=\"images/help.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "http://%LOCALADDRESS%/",
+    "image": "<div id=\"qrcodeCanvas1\"></div>"
+  }
+]

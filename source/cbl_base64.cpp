@@ -15,6 +15,13 @@
 
 static unsigned char ToBase64tbl[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static unsigned char tmpout[256];
+
+/// <summary>
+/// 文字列からBASE64表現の文字列に変換
+/// 返還後の文字列が255文字まで。
+/// </summary>
+/// <param name="instr">変換する文字列</param>
+/// <returns>変換した文字列</returns>
 unsigned char* base64(unsigned char* instr)
 {
 	unsigned char* p = tmpout;
@@ -55,6 +62,13 @@ unsigned char* base64(unsigned char* instr)
 	}
 	return tmpout;
 }
+
+/// <summary>
+/// BASE64表現の文字列から変換前の文字列に復元
+/// 返還後の文字列が255文字まで。
+/// </summary>
+/// <param name="instr">変換する文字列</param>
+/// <returns>変換した文字列</returns>
 unsigned char* unbase64(unsigned char* instr)
 {
 	int s1;

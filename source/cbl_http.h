@@ -25,6 +25,14 @@ enum class FILETYPES {
     _VOB = 5,
     _CGI = 6
 };
+enum class QUERY_METHOD
+{
+    NONE = -1,
+    GET = 1,
+    HEAD = 2,
+    POST = 3,
+    PUT = 4,
+};
 // ==========================================================================
 // HTTP Request情報保存用構造体
 // ==========================================================================
@@ -44,7 +52,7 @@ public:
     char   send_filename[QUERY_MAX]; // フルパス
     char   action[128];              // ?action=  の内容
     char   request_uri[QUERY_MAX];   // 受信した生のURI
-    int    isGet;		             // GETなら1HEADなら2POSTなら3
+    QUERY_METHOD    isGet;		     // GETなら1HEADなら2POSTなら3
 
     // JavaScript実行
     void jss(SOCKET accpet_socket, char* script_filename, char* query_string);

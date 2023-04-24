@@ -42,24 +42,25 @@ static char debug_log_filename[FILENAME_MAX];	// デバッグログ出力ファ�
 static char debug_log_initialize_flag = (1);	// デバッグログ初期化フラグ
 static void cut_before_n_length(char* sentence, unsigned int n);
 static void cut_after_n_length(char* sentence, unsigned int n);
-//////////////////////////////////////////////////////////////////////////
-// 最初に出て来たcut_charの前後を分割。
-// pattern:切り出し文字列
-// split1:前の文字列&元の文字列
-// split2:後の文字列
-//////////////////////////////////////////////////////////////////////////
-int split(const char* pattern, wString& split1, wString& split2)
+/// <summary>
+/// 最初に出て来たcut_charの前後を分割
+/// </summary>
+/// <param name="pattern">切り出し対象文字列</param>
+/// <param name="split1">前の文字列&元の文字列</param>
+/// <param name="split2">後の文字列</param>
+/// <returns>成功:true/失敗:false</returns>
+bool split(const char* pattern, wString& split1, wString& split2)
 {
 	int pos = split2.Pos(pattern);
 	if (pos == wString::npos) {
 		split1 = split2;
 		split2.clear();
-		return -1;
+		return false;
 	}
 	else {
 		split1 = split2.substr(0, pos);
 		split2 = split2.substr(pos + 1);
-		return 0;
+		return true;
 	}
 }
 
@@ -139,9 +140,12 @@ void replace_character(char* sentence, const char* key, const char* rep)
 	return;
 #endif
 }
-/********************************************************************************/
-// sentence文字列内の最初のkey文字列をrep文字列で置換する。
-/********************************************************************************/
+/// <summary>
+/// entence文字列内の最初のkey文字列をrep文字列で置換する。
+/// </summary>
+/// <param name="sentence">対象文字列</param>
+/// <param name="key">置換元文字</param>
+/// <param name="rep">置換先文字</param>
 void replace_character_first(char* sentence, const char* key, const char* rep)
 {
 	auto klen = (int)strlen(key);
@@ -152,6 +156,10 @@ void replace_character_first(char* sentence, const char* key, const char* rep)
 		return;
 	}
 	auto p = strstr(sentence, key);
+	if (p == 0)
+	{
+		return;
+	}
 	if (klen == rlen) {
 		memcpy(p, rep, rlen);
 		//前詰め置換そのままコピーすればいい
@@ -414,9 +422,11 @@ void    cut_character(char* sentence, char cut_char)
 	return;
 #endif
 }
-//******************************************************************
-// sentence文字列の、頭にcut_charがいたら、抜く。
-//******************************************************************
+/// <summary>
+/// 文字列の左端文字削除
+/// </summary>
+/// <param name="sentence">対象文字列</param>
+/// <param name="cut_char">削除文字（省略値=' '）</param>
 void ltrim(char* sentence, char cut_char)
 {
 #if 1
@@ -462,10 +472,13 @@ void ltrim(char* sentence, char cut_char)
 	return;
 #endif
 }
-// ***************************************************************************
-// sentence文字列の行末に、cut_charがあったとき、削除
-// ***************************************************************************
-void    cut_character_at_linetail(char* sentence, char cut_char)
+
+/// <summary>
+/// 文字列の右端文字削除
+/// </summary>
+/// <param name="sentence">対象文字列</param>
+/// <param name="cut_char">削除文字（省略値=' '）</param>
+void rtrim(char* sentence, char cut_char)
 {
 	if (sentence == NULL || *sentence == 0) {
 		return;
@@ -953,7 +966,7 @@ void debug_log_output(const char* fmt, ...)
 #ifdef linux
 	snprintf(replace_date_and_time, sizeof(replace_date_and_time), "\n%s[%d] ", date_and_time, getpid());
 #else
-	snprintf(replace_date_and_time, sizeof(replace_date_and_time), "\n%s[%d] ", date_and_time, GetCurrentThreadId());
+	snprintf(replace_date_and_time, sizeof(replace_date_and_time), "\n%s[%ld] ", date_and_time, GetCurrentThreadId());
 #endif
 
 	// 出力文字列生成開始。
@@ -968,21 +981,21 @@ void debug_log_output(const char* fmt, ...)
 	// =====================
 	// ログファイル出力
 	// =====================
-	if (fd < 0) {
+	if(fd < 0 ) {
 		fd = myopen(debug_log_filename, O_CREAT | O_APPEND | O_WRONLY | O_BINARY, S_IREAD | S_IWRITE);
 		return;
 	}
 	// 出力
 	if (write(fd, buf, (unsigned int)strlen(buf)) < 0) {
 		// メッセージ実体を出力
+	    close(fd);
 		// ファイルクローズ
-		//fd = -1;
+		fd = -1;
 	}
 	else
 	{
 		fd = -1;
 	}
-	//close(fd);
 	return;
 	//DEBUGが定義されてない場合ログ出力しない
 #else

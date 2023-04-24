@@ -394,13 +394,13 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 			debug_log_output("%d:URI Check start.'%s'\n", accept_socket, line.c_str());
 			// GETある？
 			if (line.find("GET") != wString::npos) {
-				isGet = 1;
+				isGet = QUERY_METHOD::GET;
 			}
 			else if (line.find("HEAD") != wString::npos) {
-				isGet = 2;
+				isGet = QUERY_METHOD::HEAD;
 			}
 			else if (line.find("POST") != wString::npos) {
-				isGet = 3;
+				isGet = QUERY_METHOD::POST;
 			}
 			else {
 				debug_log_output("'GET' not found. error.%d", accept_socket);
@@ -554,7 +554,7 @@ FILETYPES HTTP_RECV_INFO::http_file_check(void)
 	strncpy(work_data, recv_uri, sizeof(work_data)-1);
 
 	// recv_uri保護のための変更
-	cut_character_at_linetail(work_data, '/');
+	rtrim(work_data, '/');
 	replace_character(work_data, "/", DELIMITER);
 	strncat(send_filename, work_data, sizeof(send_filename) - 1);
 	//uri_decode

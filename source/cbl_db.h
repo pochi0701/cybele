@@ -35,14 +35,50 @@ public:
 	int  LoadFromFile(bufrd* br);
 };
 /////////////////////////////////////////////////////////////////////////////
-enum  class CMDS {
-	TXSELECT, TXCREATE, TXINSERT, TXUPDATE, TXDELETE, TXDROP,
-	TXFROM, TXINTO, TXWHERE, TXSHOW, TXORDER, TXBY, TXSET,
-	TXLIMIT, TXTABLES, TXTBL, TXDATABASES, TXDATABASE,
-	TXVALUES, TXQUIT, TXUSE, TXAND, TXOR, TXAS, TXHELP, TXASC,
-	TXDESC, TXPS, TXPE, TXCM, TXED, TXOP, TXALTER, TXADD, TXAFTER,
-	TXTO, TXMODIFY, TXRENAME, TXCOLUMN,
-	TXARG = 99, TXPRM = 98, TXNONE = -1, TXOTHER = -2
+enum class CMDS {
+	TXSELECT = 1,
+	TXCREATE = 2,
+	TXINSERT = 3,
+	TXUPDATE = 4,
+	TXDELETE = 5,
+	TXDROP = 6,
+	TXFROM = 7,
+	TXINTO = 8,
+	TXWHERE = 9,
+	TXSHOW = 10,
+	TXORDER = 11,
+	TXBY = 12,
+	TXSET = 13,
+	TXLIMIT = 14,
+	TXTABLES = 15,
+	TXTBL = 16,
+	TXDATABASES = 17,
+	TXDATABASE = 18,
+	TXVALUES = 19,
+	TXQUIT = 20,
+	TXUSE = 21,
+	TXAND = 22,
+	TXOR = 23,
+	TXAS = 24,
+	TXHELP = 25,
+	TXASC = 26,
+	TXDESC = 27,
+	TXPS = 28,
+	TXPE = 29,
+	TXCM = 30,
+	TXED = 31,
+	TXOP = 32,
+	TXALTER = 33,
+	TXADD = 34,
+	TXAFTER = 35,
+	TXTO = 36,
+	TXMODIFY = 37,
+	TXRENAME = 38,
+	TXCOLUMN = 39,
+	TXARG = 99,
+	TXPRM = 98,
+	TXNONE = -1,
+	TXOTHER = -2
 };
 extern  CMDS  getToken(unsigned char* sql, unsigned char* token);
 extern  CMDS  getData(unsigned char* data, unsigned char* token);
@@ -56,6 +92,10 @@ public:
 	vector<CMDS>         type;
 	map<wString, wString> clmalias;
 	map<wString, wString> tblalias;
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">なし</param>
 	condition(void) {
 		cond.clear();
 		type.clear();

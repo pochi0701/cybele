@@ -1,4 +1,4 @@
-﻿# cybele
+# cybele
 cybele is Apprication Server for JavaScript and in memory SQL. Work on Windows and Linux.
 
 ver. 2104
@@ -7,3 +7,7 @@ ver. 2104
   
 ver. 2207
   bootstrap5 に対応
+
+ver. 2208
+  db実行のバグフィックス
+  フォルダ構成変更

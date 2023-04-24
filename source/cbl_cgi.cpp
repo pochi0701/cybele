@@ -37,8 +37,9 @@
 #include "TinyJS_MathFunctions.h"
 #include "define.h"
 
+// includes
 wString escape(const wString& str);
-int split(const char* cut_char, wString& split1, wString& split2);
+bool split(const char* cut_char, wString& split1, wString& split2);
 //////////////////////////////////////////////////////////////////////////
 int HTTP_RECV_INFO::http_cgi_response(SOCKET accept_socket)
 {
@@ -194,7 +195,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 		script1.cat_sprintf("var _SERVER.GATEWAY_INTERFACE=\"%s\";", "CGI/1.1");
 		script1.cat_sprintf("var _SERVER.SERVER_PROTOCOL=\"%s\";", "HTTP/1.0");
 		char GETPOST[4][5] = { "","GET","HEAD","POST" };
-		script1.cat_sprintf("var _SERVER.REQUEST_METHOD=\"%s\";", GETPOST[isGet]);
+		script1.cat_sprintf("var _SERVER.REQUEST_METHOD=\"%s\";", GETPOST[(int)isGet]);
 
 		script1.cat_sprintf("var _SERVER.QUERY_STRING=\"%s\";", escape(query_string).c_str());
 		script1.cat_sprintf("var _SERVER.REQUEST_URI=\"%s\";", escape(request_uri).c_str());
@@ -233,7 +234,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 		}
 
 		//POSTの展開
-		if (isGet == 3) {
+		if (isGet == QUERY_METHOD::POST) {
 			char buf[10240];
 			int num;
 			int contentsize = atoi(content_length);
@@ -266,10 +267,10 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 				script4 += (char*)"var _POST." + script2 + (char*)"=\"" + escape(script1.uri_decode()) + (char*)"\";";
 			}
 			if (script4.Length()) {
-				javaScriptThread.execute(script4, 1);
+				javaScriptThread.execute(script4);
 			}
 		}
-		javaScriptThread.execute(buffer, 0);
+		javaScriptThread.execute(buffer, ExecuteModes::ON_CLIENT);
 	}
 	catch (CScriptException* e)
 	{
@@ -284,7 +285,11 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 	debug_log_output("ServerSide JavaScript end");
 	return;
 }
-//文字列のエスケープ
+/// <summary>
+/// 文字列中の引用符、エスケープを二重エスケープ
+/// </summary>
+/// <param name="str">エスケープする文字列</param>
+/// <returns>エスケープ結果</returns>
 wString escape(const wString& str)
 {
 

@@ -111,8 +111,14 @@ BOOL CCybeleApp::InitInstance()
 
 int CCybeleApp::ExitInstance() {
 	// Mutexの所有権を解放する。
-	::ReleaseMutex(m_hMutex);
-	::CloseHandle(m_hMutex);
+	if (::ReleaseMutex(m_hMutex) == 0) {
+		//失敗
+	}
+	else {
+		if (::CloseHandle(m_hMutex)) {
+			//失敗
+		}
+	}
 
 	return CWinApp::ExitInstance();
 }

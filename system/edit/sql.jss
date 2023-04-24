@@ -7,6 +7,8 @@
     var tables;
     var text;
     var selectdb;
+    var result = undefined;
+    var orgstr = undefined;
 
     database = DBConnect("_SYSTEM");
     text = database.SQL("show databases");
@@ -23,25 +25,6 @@
         _SESSION.db_id = db_id;
     }
 
-    if( databases == undefined ){
-        database = DBConnect("_SYSTEM");
-        text = database.SQL("show databases");
-        databases = eval(text);
-        database.DBDisConnect();
-        _SESSION.databases = databases;
-    }
-    if( tables == undefined ){
-        for( var i = 0 ; i < databases.length ; i++){
-            database = DBConnect(databases[i]);
-            text = database.SQL("show tables");
-            tables[i] = eval(text);
-            database.DBDisConnect();
-        }
-        _SESSION.tables = tables;
-    }
-    var result = undefined;
-    var orgstr = undefined;
-
     //結果の取得
     if( sql2.length > 0 ){
         database = DBConnect(databases[db_id]);
@@ -49,6 +32,16 @@
         result = eval(orgstr);
         database.DBDisConnect();
     }
+
+    for( var i = 0 ; i < databases.length ; i++){
+        database = DBConnect(databases[i]);
+        text = database.SQL("show tables");
+        tables[i] = eval(text);
+        database.DBDisConnect();
+    }
+
+
+
 ?>
 <!doctype html>
 <html lang="ja">
@@ -127,7 +120,12 @@
                 document.forms[0].appendChild(q);
             }
         }
-        var hpt = '<table class="table table-striped table-bordered">';
+        hpt  = 'databaseを選択してテーブルをクリックするとテーブル一部表示のSQLが入力欄に設定されます。<br>';
+        hpt += 'Execute SQLを押すとSQLが実行されます。';
+        hpt += 'CSV to TableでCSV(タイトル付。文字コードはUTF8)を選択するとCSVをテーブルに変換するSQLが入力欄に設定されます。<br>';
+        hpt += 'ファイルパスを正しく取得できないので、手動でパスを正しく変更しExecute SQLを押してください。<br>';
+        hpt += 'ファイル名がテーブル名に、CSVの1行目の項目がカラム名に、最初の項目の内容により文字列か数値かが決まり入力されます。<br>';
+        hpt += '<table class="table table-striped table-bordered">';
         hpt += '<thead><tr><th>効果</th><th>コマンド</th></tr></thead><tbody>';
         hpt += '<tr><td>データベース一覧</td><td>SHOW DATABASES;</td></tr>';
         hpt += '<tr><td>テーブル一覧</td><td>SHOW TABLES;</td></tr>';
@@ -159,7 +157,7 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse flex-grow-1 text-right" id="myNavbar">
+            <div class="collapse navbar-collapse flex-grow-1 text-end" id="myNavbar">
                 <ul class="navbar-nav ms-auto flex-nowrap">
                     <li><a href="/" class="nav-link m-2 menu-item" target="_top">Home</a></li>
                 </ul>
@@ -169,7 +167,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-5">
-            <label for="formFile" class="form-label">DBにするCSV</label>
+            <label for="formFile" class="form-label">CSV To Table</label>
             <input class="form-control" type="file" id="formFile" accept="text/csv" onchange="OnFileSelect( this );">
             </div>
         </div>

@@ -39,6 +39,7 @@ extern char* cut_after_character(char* sentence, char cut_char);
 //extern void     cut_before_character(char *sentence, char cut_char);
 //extern void     cut_character(char *sentence, char cut_char);
 extern void     ltrim(char* sentence, char cut_char = ' ');
+extern void 	rtrim(char* sentence, char cut_char = ' ');
 //extern void     cut_before_last_character(char *sentence, char cut_char);
 extern void     cut_after_last_character(char* sentence, char cut_char);
 extern int      sentence_split(char* sentence, char cut_char, char* split1, char* split2);
@@ -46,7 +47,6 @@ extern void     duplex_character_to_unique(char* sentence, char unique_char);
 extern void     replace_character(char* sentence, const char* key, const char* rep);
 extern void     replace_character_first(char* sentence, const char* key, const char* rep);
 extern void 	make_datetime_string(char* sentence);
-extern void 	cut_character_at_linetail(char* sentence, char cut_char);
 extern void     filename_to_extension(char* filename, char* extension_buf, unsigned int extension_buf_size);
 extern char* buffer_distill_line(char* text_buf_p, char* line_buf_p, unsigned int line_buf_size);
 //extern void     extension_add_rename(char *rename_filename_p, size_t rename_filename_size);
@@ -87,7 +87,7 @@ extern void     Sleep(unsigned int milliseconds);
 char* mymalloc(size_t size);
 char* mycalloc(size_t size1, int num);
 void  myfree(char* ptr);
-int   split(const char* cut_char, wString& split1, wString& split2);
+bool  split(const char* cut_char, wString& split1, wString& split2);
 class mp3 {
 public:
 	static unsigned char   mp3_id3v1_flag;         // MP3 タグ 存在フラグ

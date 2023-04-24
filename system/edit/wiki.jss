@@ -303,9 +303,9 @@ function htmlfooter2(title, config) {
     //print("\t<table>\n");
     //print("\t\t<tr>\n");
     //print("\t\t\t<td align=\"left\"><span class=\"wiki_header\">"+title+"</span></td>\n");
-    print("<div class=\"text-left\"><span class=\"wiki_header\">" + title + "</span></div>\n");
+    print("<div class=\"text-start\"><span class=\"wiki_header\">" + title + "</span></div>\n");
     //print("\t\t\t<td align=\"right\">");
-    print("<div class=\"text-right\">");
+    print("<div class=\"text-end\">");
     if (config.GENERAL.SHOW_CONTROLS) {
         print(wikiparse(config.LOCALE.HOMEPAGE_LINK + " " + config.LOCALE.PAGELIST_LINK));
     }

@@ -87,7 +87,11 @@ var me    = "<? print( me ); ?>";
 function viewCode(path) {
     var root = "<? print(_SERVER.DOCUMENT_ROOT); ?>";
     var pos = path.indexOf(path,root);
-    path = "http://<?print(_SERVER.HTTP_HOST);?>"+path.substring(root.length,path.length);
+    if( path.endsWith('md') ){
+        path = "http://<?print(_SERVER.HTTP_HOST);?>"+path.substring(root.length,path.length)+"?action=MarkDown.jss";
+    }else{
+        path = "http://<?print(_SERVER.HTTP_HOST);?>"+path.substring(root.length,path.length);
+    }
     myWin = window.open(path,path);
 }
 function QRCode(path) {
@@ -209,7 +213,6 @@ function sea() {
     <li><a class="dropdown-item" href="env.jss" target="_env">環境変数</a></li>
     <li><a class="dropdown-item" href="sql.jss" target="_sqlEditor">DB Browser</a></li>
     <li><a class="dropdown-item" href="#" onClick="expt();return false;">エクスポート</a></li>
-    <li><a class="dropdown-item" href="memoEdit.html" target="_memoEdit">メモ</a></li>
     <li><a class="dropdown-item" href="/" target="_top">Home</a></li>
     </ul>
   </div>
@@ -328,6 +331,6 @@ function sea() {
 ?>
   </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
 </body>
 </html>
