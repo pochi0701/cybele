@@ -45,7 +45,7 @@ int     _DBDisConnect(wString& key);
 wString _DBSQL(const wString& key, wString& sql);
 // ----------------------------------------------- Actual Functions
 void js_print(CScriptVar* v, void* userdata) {
-	CTinyJS* js = (CTinyJS*)userdata;
+	CTinyJS* js = static_cast<CTinyJS*>(userdata);
 	//残りのバッファ出力(ヘッダもチェック)
 	wString str = v->getParameter("text")->getString();
 	//printする前にヘッダを出力
@@ -64,14 +64,14 @@ void js_print(CScriptVar* v, void* userdata) {
 void scTrace(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(c);
 	IGNORE_PARAMETER(userdata);
-	CTinyJS* js = (CTinyJS*)userdata;
+	CTinyJS* js = static_cast<CTinyJS*>(userdata);
 	//printする前にヘッダを出力
 	headerCheckPrint(js->socket, &(js->printed), js->headerBuf, 1);
 	js->root->trace(js->socket);
 }
 
 void scObjectDump(CScriptVar* c, void* userdata) {
-	CTinyJS* js = (CTinyJS*)userdata;
+	CTinyJS* js = static_cast<CTinyJS*>(userdata);
 	wString work;
 	//printする前にヘッダを出力
 	headerCheckPrint(js->socket, &(js->printed), js->headerBuf, 1);
@@ -366,14 +366,14 @@ void scJSONStringify(CScriptVar* c, void* userdata) {
 
 void scExec(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
-	CTinyJS* tinyJS = (CTinyJS*)userdata;
+	CTinyJS* tinyJS = static_cast<CTinyJS*>(userdata);
 	wString str = c->getParameter("jsCode")->getString();
 	tinyJS->execute(str);
 }
 
 void scEval(CScriptVar* c, void* userdata) {
 
-	CTinyJS* tinyJS = (CTinyJS*)userdata;
+	CTinyJS* tinyJS = static_cast<CTinyJS*>(userdata);
 	c->setReturnVar(tinyJS->evaluateComplex(c->getParameter("jsCode")->getString()).var);
 }
 
@@ -621,7 +621,7 @@ void scCommand(CScriptVar* c, void* userdata) {
 }
 //Header
 void scHeader(CScriptVar* c, void* userdata) {
-	CTinyJS* js = (CTinyJS*)userdata;
+	CTinyJS* js = static_cast<CTinyJS*>(userdata);
 	headerCheckPrint(js->socket, &(js->printed), js->headerBuf, 0);
 	wString str = c->getParameter("str")->getString();
 	int res = js->headerBuf->header(str.c_str());
@@ -631,7 +631,7 @@ void scHeader(CScriptVar* c, void* userdata) {
 //SessionStart
 void scSessionStart(CScriptVar* c, void* userdata) {
 	const static char material[] = "abcdefghijklmnopqrstuvwxyz0123456789";
-	CTinyJS* js = (CTinyJS*)userdata;
+	CTinyJS* js = static_cast<CTinyJS*>(userdata);
 	int ret = 0;
 	//sidある？
 	wString jssessid = js->evaluate("JSSESSID");
@@ -672,7 +672,7 @@ void scSessionStart(CScriptVar* c, void* userdata) {
 /// <param name="c"></param>
 /// <param name="userdata"></param>
 void scSetCookie(CScriptVar* c, void* userdata) {
-	CTinyJS* js = (CTinyJS*)userdata;
+	CTinyJS* js = static_cast<CTinyJS*>(userdata);
 	wString str;
 	time_t timer;
 	headerCheckPrint(js->socket, &(js->printed), js->headerBuf, 0);
@@ -712,7 +712,7 @@ void scShutDown(CScriptVar* c, void* userdata) {
 		//PostMessage(Form1->Handle,WM_CLOSE,0,0);
 		//CCybeleTrayWnd::OnAppExit();
 		//PostMessage(theApp.pWnd->m_hWnd, WM_CLOSE, 0, 0);
-		CWnd* pMain = (CWnd*)AfxGetApp()->m_pMainWnd;
+		CWnd* pMain = static_cast<CWnd*>(AfxGetApp()->m_pMainWnd);
 		HWND hWnd = pMain->m_hWnd;
 
 		// WindowsはWM_CLOSEで終了

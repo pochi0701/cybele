@@ -102,7 +102,7 @@ void replace_character(char* sentence, const char* key, const char* rep)
 	auto p = strstr(sentence, key);
 	if (klen == rlen) {
 		while (p != NULL) {
-			memcpy((char*)p, (char*)rep, rlen);
+			memcpy(static_cast<void*>(p), static_cast<const void*>(rep), rlen);
 			p = strstr(p + rlen, key);
 		}
 		//前詰め置換そのままコピーすればいい
@@ -112,8 +112,8 @@ void replace_character(char* sentence, const char* key, const char* rep)
 		while (p != NULL) {
 			auto q = p;
 			while (1) {
-				*(char*)q = *(char*)(q + num);
-				if (*(char*)(q + num) == 0) {
+				*q = *(q + num);
+				if (*(q + num) == 0) {
 					break;
 				}
 				q++;
@@ -326,7 +326,7 @@ void    cut_before_n_length(char* sentence, unsigned int n)
 		return;
 	}
 	// テンポラリエリアmalloc.
-	auto malloc_p = (char*)malloc(sentence_len + 10);
+	auto malloc_p = static_cast<char*>(malloc(sentence_len + 10));
 	if (malloc_p == NULL) {
 		return;
 	}
@@ -1088,16 +1088,16 @@ void png_size(char* png_filename, unsigned int* x, unsigned int* y)
 	}
 	// ヘッダ+サイズ(0x18byte)  読む
 	//memset(buf, 0, sizeof(buf));
-	read_len = read(fd, (char*)buf, 0x18);
+	read_len = read(fd, reinterpret_cast<char*>(buf), 0x18);
 	if (read_len == 0x18) {
 		*x = (buf[0x10] << 24) +
-			(buf[0x11] << 16) +
-			(buf[0x12] << 8) +
-			(buf[0x13]);
+			 (buf[0x11] << 16) +
+			 (buf[0x12] << 8) +
+			 (buf[0x13]);
 		*y = (buf[0x14] << 24) +
-			(buf[0x15] << 16) +
-			(buf[0x16] << 8) +
-			(buf[0x17]);
+			 (buf[0x15] << 16) +
+			 (buf[0x16] << 8) +
+			 (buf[0x17]);
 	}
 	close(fd);
 	return;
@@ -1118,7 +1118,7 @@ void gif_size(char* gif_filename, unsigned int* x, unsigned int* y)
 	}
 	// ヘッダ+サイズ(10byte)  読む
 	//memset(buf, 0, sizeof(buf));
-	read_len = read(fd, (char*)buf, 10);
+	read_len = read(fd, reinterpret_cast<char*>(buf), 10);
 	if (read_len == 10) {
 		*x = buf[6] + (buf[7] << 8);
 		*y = buf[8] + (buf[9] << 8);
@@ -1195,7 +1195,7 @@ void  jpeg_size(char* jpeg_filename, unsigned int* x, unsigned int* y)
 		}
 		// length 読む
 		memset(buf, 0, sizeof(buf));
-		read(fd, buf, 2);
+		auto dummy = read(fd, buf, 2);
 		length = (buf[0] << 8) + buf[1];
 		// length分とばす
 		lseek(fd, length - 2, SEEK_CUR);
@@ -1685,7 +1685,7 @@ void convert_language_code(const char* in, char* out, size_t len, int in_flag, i
 	// libnkf 実行
 	//=================================================
 	*out = 0;
-	nkf((const char*)in, out, len, (const char*)nkf_option);
+	nkf(static_cast<const char*>(in), out, len, static_cast<const char*>(nkf_option));
 	return;
 }
 #endif
@@ -1866,7 +1866,7 @@ int  mp3::mp3_id3v1_tag_read(const char* mp3_filename)
 	unsigned char       buf[128];
 	off_t               length;
 	memset(buf, '\0', sizeof(buf));
-	fd = open((char*)mp3_filename, O_RDONLY);
+	fd = open(mp3_filename, O_RDONLY);
 	if (fd < 0)
 	{
 		return -1;
@@ -1883,7 +1883,7 @@ int  mp3::mp3_id3v1_tag_read(const char* mp3_filename)
 	if (read(fd, buf, 3) > 0) {
 		//debug_log_output("buf='%s'", buf);
 		// "TAG" 文字列チェック
-		if (memcmp((char*)buf, "TAG", 3) != 0)
+		if (memcmp(static_cast<const void*>(buf), "TAG", 3) != 0)
 		{
 			//debug_log_output("NO ID3 Tag.");
 			close(fd);
@@ -1896,38 +1896,38 @@ int  mp3::mp3_id3v1_tag_read(const char* mp3_filename)
 		//  client文字コードに変換。
 		// ------------------------------------------------------------
 		// 曲名
-		memset((char*)buf, '\0', sizeof(buf));
+		memset(static_cast<void*>(buf), '\0', sizeof(buf));
 		if (read(fd, buf, 30) > 0) {
-			wString::Rtrimch((char*)buf, 0xFF);
-			wString::Rtrimch((char*)buf, ' ');
-			convert_language_code((char*)buf, (char*)mp3_id3v1_title, sizeof(mp3_id3v1_title), CODE_AUTO, CODE_UTF8);
+			wString::Rtrimch(reinterpret_cast<char*>(buf), 0xFF);
+			wString::Rtrimch(reinterpret_cast<char*>(buf), ' ');
+			convert_language_code(reinterpret_cast<const char*>(buf), reinterpret_cast<char*>(mp3_id3v1_title), sizeof(mp3_id3v1_title), CODE_AUTO, CODE_UTF8);
 
 			// アーティスト
-			memset((char*)buf, '\0', sizeof(buf));
+			memset(static_cast<void*>(buf), '\0', sizeof(buf));
 			if (read(fd, buf, 30) > 0) {
-				wString::Rtrimch((char*)buf, 0xFF);
-				wString::Rtrimch((char*)buf, ' ');
-				convert_language_code((char*)buf, (char*)mp3_id3v1_artist, sizeof(mp3_id3v1_artist), CODE_AUTO, CODE_UTF8);
+				wString::Rtrimch(reinterpret_cast<char*>(buf), 0xFF);
+				wString::Rtrimch(reinterpret_cast<char*>(buf), ' ');
+				convert_language_code(reinterpret_cast<const char*>(buf), reinterpret_cast<char*>(mp3_id3v1_artist), sizeof(mp3_id3v1_artist), CODE_AUTO, CODE_UTF8);
 
 				// アルバム名
-				memset((char*)buf, '\0', sizeof(buf));
+				memset(static_cast<void*>(buf), '\0', sizeof(buf));
 				if (read(fd, buf, 30) > 0) {
-					wString::Rtrimch((char*)buf, 0xFF);
-					wString::Rtrimch((char*)buf, ' ');
-					convert_language_code((char*)buf, (char*)mp3_id3v1_album, sizeof(mp3_id3v1_album), CODE_AUTO, CODE_UTF8);
+					wString::Rtrimch(reinterpret_cast<char*>(buf), 0xFF);
+					wString::Rtrimch(reinterpret_cast<char*>(buf), ' ');
+					convert_language_code(reinterpret_cast<const char*>(buf), reinterpret_cast<char*>(mp3_id3v1_album), sizeof(mp3_id3v1_album), CODE_AUTO, CODE_UTF8);
 
 					// 制作年度
-					memset((char*)buf, '\0', sizeof(buf));
+					memset(static_cast<void*>(buf), '\0', sizeof(buf));
 					if (read(fd, buf, 4) > 0) {
-						wString::Rtrimch((char*)buf, 0xFF);
-						wString::Rtrimch((char*)buf, ' ');
-						convert_language_code((char*)buf, (char*)mp3_id3v1_year, sizeof(mp3_id3v1_year), CODE_AUTO, CODE_UTF8);
+						wString::Rtrimch(reinterpret_cast<char*>(buf), 0xFF);
+						wString::Rtrimch(reinterpret_cast<char*>(buf), ' ');
+						convert_language_code(reinterpret_cast<const char*>(buf), reinterpret_cast<char*>(mp3_id3v1_year), sizeof(mp3_id3v1_year), CODE_AUTO, CODE_UTF8);
 						// コメント
-						memset((char*)buf, '\0', sizeof(buf));
+						memset(static_cast<void*>(buf), '\0', sizeof(buf));
 						if (read(fd, buf, 28) > 0) {
-							wString::Rtrimch((char*)buf, 0xFF);
-							wString::Rtrimch((char*)buf, ' ');
-							convert_language_code((char*)buf, (char*)mp3_id3v1_comment, sizeof(mp3_id3v1_comment), CODE_AUTO, CODE_UTF8);
+							wString::Rtrimch(reinterpret_cast<char*>(buf), 0xFF);
+							wString::Rtrimch(reinterpret_cast<char*>(buf), ' ');
+							convert_language_code(reinterpret_cast<const char*>(buf), reinterpret_cast<char*>(mp3_id3v1_comment), sizeof(mp3_id3v1_comment), CODE_AUTO, CODE_UTF8);
 							// ---------------------
 							// 存在フラグ
 							// ---------------------
@@ -1978,7 +1978,7 @@ int  mp3::mp3_id3v2_tag_read(const char* mp3_filename)
 	int i;
 	int flag_extension = 0;
 	memset(buf, '\0', sizeof(buf));
-	fd = open((char*)mp3_filename, O_RDONLY);
+	fd = open(mp3_filename, O_RDONLY);
 	if (fd < 0)
 	{
 		return -1;
@@ -1994,7 +1994,7 @@ int  mp3::mp3_id3v2_tag_read(const char* mp3_filename)
 	}
 	// debug_log_output("buf='%s'", buf);
 	// "ID3" 文字列チェック
-	if (strncmp((char*)buf, "ID3", 3) != 0)
+	if (strncmp(reinterpret_cast<char*>(buf), "ID3", 3) != 0)
 	{
 		/*
 		*  ファイルの後ろにくっついてる ID3v2 タグとか
@@ -2045,18 +2045,18 @@ int  mp3::mp3_id3v2_tag_read(const char* mp3_filename)
 		/* フレームの長さを算出 */
 		frame_len = id3v2_len(buf + 4);
 		/* フレーム最後まで たどりついた */
-		unsigned long* ppp = (unsigned long*)buf;
+		unsigned long* ppp = reinterpret_cast<unsigned long*>(buf);
 		if (frame_len == 0 || *ppp == 0) {
 			break;
 		}
 		for (i = 0; i < list_count; i++) {
-			if (!strncmp((char*)buf, (char*)copy_list[i].id, 4)) break;
+			if (!strncmp(reinterpret_cast<char*>(buf), reinterpret_cast<char*>(copy_list[i].id), 4)) break;
 		}
 		if (i < list_count) {
 			// 解釈するタグ 発見
 			// 存在フラグ
 			mp3_id3v1_flag = 1;
-			frame = (unsigned char*)malloc(frame_len + 1);
+			frame = static_cast<unsigned char*>(malloc(frame_len + 1));
 			if (frame == NULL) {
 				close(fd);
 				return -1;
@@ -2069,11 +2069,11 @@ int  mp3::mp3_id3v2_tag_read(const char* mp3_filename)
 				return -1;
 			}
 			//debug_log_output("ID3v2 Tag[%s] found. '%s'", copy_list[i].id, frame + 1);
-			wString::Rtrimch((char*)frame + 1, ' ');
+			wString::Rtrimch(reinterpret_cast<char*>(frame + 1), ' ');
 			//convert_language_code( frame+1,strlen(frame+1),CODE_AUTO, CODE_UTF8);
-			strncpy((char*)buf2, (char*)(frame + 1), copy_list[i].maxlen);
+			strncpy(reinterpret_cast<char*>(buf2), reinterpret_cast<char*>(frame + 1), copy_list[i].maxlen);
 			//strncpy( (char*)copy_list[i].container, (char*)(frame+1), copy_list[i].maxlen );
-			convert_language_code((char*)buf2, (char*)copy_list[i].container, copy_list[i].maxlen, CODE_AUTO, CODE_UTF8);
+			convert_language_code(reinterpret_cast<const char*>(buf2), reinterpret_cast<char*>(copy_list[i].container), copy_list[i].maxlen, CODE_AUTO, CODE_UTF8);
 			//convert_language_code( copy_list[i].container,copy_list[i].maxlen,CODE_AUTO, CODE_UTF8);
 			free(frame);
 		}

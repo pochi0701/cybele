@@ -864,8 +864,8 @@ CMDS getToken(unsigned char* sql, unsigned char* token)
 		*q = 0;
 		//cmd?
 		for (unsigned int i = 0; i < cmdNum; i++) {
-			if (stricmp((char*)token, ccmd[i]) == 0) {
-				strcpy((char*)token, ccmd[i]);
+			if (stricmp(reinterpret_cast<char*>(token), ccmd[i]) == 0) {
+				strcpy(reinterpret_cast<char*>(token), ccmd[i]);
 				ret = cmds[i];
 				break;
 			}
@@ -1103,7 +1103,7 @@ Table::Table(const char* myname, const char* mycolumn) {
 	unsigned char work[4096] = { 0 };
 	unsigned char token[256];
 	CMDS ret;
-	strcpy((char*)work, mycolumn);
+	strcpy(reinterpret_cast<char*>(work), mycolumn);
 	for (;;) {
 		ret = getData(work, token);
 		if (ret != CMDS::TXPRM) {
@@ -1111,7 +1111,7 @@ Table::Table(const char* myname, const char* mycolumn) {
 			writeEnd();
 			return;
 		}
-		clmns.push_back((char*)token);
+		clmns.push_back(reinterpret_cast<char*>(token));
 		ret = getData(work, token);
 		if (ret != CMDS::TXCM) break;
 	}
@@ -1258,8 +1258,12 @@ void  Table::copy(Table* tbl)
 	//vector<int>     index;        //orderby等のフィルタ
 }
 /////////////////////////////////////////////////////////////////////////////
-//テーブルインサート(CSV)
-//カラム数が合ってない等チェックしてないので残りはNULLを追加
+/// <summary>
+/// テーブルインサート(CSV)
+/// カラム数が合ってない等チェックしてないので残りはNULLを追加
+/// </summary>
+/// <param name="data"></param>
+/// <returns></returns>
 int Table::Insert(const char* data) {
 	vector<wString> tmp;
 	unsigned char work[4096] = { 0 };
@@ -1267,11 +1271,11 @@ int Table::Insert(const char* data) {
 	CMDS ret;
 	writeStart();
 	//実行開始
-	strcpy((char*)work, (char*)data);
+	strcpy(reinterpret_cast<char*>(work), const_cast<char*>(data));
 	for (;;) {
 		ret = getData(work, token);
 		if (ret == CMDS::TXPRM) {
-			tmp.push_back((char*)token);
+			tmp.push_back(reinterpret_cast<char*>(token));
 		}
 		else if (ret == CMDS::TXCM) {
 			tmp.push_back("");
@@ -1618,7 +1622,7 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 	vector<int>      limit;
 	Table* tbl;
 	view* vw;
-	strcpy((char*)sql, (char*)sqltext.c_str());
+	strcpy(reinterpret_cast<char*>(sql), reinterpret_cast<char*>(sqltext.c_str()));
 	CMDS ret = getToken(sql, token);
 	if (ret == CMDS::TXNONE || ret == CMDS::TXOTHER) {
 		return -1;
@@ -1630,19 +1634,19 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 		for (;;) {
 			if (chkToken(sql, token2, ret, CMDS::TXARG)) { err("SELECT NO ARG ERROR");   return -1; }//ARG
 			//countの対応
-			if (stricmp((char*)token2, "count") == 0) {
+			if (stricmp(reinterpret_cast<char*>(token2), "count") == 0) {
 				if (chkToken(sql, token2, ret, CMDS::TXPS)) { err("SELECT NO ARG ERROR");   return -1; }//ARG
 				if (chkToken(sql, token2, ret, CMDS::TXARG)) { err("SELECT NO ARG ERROR");   return -1; }//ARG
 				if (chkToken(sql, token2, ret, CMDS::TXPE)) { err("SELECT NO ARG ERROR");   return -1; }//ARG
-				strcpy((char*)token2, "count(*)");
+				strcpy(reinterpret_cast<char*>(token2), "count(*)");
 			}
-			colnams.push_back((char*)token2);
+			colnams.push_back(reinterpret_cast<char*>(token2));
 
 			ret = getToken(sql, token);
 			if (ret == CMDS::TXAS) {
 				if (chkToken(sql, token, ret, CMDS::TXARG)) { err("SELECT NO ARG ERROR");   return -1; }//ARG
 				//エイリアス登録
-				cond.clmalias[(char*)token] = (char*)token2;
+				cond.clmalias[reinterpret_cast<char*>(token)] = reinterpret_cast<char*>(token2);
 				ret = getToken(sql, token);
 			}
 			if (ret == CMDS::TXFROM)               break;
@@ -1651,38 +1655,38 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 		//テーブル名取得
 		for (;;) {
 			if (chkToken(sql, token2, ret, CMDS::TXARG)) { err("SELECT NO TABLE ERROR"); return -1; }//table
-			tables.push_back((char*)token2);
+			tables.push_back(reinterpret_cast<char*>(token2));
 			ret = getToken(sql, token);
 			if (ret == CMDS::TXAS) {
 				if (chkToken(sql, token, ret, CMDS::TXARG)) { err("SELECT NO ARG ERROR");   return -1; }//ARG
 				//テーブルエイリアス登録
-				cond.tblalias[(char*)token] = (char*)token2;
+				cond.tblalias[reinterpret_cast<char*>(token)] = reinterpret_cast<char*>(token2);
 				ret = getToken(sql, token);
 			}
 			if (ret != CMDS::TXCM)                 break;
 		}
 		//WHERE取得
 		if (ret == CMDS::TXWHERE) {
-			cond.put((char*)"AND", CMDS::TXAND);           //初回は1にANDする
+			cond.put(const_cast<char*>("AND"), CMDS::TXAND);           //初回は1にANDする
 			for (;;) {
 				if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("SELECT NO ARG IN WHERE"); return -1; }//arg1
-				cond.put((char*)token, ret);
+				cond.put(reinterpret_cast<char*>(token), ret);
 
 				if (chkToken(sql, token, ret, CMDS::TXOP)) { err("SELECT NO OPE IN WHERE"); return -1; }//op1
-				cond.put((char*)token, ret);
+				cond.put(reinterpret_cast<char*>(token), ret);
 
 				if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("SELECT NO ARG IN WHERE"); return -1; }//arg2
-				cond.put((char*)token, ret);
+				cond.put(reinterpret_cast<char*>(token), ret);
 
 				if (chkToken(sql, token, ret, CMDS::TXAND, CMDS::TXOR)) break;
-				cond.put((char*)token, ret);
+				cond.put(reinterpret_cast<char*>(token), ret);
 			}
 		}
 		//ORDER BY 取得
 		if (ret == CMDS::TXORDER) {
 			if (chkToken(sql, token, ret, CMDS::TXBY)) { err("SYNTAX ERROR IN ORDER BY"); return -1; }//arg1
 			if (chkToken(sql, token, ret, CMDS::TXARG)) { err("ORDER BY NO ARG IN WHERE"); return -1; }//arg1
-			order.push_back((char*)token);
+			order.push_back(reinterpret_cast<char*>(token));
 			if (!chkToken(sql, token, ret, CMDS::TXASC, CMDS::TXDESC)) {
 				orderTyp = (ret == CMDS::TXASC) ? orderType::ASC : orderType::DESC;
 				ret = getToken(sql, token);
@@ -1691,12 +1695,12 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 		//LIMIT 取得
 		if (ret == CMDS::TXLIMIT) {
 			if (chkToken(sql, token, ret, CMDS::TXPRM)) { err("LIMIT NO ARG IN LIMIT"); return -1; }//arg
-			limit.push_back(atoi((char*)token));
+			limit.push_back(atoi(reinterpret_cast<char*>(token)));
 
 			ret = getToken(sql, token);
 			if (ret == CMDS::TXCM) {
 				if (chkToken(sql, token, ret, CMDS::TXPRM)) { err("LIMIT NO ARG IN LIMIT"); return -1; }//arg
-				limit.push_back(atoi((char*)token));
+				limit.push_back(atoi(reinterpret_cast<char*>(token)));
 				ret = getToken(sql, token);
 			}
 		}
@@ -1758,19 +1762,19 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 		// CREATE TABLE
 		if (ret == CMDS::TXTBL) {
 			if (chkToken(sql, token, ret, CMDS::TXARG)) { err("CREATE TABLE NO TABLE ERROR"); return -1; }//tablename
-			tables.push_back((char*)token);
+			tables.push_back(reinterpret_cast<char*>(token));
 
 			ret = getToken(sql, token);
 			// CREATE TABLE(
 			if (ret == CMDS::TXPS) {
 				for (;;) {
 					if (chkToken(sql, token, ret, CMDS::TXARG)) { err("CREATE TABLE INVALID ARGS");   return -1; }//field name
-					if (chkToken(sql, token2, ret, CMDS::TXARG) || (stricmp((char*)token2, "number") != 0 && stricmp((char*)token2, "string") != 0))
+					if (chkToken(sql, token2, ret, CMDS::TXARG) || (stricmp(reinterpret_cast<char*>(token2), "number") != 0 && stricmp(reinterpret_cast<char*>(token2), "string") != 0))
 					{
 						err("CREATE TABLE INVALID ARGS");   return -1;
 					}//number/string
-					dataType typ = (stricmp((char*)token2, "number") == 0) ? dataType::NUMBER : dataType::STRING;
-					Column* clm = new Column(tables[0], (char*)token, typ);
+					dataType typ = (stricmp(reinterpret_cast<char*>(token2), "number") == 0) ? dataType::NUMBER : dataType::STRING;
+					Column* clm = new Column(tables[0], reinterpret_cast<char*>(token), typ);
 					columns.push_back(clm);
 					ret = getToken(sql, token);
 					if (ret == CMDS::TXPE)          break;
@@ -1795,7 +1799,7 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 			// CREATE TABLE FROM
 			else if (ret == CMDS::TXFROM) {
 				if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("No file assigned");            return -1; }
-				FILE* rs = fopen((char*)token, "r");
+				FILE* rs = fopen(reinterpret_cast<char*>(token), "r");
 				if (rs) {
 					char work[4096];
 					fgets(work, 4096, rs);
@@ -1807,7 +1811,7 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 						fgets(work, 4096, rs);
 						while (*work && work[strlen(work) - 1] < ' ') work[strlen(work) - 1] = 0;
 						if (strlen(work) == 0) break;
-						ntbl->Insert((char*)work);
+						ntbl->Insert(reinterpret_cast<char*>(work));
 						//if ((num++ % 1000) == 0) {
 						//	printf("%d\n", num);
 						//}
@@ -1825,9 +1829,9 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 		}
 		else if (ret == CMDS::TXDATABASE) {
 			if (chkToken(sql, token, ret, CMDS::TXARG)) { err("CREATE DATABASE NO TABLE ERROR"); return -1; }//tablename
-			if (catalog->dblist.count((char*)token)) { err("DATABASE ALREADY EXISTS");        return -1; }//dbname
+			if (catalog->dblist.count(reinterpret_cast<char*>(token))) { err("DATABASE ALREADY EXISTS");        return -1; }//dbname
 			//token名でデータベース作成
-			catalog->DBCreate(wString((char*)token));
+			catalog->DBCreate(wString(reinterpret_cast<char*>(token)));
 			break;
 		}
 		else {
@@ -1838,12 +1842,12 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 	case  CMDS::TXINSERT://INSERT INTO TABLENAME(fieldname1,fieldname2,..) VALUES(value1,value2,...);
 		if (chkToken(sql, token, ret, CMDS::TXINTO)) { err("INSERT SYNTAX ERROR"); return -1; }//INTO
 		if (chkToken(sql, token, ret, CMDS::TXARG)) { err("INSERT NO TABLE NAME"); return -1; }//TABLENAME
-		tables.push_back((char*)token);
+		tables.push_back(reinterpret_cast<char*>(token));
 		if (chkToken(sql, token, ret, CMDS::TXPS)) { err("INSERT SYNTAX ERROR"); return -1; }//(
 		for (;;) {
 			ret = getToken(sql, token);
 			if (ret == CMDS::TXARG) {
-				colnams.push_back((char*)token);
+				colnams.push_back(reinterpret_cast<char*>(token));
 			}
 			else if (ret == CMDS::TXCM) {
 				continue;
@@ -1861,7 +1865,7 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 		for (;;) {
 			ret = getToken(sql, token);
 			if (ret == CMDS::TXARG || ret == CMDS::TXPRM) {
-				values.push_back((char*)token);
+				values.push_back(reinterpret_cast<char*>(token));
 			}
 			else if (ret == CMDS::TXCM) {
 				continue;
@@ -1887,36 +1891,36 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 	case  CMDS::TXUPDATE://UPDATE TABLENAME SET field = value, field = value.. WHERE cond1,op1,cond2;
 		//テーブル名取得
 		if (chkToken(sql, token, ret, CMDS::TXARG)) { err("UPDATE NO TABLE ERROR"); return -1; }//table
-		tables.push_back((char*)token);
+		tables.push_back(reinterpret_cast<char*>(token));
 
 		if (chkToken(sql, token, ret, CMDS::TXSET)) { err("UPDATE SYNTAX ERROR");   return -1; }//SET
 		//カラム名取得
 		for (;;) {
 			if (chkToken(sql, token, ret, CMDS::TXARG)) { err("UPDATE NO ARG ERROR");   return -1; }//ARG
-			colnams.push_back((char*)token);
+			colnams.push_back(reinterpret_cast<char*>(token));
 			if (chkToken(sql, token, ret, CMDS::TXOP)) { err("UPDATE SYNTAX ERROR");   return -1; }//=
-			if (strcmp((char*)token, "=") != 0) { err("UPDATE SYNTAX ERROR");   return -1; }//=
+			if (strcmp(reinterpret_cast<char*>(token), "=") != 0) { err("UPDATE SYNTAX ERROR");   return -1; }//=
 
 			if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("UPDATE NO VALUE ERROR"); return -1; }//ARG
-			values.push_back((char*)token);
+			values.push_back(reinterpret_cast<char*>(token));
 			ret = getToken(sql, token);
 			if (ret != CMDS::TXCM)                       break;
 		}
 		//WHERE取得
 		if (ret == CMDS::TXWHERE) {
-			cond.put((char*)"AND", CMDS::TXAND);               //初回は1にANDする
+			cond.put(const_cast<char*>("AND"), CMDS::TXAND);               //初回は1にANDする
 			for (;;) {
 				if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("UPDATE NO ARG IN WHERE"); return -1; }//arg1
-				cond.put((char*)token, ret);
+				cond.put(reinterpret_cast<char*>(token), ret);
 
 				if (chkToken(sql, token, ret, CMDS::TXOP)) { err("UPDATE NO OPE IN WHERE"); return -1; }//op1
-				cond.put((char*)token, ret);
+				cond.put(reinterpret_cast<char*>(token), ret);
 
 				if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("UPDATE NO ARG IN WHERE"); return -1; }//arg2
-				cond.put((char*)token, ret);
+				cond.put(reinterpret_cast<char*>(token), ret);
 
 				if (chkToken(sql, token, ret, CMDS::TXAND, CMDS::TXOR)) break;
-				cond.put((char*)token, ret);
+				cond.put(reinterpret_cast<char*>(token), ret);
 			}
 		}
 		//末尾の処理
@@ -1934,24 +1938,24 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 		//テーブル名取得
 		if (chkToken(sql, token, ret, CMDS::TXFROM)) { err("DELETE SYNTAX ERROR");   return -1; }//table name
 		if (chkToken(sql, token, ret, CMDS::TXARG)) { err("DELETE NO TABLE ERROR"); return -1; }//table name
-		tables.push_back((char*)token);
+		tables.push_back(reinterpret_cast<char*>(token));
 
 		ret = getToken(sql, token);
 		//WHERE取得
 		if (ret == CMDS::TXWHERE) {
-			cond.put((char*)"AND", CMDS::TXAND);                  //初回は1にANDする
+			cond.put(const_cast<char*>("AND"), CMDS::TXAND);                  //初回は1にANDする
 			for (;;) {
 				if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("DELETE NO ARG IN WHERE"); return -1; }//arg1
-				cond.put((char*)token, ret);
+				cond.put(reinterpret_cast<char*>(token), ret);
 
 				if (chkToken(sql, token, ret, CMDS::TXOP)) { err("DELETE NO OPE IN WHERE"); return -1; }//op1
-				cond.put((char*)token, ret);
+				cond.put(reinterpret_cast<char*>(token), ret);
 
 				if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("DELETE NO ARG IN WHERE"); return -1; }//arg2
-				cond.put((char*)token, ret);
+				cond.put(reinterpret_cast<char*>(token), ret);
 
 				if (chkToken(sql, token, ret, CMDS::TXAND, CMDS::TXOR))  break;
-				cond.put((char*)token, ret);
+				cond.put(reinterpret_cast<char*>(token), ret);
 			}
 		}
 		//末尾の処理
@@ -2010,14 +2014,14 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 		if (ret == CMDS::TXTBL) {
 			if (chkToken(sql, token, ret, CMDS::TXARG)) { err("DROPTABLE NO TABLE ERROR"); return -1; }//tablename
 			//チェック。同名のテーブルがあるか？
-			if (!tblList.count((char*)token)) {
+			if (!tblList.count(reinterpret_cast<char*>(token))) {
 				err("Table not exist");
 				return -1;
 			}
-			Table* ntbl = tblList[(char*)token];
+			Table* ntbl = tblList[reinterpret_cast<char*>(token)];
 			//ntbl->changed = true;
 			delete ntbl;
-			tblList.erase((char*)token);
+			tblList.erase(reinterpret_cast<char*>(token));
 			//this->Save();
 			//ＤＢに変更がありました。
 			this->changed = true;
@@ -2026,11 +2030,11 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 		else if (ret == CMDS::TXDATABASE) {
 			if (chkToken(sql, token, ret, CMDS::TXARG)) { err("CREATE DATABASE NO TABLE ERROR"); return -1; }//tablename
 			//存在チェック
-			if (!catalog->dblist.count((char*)token)) {
+			if (!catalog->dblist.count(reinterpret_cast<char*>(token))) {
 				err("Database not exist");
 				return -1;
 			}
-			Database* db = catalog->dblist[(char*)token];
+			Database* db = catalog->dblist[reinterpret_cast<char*>(token)];
 			//使用してない時だけ消せる
 			if (db) {
 				if (db->ref > 0) {
@@ -2041,7 +2045,7 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 			}
 
 			//カタログから消去
-			catalog->dblist.erase((char*)token);
+			catalog->dblist.erase(reinterpret_cast<char*>(token));
 			break;
 		}
 		else {
@@ -2058,7 +2062,7 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 	case CMDS::TXALTER:
 		if (chkToken(sql, token, ret, CMDS::TXTBL)) { err("ALTER TABLE SYNTAX ERROR");   return -1; }//tablename
 		if (chkToken(sql, token, ret, CMDS::TXARG)) { err("ALTER TABLE NO TABLE ERROR"); return -1; }//tablename
-		tables.push_back((char*)token);
+		tables.push_back(reinterpret_cast<char*>(token));
 		ret = getToken(sql, token);
 		//追加/変更
 		if (ret == CMDS::TXADD || ret == CMDS::TXMODIFY || ret == CMDS::TXDROP) {
@@ -2066,12 +2070,12 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 			if (chkToken(sql, token, ret, CMDS::TXPS)) { err("ALTER TABLE SYNTAX ERROR");   return -1; }//field name
 			for (;;) {
 				if (chkToken(sql, token, ret, CMDS::TXARG)) { err("ALTER TABLE INVALID ARGS"); return -1; }//field name
-				if (chkToken(sql, token2, ret, CMDS::TXARG) || (stricmp((char*)token2, "number") != 0 && stricmp((char*)token2, "string") != 0))
+				if (chkToken(sql, token2, ret, CMDS::TXARG) || (stricmp(reinterpret_cast<char*>(token2), "number") != 0 && stricmp(reinterpret_cast<char*>(token2), "string") != 0))
 				{
 					err("CREATE TABLE INVALID ARGS");   return -1;
 				}//number/string
-				dataType typ = (stricmp((char*)token2, "number") == 0) ? dataType::NUMBER : dataType::STRING;
-				Column* clm = new Column(tables[0], (char*)token, typ);
+				dataType typ = (stricmp(reinterpret_cast<char*>(token2), "number") == 0) ? dataType::NUMBER : dataType::STRING;
+				Column* clm = new Column(tables[0], reinterpret_cast<char*>(token), typ);
 				columns.push_back(clm);
 				//delete clm;
 				ret = getToken(sql, token);
@@ -2133,7 +2137,7 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 			if (chkToken(sql, token, ret, CMDS::TXPS)) { err("ALTER TABLE SYNTAX ERROR");   return -1; }//field name
 			for (;;) {
 				if (chkToken(sql, token, ret, CMDS::TXARG)) { err("ALTER TABLE INVALID ARGS"); return -1; }//field name
-				colnams.push_back((char*)token);
+				colnams.push_back(reinterpret_cast<char*>(token));
 				ret = getToken(sql, token);
 				if (ret == CMDS::TXPE)          break;
 				else if (ret != CMDS::TXCM) { err("ALTER TABLE SYNTAX ERROR");   return -1; }
@@ -2174,7 +2178,7 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 			//テーブル名変更
 			if (ret == CMDS::TXTO) {
 				if (chkToken(sql, token, ret, CMDS::TXARG)) { err("ALTER TABLE NO TABLE ERROR"); return -1; }//tablename
-				tables.push_back((char*)token);
+				tables.push_back(reinterpret_cast<char*>(token));
 				//テーブル名変更処理
 				tbl = tblList[tables[0]];
 				tbl->name = tables[1];
@@ -2183,10 +2187,10 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 			}
 			else if (ret == CMDS::TXCOLUMN) {
 				if (chkToken(sql, token, ret, CMDS::TXARG)) { err("ALTER TABLE NO TABLE ERROR"); return -1; }//tablename
-				colnams.push_back((char*)token);
+				colnams.push_back(reinterpret_cast<char*>(token));
 				if (chkToken(sql, token, ret, CMDS::TXTO)) { err("ALTER TABLE NO TABLE ERROR"); return -1; }//tablename
 				if (chkToken(sql, token, ret, CMDS::TXARG)) { err("ALTER TABLE NO TABLE ERROR"); return -1; }//tablename
-				colnams.push_back((char*)token);
+				colnams.push_back(reinterpret_cast<char*>(token));
 				//カラム名変更処理
 				tbl = tblList[tables[0]];
 				//カラム番号求める
@@ -2209,11 +2213,11 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 	case CMDS::TXDESC:
 		if (chkToken(sql, token, ret, CMDS::TXARG)) { err("DESC NO TABLE ERROR"); return -1; }//tablename
 		//テーブル取得
-		if (tblList.count((char*)token) == 0) {
+		if (tblList.count(reinterpret_cast<char*>(token)) == 0) {
 			err("DESC TABLE NAME NOT EXISTS ERROR");
 			return -1;
 		}
-		tbl = tblList[(char*)token];
+		tbl = tblList[reinterpret_cast<char*>(token)];
 		retStr.clear();
 #ifdef CMDLINE
 		retStr = "name\ttype\n";
@@ -2516,11 +2520,11 @@ wString _DBConnect(wString& database)
 		for (int i = 0; i < 26; i++) {
 			work[i] = material[rand() % (sizeof(material) - 1)];
 		}
-		temp = (char*)work;
+		temp = reinterpret_cast<char*>(work);
 		//同じモノはダメ
-		if (connects->count((char*)work) == 0) break;
+		if (connects->count(reinterpret_cast<char*>(work)) == 0) break;
 	}
-	(*connects)[(char*)work] = db;
+	(*connects)[reinterpret_cast<char*>(work)] = db;
 	return temp;
 }
 int _DBDisConnect(wString& key)

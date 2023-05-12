@@ -92,7 +92,7 @@ wString::wString(void)
 	//初期化
 	len = 0;
 	total = 1;
-	String = (char*)new char[1];
+	String = static_cast<char*>(new char[1]);
 	*String = 0;
 }
 
@@ -107,7 +107,7 @@ wString::wString(int mylen)
 	len = 0;
 	//末尾０の分
 	total = mylen + 1;
-	String = (char*)new char[mylen + 1];
+	String = static_cast<char*>(new char[mylen + 1]);
 	*String = 0;
 }
 
@@ -126,7 +126,7 @@ wString::wString(const char* str)
 	}
 	else {
 		total = 1;
-		String = (char*)new char[1];
+		String = static_cast<char*>(new char[1]);
 		String[0] = 0;
 	}
 }
@@ -144,7 +144,7 @@ wString::wString(const wString& str)
 	}
 	else {
 		total = 1;
-		String = (char*)new char[1];
+		String = static_cast<char*>(new char[1]);
 		String[0] = 0;
 	}
 }
@@ -586,7 +586,7 @@ int wString::LoadFromFile(const char* FileName)
 	int  handle;
 	if (strncmp(FileName, "http://", 7) == 0) {
 		wString tmp;
-		tmp = wString::HTTPGet((char*)FileName);
+		tmp = wString::HTTPGet(const_cast<char*>(FileName));
 		*this = tmp;
 	}
 	else {
@@ -746,7 +746,7 @@ wString wString::Trim(void)
 				*src++ = *dst++;
 			}
 #else
-			strcpy((char*)temp.String, (char*)(temp.String + 1));
+			strcpy(temp.String, temp.String + 1);
 #endif
 			temp.len--;
 		}
@@ -1086,25 +1086,25 @@ int wString::DirectoryExists(const wString& str)
 /********************************************************************************/
 void wString::replace_character_len(const char* sentence, int slen, const char* p, int klen, const char* rep)
 {
-	auto rlen = (int)strlen((char*)rep);
+	auto rlen = (int)strlen(const_cast<char*>(rep));
 	int num;
 	if (klen == rlen) {
-		memcpy((void*)p, rep, rlen);
+		memcpy(const_cast<char*>(p), rep, rlen);
 		//前詰め置換そのままコピーすればいい
 	}
 	else if (klen > rlen) {
 		num = klen - rlen;
-		strcpy((char*)p, (char*)(p + num));
-		memcpy((void*)p, rep, rlen);
+		strcpy(const_cast<char*>(p), p + num);
+		memcpy(const_cast<char*>(p), rep, rlen);
 		//置換文字が長いので後詰めする
 	}
 	else {
 		num = rlen - klen;
 		//pからrlen-klenだけのばす
-		for (auto str = (char*)(sentence + slen + num); str > p + num; str--) {
+		for (auto str = const_cast<char*>(sentence + slen + num); str > p + num; str--) {
 			*str = *(str - num);
 		}
-		memcpy((void*)p, rep, rlen);
+		memcpy(const_cast<char*>(p), rep, rlen);
 	}
 	return;
 }
@@ -2556,7 +2556,7 @@ wString& wString::replace(int index, unsigned int slen, const wString& repstr)
 	auto rlen = repstr.len;
 	//同じ
 	if (slen == rlen) {
-		memcpy((void*)(String + index), (void*)repstr.String, rlen);
+		memcpy(String + index, repstr.String, rlen);
 		//前詰め置換そのままコピーすればいい
 	}
 	else if (slen > rlen) {
@@ -2566,7 +2566,7 @@ wString& wString::replace(int index, unsigned int slen, const wString& repstr)
 		while (*q) {
 			*p++ = *q++;
 		}
-		memcpy((void*)(String + index), (void*)(repstr.String), rlen);
+		memcpy(String + index, repstr.String, rlen);
 		len -= num;
 		String[len] = 0;
 		//置換文字が長いので後詰めする
@@ -2574,10 +2574,10 @@ wString& wString::replace(int index, unsigned int slen, const wString& repstr)
 	else {
 		int num = rlen - slen;
 		resize(len + num + 1);
-		for (char* p = (char*)(String + len + num); p > String + index + num; p--) {
+		for (char* p = (String + len + num); p > String + index + num; p--) {
 			*p = *(p - num);
 		}
-		memcpy((void*)(String + index), (void*)(repstr.String), rlen);
+		memcpy(String + index, repstr.String, rlen);
 		len += num;
 		String[len] = 0;
 	}
@@ -2587,7 +2587,7 @@ wString& wString::replace(int index, unsigned int slen, const wString& repstr)
 wString wString::base64(void)
 {
 	wString tmpout;
-	unsigned char* instr = (unsigned char*)String;
+	unsigned char* instr = reinterpret_cast<unsigned char*>(String);
 	unsigned char ch = 0;
 	int count = 0;
 	/*
@@ -2624,7 +2624,7 @@ wString wString::base64(void)
 }
 wString wString::unbase64(void)
 {
-	unsigned char* instr = (unsigned char*)String;
+	unsigned char* instr = reinterpret_cast<unsigned char*>(String);
 
 	int s1;
 	int s2;
