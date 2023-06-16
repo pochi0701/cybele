@@ -118,7 +118,7 @@ wString::wString(int mylen)
 wString::wString(const char* str)
 {
 	//初期化
-	len = (unsigned int)strlen(str);
+	len = static_cast<unsigned int>(strlen(str));
 	if (len) {
 		total = len + 1;
 		String = (char*)new char[total];
@@ -204,12 +204,37 @@ void wString::operator+=(const wString& str)
 //---------------------------------------------------------------------------
 void wString::operator+=(const char* str)
 {
-	auto slen = (unsigned int)strlen(str);
+	auto slen = static_cast<unsigned int>(strlen(str));
 	auto newLen = slen + len;
 	resize(newLen);
 	strcpy(String + len, str);
 	len = newLen;
 	return;
+}
+//---------------------------------------------------------------------------
+
+/// <summary>
+/// バイナリ文字列の設定
+/// </summary>
+/// <param name="mem">設定バイナリ</param>
+/// <param name="addLen">設定長さ</param>
+void wString::setBinary(const void* mem,int binaryLength)
+{
+	auto newLen = binaryLength + len;
+	resize(newLen);
+	memcpy((void*)(String + len), mem, binaryLength);
+	len = newLen;
+	return;
+}
+//---------------------------------------------------------------------------
+/// <summary>
+/// 先頭文字列の比較（バイナリ非対応）
+/// </summary>
+/// <param name="needle">検索する文字列</param>
+/// <returns>先頭と一致すればtrue</returns>
+bool wString::startsWith(const char* needle)
+{
+	return strstr(String, needle) == String;
 }
 //---------------------------------------------------------------------------
 void wString::operator+=(const char ch)
@@ -231,7 +256,7 @@ bool wString::operator==(const wString& str) const
 //---------------------------------------------------------------------------
 bool wString::operator==(const char* str) const
 {
-	auto mylen = (unsigned int)strlen(str);
+	auto mylen = static_cast<unsigned int>(strlen(str));
 	if (len != mylen) {
 		return false;
 	}
@@ -262,7 +287,7 @@ bool wString::operator>=(const wString& str) const
 //---------------------------------------------------------------------------
 bool wString::operator>=(const char* str) const
 {
-	auto mylen = (unsigned int)strlen(str);
+	auto mylen = static_cast<unsigned int>(strlen(str));
 	auto maxlen = (len > mylen) ? len : mylen;
 	return(strncmp(String, str, maxlen) >= 0);
 }
@@ -275,20 +300,20 @@ bool wString::operator<=(const wString& str) const
 //---------------------------------------------------------------------------
 bool wString::operator<=(const char* str) const
 {
-	auto mylen = (unsigned int)strlen(str);
+	auto mylen = static_cast<unsigned int>(strlen(str));
 	auto maxlen = (len > mylen) ? len : mylen;
 	return(strncmp(String, str, maxlen) <= 0);
 }
 //---------------------------------------------------------------------------
 bool wString::operator>(const wString& str) const
 {
-	unsigned int maxlen = (len > str.len) ? len : str.len;
+	auto maxlen = (len > str.len) ? len : str.len;
 	return(strncmp(String, str.String, maxlen) > 0);
 }
 //---------------------------------------------------------------------------
 bool wString::operator>(const char* str) const
 {
-	auto mylen = (unsigned int)strlen(str);
+	auto mylen = static_cast<unsigned int>(strlen(str));
 	auto maxlen = (len > mylen) ? len : mylen;
 	return(strncmp(String, str, maxlen) > 0);
 }
@@ -301,7 +326,7 @@ bool wString::operator<(const wString& str) const
 //---------------------------------------------------------------------------
 bool wString::operator<(const char* str) const
 {
-	auto mylen = (unsigned int)strlen(str);
+	auto mylen = static_cast<unsigned int>(strlen(str));
 	auto maxlen = (len > mylen) ? len : mylen;
 	return(strncmp(String, str, maxlen) < 0);
 }
@@ -316,7 +341,7 @@ void wString::operator=(const wString& str)
 //---------------------------------------------------------------------------
 void wString::operator=(const char* str)
 {
-	auto newLen = (int)strlen(str);
+	auto newLen = static_cast<unsigned int>(strlen(str));
 	resize(newLen);
 	strcpy(String, str);
 	len = newLen;
@@ -428,7 +453,7 @@ int wString::find(const wString& str, int index) const
 		return npos;
 	}
 	else {
-		return (int)(ptr - String);
+		return (int)((ptr - String));
 	}
 }
 //---------------------------------------------------------------------------
@@ -638,7 +663,6 @@ void wString::LoadFromCSV(const char* FileName)
 	int  fd;
 	char s[1024] = { 0 };
 	char t[1024] = { 0 };
-	int ret;
 	int first = 1;
 	fd = myopen(FileName, O_RDONLY | O_BINARY, S_IREAD);
 	if (fd < 0) {
@@ -649,7 +673,7 @@ void wString::LoadFromCSV(const char* FileName)
 	*this = "[";
 	//１行目はタイトル
 	while (true) {
-		ret = readLine(fd, s, sizeof(s));
+		auto ret = readLine(fd, s, sizeof(s));
 		if (ret < 0) break;
 		//分解する
 		char* p = strtok(s, ",");
@@ -1184,6 +1208,33 @@ wString wString::EnumFolderjson(const wString& Path)
 	return temp;
 #endif
 }
+wString wString::dump(void* ptr, int vlen)
+{
+	wString tmp;
+	char* out = static_cast<char*>(ptr);
+	for (int start = 0; start < vlen; start += 16)
+	{
+		tmp.cat_sprintf( "%04d:", start);
+		for (int line = start; line < start + 16 && line < vlen; line++)
+		{
+			tmp.cat_sprintf("%02X ", out[line]);
+		}
+		for (int line = start; line < start + 16 && line < vlen; line++)
+		{
+			if (out[line] >= ' ' && out[line] < 0x7f)
+			{
+				tmp.cat_sprintf("%c", out[line]);
+			}
+			else
+			{
+				tmp.cat_sprintf(".");
+			}
+		}
+		tmp.cat_sprintf("\r\n");
+		return tmp;
+	}
+}
+
 //---------------------------------------------------------------------------
 // フォルダのファイルを数える
 // 引数　wString Path:
@@ -1628,12 +1679,36 @@ wString wString::strsplit(const char* delimstr)
 {
 
 	wString tmp;
+	char* ptr = c_str();
 	auto delimlen = (int)strlen(delimstr);
+	int start = 0;
+	for (auto i = start; i < len; i++)
+	{
+		for (auto j = 0; j < delimlen; j++)
+		{
+			if (ptr[i] == delimstr[j])
+			{
+				ptr[i] = 0;
+				tmp.Add(&ptr[start]);
+				start = i+1;
+				break;
+			}
+		}
+	}
+	if (start < len)
+	{
+		tmp.Add(&ptr[start]);
+	}
+	return tmp;
+/*
+
+
+
 	auto pos = Pos(delimstr);
 	if (pos != npos) {
 		tmp = substr(pos + delimlen);
 	}
-	return tmp;
+	return tmp*/;
 }
 //---------------------------------------------------------------------------
 //
@@ -1645,6 +1720,7 @@ void wString::resize(const int newsize)
 		exit(1);
 	}
 	if ((int)total <= newsize) {
+		// すこし大き目に TODO
 		total = newsize + 1;
 		char* tmp = new char[total];
 		memcpy(tmp, String, len);

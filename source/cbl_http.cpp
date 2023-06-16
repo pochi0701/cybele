@@ -522,8 +522,19 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 			// ':' より前を切る。
 			line.cut_before_character(':');
 			line = line.LTrim();
-			strncpy(content_type, line.c_str(), sizeof(content_type)-1);
-			debug_log_output("%s Detect. %s '%s'", HTTP_CONTENT_TYPE1, HTTP_CONTENT_TYPE1, content_type);
+			// multipart
+			if (strncasecmp(line.c_str(), "multipart/form-data", strlen("multipart/form-data")) == 0) {
+				wString bnd = line;
+				bnd.cut_before_character('=');
+				strncpy(boundary, bnd.c_str(), sizeof(boundary) - 1);
+				strncpy(content_type, "multipart/form-data", sizeof("multipart/form-data") - 1);
+				debug_log_output("%s Detect. %s '%s'", "multipart/form-data", "multipart/form-data", boundary);
+			}
+			else
+			{
+				strncpy(content_type, line.c_str(), sizeof(content_type) - 1);
+				debug_log_output("%s Detect. %s '%s'", HTTP_CONTENT_TYPE1, HTTP_CONTENT_TYPE1, content_type);
+			}
 			continue;
 		}
 	}

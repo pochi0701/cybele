@@ -36,12 +36,74 @@
 #endif
 //#include  "cbl.h"
 //#include  "const.h"
-#include  "cbl_tools.h"
+#include "cbl_tools.h"
 #include "define.h"
 static char debug_log_filename[FILENAME_MAX];	// デバッグログ出力ファイル名(フルパス)
 static char debug_log_initialize_flag = (1);	// デバッグログ初期化フラグ
 static void cut_before_n_length(char* sentence, unsigned int n);
 static void cut_after_n_length(char* sentence, unsigned int n);
+
+char* seekCRLF(char* start, char* end)
+{
+	while (start <= end-2)
+	{
+		if (*start++ == '\r')
+		{
+			if (*start++ == '\n')
+			{
+				return start;
+			}
+		}
+	}
+}
+char* seekCRLFCRLF(char* start, char* end)
+{
+	while (start <= end-4)
+	{
+		char* nptr = start;
+		if (*start++ == '\r')
+		{
+			if (*start++ == '\n')
+			{
+				if (*start++ == '\r')
+				{
+					if (*start++ == '\n')
+					{
+						*nptr = 0;
+						return start;
+					}
+				}
+			}
+		}
+	}
+	return NULL;
+}
+
+/// <summary>
+/// 部分文字列の位置を示す  
+/// </summary>
+/// <param name="haystack">全データ</param>
+/// <param name="haystacklen">全データ長</param>
+/// <param name="needle">探索データ</param>
+/// <param name="needlelen">探索データ長さ</param>
+/// <returns></returns>
+void* memmem(const void* haystack, size_t haystacklen, const void* needle, size_t needlelen)
+{
+	const char* begin = (const char*)haystack;
+	const char* last = begin + haystacklen - needlelen;
+
+	if (needlelen == 0) {
+		return (void*)begin;
+	}
+
+	for (; begin <= last; begin++) {
+		if (*begin == *static_cast<const char*>(needle) && memcmp(begin, needle, needlelen) == 0) {
+			return (void*)begin;
+		}
+	}
+
+	return NULL;
+}
 /// <summary>
 /// 最初に出て来たcut_charの前後を分割
 /// </summary>

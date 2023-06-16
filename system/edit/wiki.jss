@@ -203,7 +203,7 @@ function updateWiki(modes, title, config) {
     if (title == "BackupWiki") {
         if (backupEnabled) {
             wikiname = config.GENERAL.TITLE;
-            wikiname.replace(" ", "_");
+            wikiname.replaceAll(" ", "_");
             //date = date( "Y-m-d_H-i-s" );
             //filename = tempDir()+wikiname+"_"+date+"+bkup";
             filename = tempDir() + wikiname + "_bkup";
@@ -514,9 +514,9 @@ function verbatim(contents) {
 function htmltag(contents) {
     // ' must be used for fields
     var result = contents;
-    result = result.replace("&lt;", "<");
-    result = result.replace("&gt;", ">");
-    result = result.replace("&quot;", "\\\"");
+    result = result.replaceAll("&lt;", "<");
+    result = result.replaceAll("&gt;", ">");
+    result = result.replaceAll("&quot;", "\\\"");
     return result;
 }
 
@@ -1006,7 +1006,7 @@ function displayPage(title, mode, contents) {
     } else if (title == "BackupWiki") {
         if (!anyErrors()) {
             wikiname = config.GENERAL.TITLE;
-            wikiname.replace(" ", "_");
+            wikiname.replaceAll(" ", "_");
             files = wikiReadDir(pageDir());
             backups = wikiReadDir(tempDir());
             contents = "Backed up " + files.length + " pages+\n\nRight-click on the link below and \"Save Link to Disk...\".\n";
@@ -1082,7 +1082,7 @@ function displayControls(title, mode) {
         } else if (mode == "backupwiki") {
             if (!anyErrors()) {
                 wikiname = config.GENERAL.TITLE;
-                wikiname.replace(" ", "_");
+                wikiname.replaceAll(" ", "_");
                 files = wikiReadDir(pageDir());
                 backups = wikiReadDir(tempDir());
                 details = [];

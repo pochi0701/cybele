@@ -36,7 +36,17 @@
 #include "TinyJS_Functions.h"
 #include "TinyJS_MathFunctions.h"
 #include "define.h"
-
+class multipart
+{
+public:
+	multipart(void)
+	{
+	}
+	void* content;
+	size_t length;
+	char name[256];
+	char fileName[256];
+};
 // includes
 wString escape(const wString& str);
 bool split(const char* cut_char, wString& split1, wString& split2);
@@ -149,6 +159,11 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 	buffer[size] = 0;
 	close(fd);
 
+	//multipart
+	vector<multipart> mp;
+	//multipart mp[10];
+	//int       mp_count = 0;
+
 	CTinyJS  javaScriptThread(accept_socket);
 	registerFunctions(&javaScriptThread);
 	registerMathFunctions(&javaScriptThread);
@@ -235,7 +250,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 
 		//POSTの展開
 		if (isGet == QUERY_METHOD::POST) {
-			char buf[10240];
+			char buf[1025] = { 0 };
 			int num;
 			int contentsize = atoi(content_length);
 			int readsize;
@@ -258,16 +273,72 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 					contentsize -= num;
 				}
 				buf[num] = 0;
-				script3 += buf;
+				script3.setBinary(buf, num);
 			}
-			script4.clear();
-			while (script3.length()) {
-				split("&", script1, script3);
-				split("=", script2, script1);
-				script4 += (char*)"var _POST." + script2 + (char*)"=\"" + escape(script1.uri_decode()) + (char*)"\";";
+
+			// multipart
+			if (strlen(boundary) > 0) {
+				// boundary
+				char* start = script3.c_str();
+
+				int total = script3.length();
+				char* end = script3.c_str() + total;
+				// 一覧の先頭と個数を取得
+				while (true)
+				{
+					start = static_cast<char*>(memmem(start, start - script3.c_str() + script3.length(), boundary, strlen(boundary)));
+					if (start == NULL)
+					{
+						break;
+					}
+					//start += strlen(boundary);
+					//while (*start != '\n' && start < end) {
+					//	start++;
+					//}
+					//start++;
+					// boundaryの終わり
+					*start = 0;
+					start += strlen(boundary) + 2;
+					multipart* multip = new multipart();
+					multip->content = start;
+					mp.push_back(*multip);
+				}
+				// アドレス正規化
+				for (int i = 0; i < mp.size() - 1; i++)
+				{
+					char* st = static_cast<char*>(mp[i].content);
+					char* ed = static_cast<char*>(mp[i + 1].content);
+					//boundary
+					char* ptr = seekCRLFCRLF(st, ed);
+					if (ptr == NULL) {
+						//multipartでない
+						break;
+					}
+					wString text(st);
+					wString st2 = text.strsplit("\"");
+					mp[i].content = ptr;
+					mp[i].length = ed - ptr-(strlen(boundary) + 2)+2;
+					if (st2.GetListString(0).startsWith(CONTENT_DISPOSITION))
+					{
+						strcpy(mp[i].name, st2.GetListString(1).c_str());
+						if (st2.GetListString(2).Pos("filename=") >= 0)
+						{
+							strcpy(mp[i].fileName, st2.GetListString(3).c_str());
+						}
+					}
+				}
 			}
-			if (script4.Length()) {
-				javaScriptThread.execute(script4);
+			// normal
+			else {
+				script4.clear();
+				while (script3.length()) {
+					split("&", script1, script3);
+					split("=", script2, script1);
+					script4 += (char*)"var _POST." + script2 + (char*)"=\"" + escape(script1.uri_decode()) + (char*)"\";";
+				}
+				if (script4.Length()) {
+					javaScriptThread.execute(script4);
+				}
 			}
 		}
 		javaScriptThread.execute(buffer, ExecuteModes::ON_CLIENT);

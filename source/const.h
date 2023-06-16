@@ -151,33 +151,35 @@ typedef int socklen_t;
 #define	HTTP_SERVER_NAME			"Server: %s\r\n"
 #define	HTTP_CONNECTION				"Connection: Close\r\n"
 #define HTTP_ACCEPTRANGE			"Accept-Ranges: bytes\r\n"
-#define HTTP_DATE				"Date: %s\r\n"
-#define HTTP_END				"\r\n"
+#define HTTP_DATE				    "Date: %s\r\n"
+#define HTTP_END				    "\r\n"
 
+//MULTIPART
+#define CONTENT_DISPOSITION          "Content-Disposition: form-data;"
 
 // アクセスコントロール 登録可能数
 #define		ACCESS_ALLOW_LIST_MAX		(32)
 #define		ALLOW_USER_AGENT_LIST_MAX	(32)
 // MIME_LIST_T.stream_type 用
-#define		TYPE_STREAM			(0)
+#define		TYPE_STREAM			    (0)
 #define		TYPE_NO_STREAM			(1)
 // MIME_LIST.menu_file_type用
 #define		TYPE_UNKNOWN			(0)
 #define		TYPE_DIRECTORY			(1)
 #define		TYPE_MOVIE		        (2)
-#define		TYPE_MUSIC			(3)
-#define		TYPE_IMAGE			(4)
+#define		TYPE_MUSIC			    (3)
+#define		TYPE_IMAGE			    (4)
 #define		TYPE_DOCUMENT			(5)
 #define		TYPE_PLAYLIST			(7)
 #define		TYPE_MUSICLIST			(9)
-#define		TYPE_JPEG			(10)
-#define		TYPE_URL			(11)
+#define		TYPE_JPEG			    (10)
+#define		TYPE_URL			    (11)
 #define		NO_RESPONSE_TIMEOUT		(12)
 
 #define		MULTI_ACCESS_MAX		(5)
 #define		TIMEOUT_SECOND			(300)
 #define		MAX_COUNT_ALIAS			(3)
-#define         MAXTHREAD                       (3)
+#define     MAXTHREAD               (3)
 extern int                      loop_flag;
 extern int                      ready_flag;                                   //Accept完了フラグ
 extern SOCKET                   listen_socket;                                // 待ち受けSocket

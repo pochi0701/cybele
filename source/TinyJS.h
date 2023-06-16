@@ -44,30 +44,35 @@ const int TINYJS_LOOP_MAX_ITERATIONS = 8192;
 extern map<wString, wString>* session;
 enum class  LEX_TYPES {
 	LEX_EOF = 0,
-
-	LEX_MINUS = '-',
-	LEX_PLUS = '+',
-	LEX_MULTI = '*',
-	LEX_DEVIDE = '/',
-	LEX_AMPERSAND = '&',
-	LEX_OR = '|',
-	LEX_LT = '<',
-	LEX_GT = '>',
-	LEX_EQ = '=',
-	LEX_SEMICOLON = ';',
-	LEX_COLON = ':',
-	LEX_LP = '(',
-	LEX_RP = ')',
-	LEX_COMMA = ',',
-	LEX_LSB = '[',
-	LEX_RSB = ']',
-	LEX_LCB = '{',
-	LEX_RCB = '}',
-	LEX_PERIOD = '.',
-	LEX_XOR = '^',
-	LEX_MOD = '%',
-	LEX_EXCLAMATIN = '!',
-	LEX_QUESTION = '?',
+    LEX_LF = '\r',
+    LEX_CR = '\n',
+    LEX_EXC   = '!',  /// exclamation
+    LEX_DQT   = '"',  /// double quote
+    LEX_MOD   = '%',
+    LEX_AND   = '&',
+    LEX_SQT   = '\'', /// single quote
+    LEX_LPA   = '(',
+    LEX_RPA   = ')',
+    LEX_MUL   = '*',
+    LEX_PLUS  = '+',
+    LEX_CMA   = ',',
+    LEX_MINUS = '-',
+    LEX_DOT   = '.',
+    LEX_DIV   = '/',
+    LEX_COL   = ':',
+    LEX_SCL   = ';',
+    LEX_LTN   = '<',
+    LEX_EQ    = '=',
+    LEX_GTN   = '>',
+    LEX_QST   = '?',
+    LEX_LBKT  = '[',
+    LEX_ESC   = '\\',
+    LEX_RBKT  = ']',
+    LEX_HAT   = '^',
+    LEX_LBRA  = '{',
+    LEX_OR    = '|',
+    LEX_RBRA  = '}',
+    LEX_TLD   = '~',
 
 	LEX_ID = 256,
 	LEX_INT,
@@ -166,8 +171,8 @@ public:
 	~CScriptLex(void);
 	wString* prBuffer;
 	int* prPos;
-	char currCh;
-	char nextCh;
+    LEX_TYPES currCh;
+    LEX_TYPES nextCh;
 	LEX_TYPES tk;                            ///< The type of the token that we have
 	int tokenStart;                          ///< Position in the data at the beginning of the token we have here
 	int tokenEnd;                            ///< Position in the data at the last character of the token we have here
@@ -188,11 +193,12 @@ protected:
 	   relevant string. This doesn't re-allocate and copy the string, but instead copies
 	   the data pointer and sets dataOwned to false, and dataStart/dataEnd to the relevant things. */
 	char* data;                              ///< Data wString to get tokens from
-	int  dataStart, dataEnd;                 ///< Start and end position in data string
+    int  dataStart;         ///< Start and end position in data string
+    int  dataEnd;           ///< Start and end position in data string
 	bool dataOwned;                          ///< Do we own this data string?
 
 
-	void getNextCh();
+    LEX_TYPES getNextCh();
 	void getNextToken();                     ///< Get the text token from our text string
 	wString* headerBuf;                      ///buffer for header
 	int* printed;                            ///buffer already printed
@@ -251,7 +257,7 @@ public:
 	CScriptVarLink* findChildOrCreateByPath(const wString& path); ///< Tries to find a child with the given path (separated by dots)
 	CScriptVarLink* addChild(const wString& childName, CScriptVar* child = NULL);
 	CScriptVarLink* addChildNoDup(const wString& childName, CScriptVar* child = NULL); ///< add a child overwriting any with the same name
-	void removeChild(CScriptVar* child);
+	void removeChild(const CScriptVar* child);
 	void removeLink(CScriptVarLink* link); ///< Remove a specific link (this is faster than finding via a child)
 	void removeAllChildren();
 	CScriptVar* getArrayIndex(int idx); ///< The the value at an array index

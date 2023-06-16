@@ -52,6 +52,7 @@ public:
     char   send_filename[QUERY_MAX]; // フルパス
     char   action[128];              // ?action=  の内容
     char   request_uri[QUERY_MAX];   // 受信した生のURI
+    char   boundary[128];            // multipart/fomr-dataの時のboundary
     QUERY_METHOD    isGet;		     // GETなら1HEADなら2POSTなら3
 
     // JavaScript実行

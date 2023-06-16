@@ -62,6 +62,8 @@ public:
 	void     operator+=(const char* str);
 	char     operator[](unsigned int index) const;
 	//STRING FUNCTION
+	bool            startsWith(const char* str);
+	void            setBinary(const void* str, int addLen);
 	char            at(unsigned int index) const;
 	wString         SubString(int start, int mylen)   const;
 	wString         substr(int start, int mylen = -1) const;
@@ -71,7 +73,8 @@ public:
 	int             Pos(const wString& pattern, int pos = 0) const;
 	int             Pos(const char* pattern, int pos = 0) const;
 	unsigned int    copy(char* str, unsigned int slen, int index) const;
-	wString& replace(int index, unsigned int len, const wString& repstr);
+	wString&        replace(int index, unsigned int len, const wString& repstr);
+	wString         dump(void* ptr, int vlen);
 
 	unsigned int    size(void) const;
 	unsigned int    length(void) const;
@@ -90,6 +93,7 @@ public:
 	int             sprintf(const char* format, ...);
 	int             cat_sprintf(const char* format, ...);
 	int             LastDelimiter(const char* delim) const;
+///	wString         strsplit(const wString& str, const char* delimstr);
 	wString         strsplit(const char* delimstr);
 	int             find(const wString& str, int index = 0) const;
 	int             find(const char* str, int index = 0) const;

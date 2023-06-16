@@ -35,6 +35,8 @@ extern int      uri_encode(char* dst, unsigned int dst_len, const char* src, uns
 extern int      uri_decode(char* dst, unsigned int dst_len, const char* src, unsigned int src_len);
 
 // テキスト処理イロイロ。
+extern char* seekCRLFCRLF(char* start, char* end);
+extern void* memmem(const void* haystack, size_t haystacklen, const void* needle, size_t needlelen);
 extern char* cut_after_character(char* sentence, char cut_char);
 //extern void     cut_before_character(char *sentence, char cut_char);
 //extern void     cut_character(char *sentence, char cut_char);

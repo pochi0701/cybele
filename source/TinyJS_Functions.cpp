@@ -98,11 +98,13 @@ void scKeys(CScriptVar* c, void* userdata) {
 
 void scMathRand(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
+	//srand((unsigned int)time(NULL));
 	c->getReturnVar()->setDouble((double)rand() / RAND_MAX);
 }
 
 void scMathRandInt(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
+	//srand((unsigned int)time(NULL));
 	int min = c->getParameter("min")->getInt();
 	int max = c->getParameter("max")->getInt();
 	int val = min + (int)(rand() % (1 + max - min));
@@ -175,6 +177,13 @@ void scStringSubstr(CScriptVar* c, void* userdata) {
 		c->getReturnVar()->setString("");
 }
 //AT
+
+/// <summary>
+/// function String.charAt(pos)
+/// pos位置の文字を取得（byte単位）
+/// </summary>
+/// <param name="c">引き渡しデータ</param>
+/// <param name="userdata"></param>
 void scStringCharAt(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString str = c->getParameter("this")->getString();
@@ -220,6 +229,19 @@ void scStringSplit(CScriptVar* c, void* userdata) {
 }
 //Replace
 void scStringReplace(CScriptVar* c, void* userdata) {
+	IGNORE_PARAMETER(userdata);
+	wString str = c->getParameter("this")->getString();
+	wString before = c->getParameter("before")->getString();
+	wString after = c->getParameter("after")->getString();
+	//strの中のbeforeを探す
+	int pos = str.find(before);
+	if (pos != wString::npos) {
+		str = str.substr(0, pos) + after + str.substr(pos + before.length());
+	}
+	c->getReturnVar()->setString(str);
+}
+//ReplaceAll
+void scStringReplaceAll(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString str = c->getParameter("this")->getString();
 	wString before = c->getParameter("before")->getString();
@@ -769,6 +791,7 @@ void registerFunctions(CTinyJS* tinyJS) {
 	tinyJS->addNative("function String.fromCharCode(char)", scStringFromCharCode, 0);
 	tinyJS->addNative("function String.split(separator)", scStringSplit, 0);
 	tinyJS->addNative("function String.replace(before,after)", scStringReplace, 0);
+	tinyJS->addNative("function String.replaceAll(before,after)", scStringReplaceAll, 0);
 	tinyJS->addNative("function String.preg_replace(pattern,replace)", scPregStringReplace, 0);
 	//tinyJS->addNative("function String.preg_match(pattern)",scPregStringMatch, 0 );
 	tinyJS->addNative("function String.addSlashes()", scAddShashes, 0);

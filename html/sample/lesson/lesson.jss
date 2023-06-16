@@ -80,7 +80,7 @@
         if( grade == 0 || list[i]["grade"] == grade ){
           print("<tr><td>"+list[i]["id"]+"</td>");
           print("<td>"+list[i]["grade"]+"</td>");
-          print("<td><a href=\"./preview.jss?url=%2fsample%2fmultimedia%2f"+list[i]["movie"]+"&mid="+list[i]["mid"]+"\">"+list[i]["title"].replace("\n","<br/>")+"</a></td>\n");
+          print("<td><a href=\"./preview.jss?url=%2fsample%2fmultimedia%2f"+list[i]["movie"]+"&mid="+list[i]["mid"]+"\">"+list[i]["title"].replaceAll("\n","<br/>")+"</a></td>\n");
           print("<td>"+list[i]["cnt"]+"</td></tr>\n");
         }
       }

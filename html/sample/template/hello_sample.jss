@@ -10,7 +10,7 @@
        print("HELLO WORLD!");
   ?>
 <script>
-alert(b);
+//alert(b);
 </script>
 </body>
 </html>
