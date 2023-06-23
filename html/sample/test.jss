@@ -14,6 +14,12 @@
 <div>
   <form action="test.jss" method="post" enctype="multipart/form-data" >
     <div>
+      <input type="text" name="title" value="">
+    </div>
+    <div>
+      <input type="text" name="title2" value="">
+    </div>
+    <div>
       <input type="file" name="test.cs">
     </div>
     <div>

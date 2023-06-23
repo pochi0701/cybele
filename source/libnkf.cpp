@@ -471,7 +471,7 @@ nkf(const char *in, char *out, size_t len, const char *options)
             continue;
         }
     }
-    kanji_convert((char *)in);
+    kanji_convert(const_cast<char*>(in));
     *(out + len_out) = (char)'\0';
     if (offlag != 0)
     return (-1);
@@ -1119,10 +1119,9 @@ w2e_conv(int c2, int c1, int c0, int *p2, int *p1)
     extern unsigned short *utf8_to_euc_2bytes[];
     extern unsigned short **utf8_to_euc_3bytes[];
     if (0xc0 <= c2 && c2 <= 0xef) {
-        unsigned short **pp;
         if (0xe0 <= c2) {
             if (c0 == 0) return -1;
-            pp = utf8_to_euc_3bytes[c2 - 0x80];
+            auto pp = utf8_to_euc_3bytes[c2 - 0x80];
             return w_iconv_common(c1, c0, pp, sizeof_utf8_to_euc_C2, p2, p1);
         } else {
             return w_iconv_common(c2, c1, utf8_to_euc_2bytes, sizeof_utf8_to_euc_2bytes, p2, p1);

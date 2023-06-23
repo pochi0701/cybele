@@ -36,7 +36,7 @@ DIR *opendir(const char *name)
             strchr("/\\", name[base_length - 1]) ? "*" : "/*";
 
         if((dir = static_cast<DIR*>(malloc(sizeof *dir))) != 0 &&
-           (dir->name = (char *) malloc(base_length + strlen(all) + 1)) != 0)
+           (dir->name = static_cast<char*>(malloc(base_length + strlen(all) + 1))) != 0)
         {
             strcat(strcpy(dir->name, name), all);
 

@@ -108,7 +108,7 @@ typedef int socklen_t;
 
 #define	DEFAULT_FLAG_DEBUG_LOG_OUTPUT	TRUE
 #ifdef linux
-#define	DEFAULT_DEBUG_LOG_FILENAME	"/tmp/cbl_debug.log"
+#define	DEFAULT_DEBUG_LOG_FILENAME	    "/tmp/cbl_debug.log"
 #else
 #define DEFAULT_DEBUG_LOG_FILENAME      "cbl_debug.log"
 #endif
@@ -130,17 +130,17 @@ typedef int socklen_t;
 #define CODE_EUC					(2)
 #define CODE_UTF8					(3)
 #define CODE_UTF16					(4)
-#define HTTP_USER_AGENT				        "User-agent:"
+#define HTTP_USER_AGENT				"User-agent:"
 #define HTTP_RANGE					"Range:"
 #define HTTP_HOST					"Host:"
-#define HTTP_CONTENT_LENGTH1	                	"Content-Length:"
-#define HTTP_CONTENT_TYPE1	                	"Content-Type:"
+#define HTTP_CONTENT_LENGTH1	    "Content-Length:"
+#define HTTP_CONTENT_TYPE1	        "Content-Type:"
 #define HTTP_COOKIE					"Cookie:"
 #define HTTP_DELIMITER				"\r\n\r\n"
 
 #define	HTTP_OK 	        		"HTTP/1.0 200 OK\r\n"
 #define	HTTP_NOT_FOUND 				"HTTP/1.0 404 File Not Found\r\n"
-#define HTTP_NOT_FOUND1     		        "HTTP/1.x 404 Not Found\r\n"
+#define HTTP_NOT_FOUND1     		"HTTP/1.x 404 Not Found\r\n"
 //#ifdef linux
 #define HTTP_CONTENT_LENGTH			"Content-Length: %zu\r\n"
 //#else
@@ -161,20 +161,38 @@ typedef int socklen_t;
 #define		ACCESS_ALLOW_LIST_MAX		(32)
 #define		ALLOW_USER_AGENT_LIST_MAX	(32)
 // MIME_LIST_T.stream_type 用
-#define		TYPE_STREAM			    (0)
-#define		TYPE_NO_STREAM			(1)
+enum class STREAM_TYPE
+{
+	TYPE_STREAM = 0,
+	TYPE_NO_STREAM = 1,
+	NOT_DEFINED = -1,
+};
 // MIME_LIST.menu_file_type用
-#define		TYPE_UNKNOWN			(0)
-#define		TYPE_DIRECTORY			(1)
-#define		TYPE_MOVIE		        (2)
-#define		TYPE_MUSIC			    (3)
-#define		TYPE_IMAGE			    (4)
-#define		TYPE_DOCUMENT			(5)
-#define		TYPE_PLAYLIST			(7)
-#define		TYPE_MUSICLIST			(9)
-#define		TYPE_JPEG			    (10)
-#define		TYPE_URL			    (11)
-#define		NO_RESPONSE_TIMEOUT		(12)
+enum class MIME_TYPE
+{
+	TYPE_UNKNOWN = 0,
+	TYPE_DIRECTORY = 1,
+	TYPE_MOVIE = 2,
+	TYPE_MUSIC = 3,
+	TYPE_IMAGE = 4,
+	TYPE_DOCUMENT = 5,
+	TYPE_PLAYLIST = 7,
+	TYPE_MUSICLIST = 9,
+	TYPE_JPEG = 10,
+	TYPE_URL = 11,
+	NOT_MIME = -1,
+};
+//#define		TYPE_UNKNOWN			(0)
+//#define		TYPE_DIRECTORY			(1)
+//#define		TYPE_MOVIE		        (2)
+//#define		TYPE_MUSIC			    (3)
+//#define		TYPE_IMAGE			    (4)
+//#define		TYPE_DOCUMENT			(5)
+//#define		TYPE_PLAYLIST			(7)
+//#define		TYPE_MUSICLIST			(9)
+//#define		TYPE_JPEG			    (10)
+//#define		TYPE_URL			    (11)
+#define		NO_RESPONSE_TIMEOUT		(300)
 
 #define		MULTI_ACCESS_MAX		(5)
 #define		TIMEOUT_SECOND			(300)

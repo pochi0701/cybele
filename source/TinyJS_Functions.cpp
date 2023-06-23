@@ -43,6 +43,9 @@ void headerCheckPrint(SOCKET mysocket, int* printed, wString* headerBuf, int fla
 wString _DBConnect(wString& database);
 int     _DBDisConnect(wString& key);
 wString _DBSQL(const wString& key, wString& sql);
+
+extern vector<multipart*> mp;
+
 // ----------------------------------------------- Actual Functions
 void js_print(CScriptVar* v, void* userdata) {
 	CTinyJS* js = static_cast<CTinyJS*>(userdata);
@@ -463,7 +466,8 @@ void scArrayJoin(CScriptVar* c, void* userdata) {
 void scFileExists(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString path = c->getParameter("path")->getString();
-	int flag = wString::FileExists(path);
+	//int flag = wString::FileExists(path);
+	int flag = path.FileExists();
 	c->getReturnVar()->setInt(flag);
 }
 //ディレクトリ存在チェック
@@ -567,9 +571,23 @@ void scLoadFromFile(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString path = c->getParameter("path")->getString();
 	wString data;
-	data.LoadFromFile(path);
-	c->getReturnVar()->setString(data);
-	c->getReturnVar()->setString(data);
+	if (path.FileExists())
+	{
+		data.LoadFromFile(path);
+		c->getReturnVar()->setString(data);
+	}
+	else {
+		//for (auto i = 0; i < mp.size() - 1; i++)
+		//{
+		//	if (path == mp[i]->name)
+		//	{
+		//		break;
+		//	}
+		//}
+		//data.LoadFromFile(path,)
+	}
+
+	//c->getReturnVar()->setString(data);
 }
 //CSV内容取得
 void scLoadFromCSV(CScriptVar* c, void* userdata) {

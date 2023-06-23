@@ -9,9 +9,7 @@
 //		$Date: 2018/02/12 21:11:00 $
 //
 // ==========================================================================
-#ifndef linux
-//#include <mem.h>
-#endif
+
 
 static unsigned char ToBase64tbl[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static unsigned char tmpout[256];
@@ -71,11 +69,6 @@ unsigned char* base64(unsigned char* instr)
 /// <returns>変換した文字列</returns>
 unsigned char* unbase64(unsigned char* instr)
 {
-	int s1;
-	int s2;
-	int s3;
-	int s4;
-
 	char FromBase64tbl[256] = { 0 };
 	unsigned char* p = tmpout;
 	//逆テーブルの作成,=も０になる
@@ -89,10 +82,10 @@ unsigned char* unbase64(unsigned char* instr)
 	10 14 09 03
 	*/
 	while (*instr) {
-		s1 = FromBase64tbl[*instr++];
-		s2 = FromBase64tbl[*instr++];
-		s3 = FromBase64tbl[*instr++];
-		s4 = FromBase64tbl[*instr++];
+		int s1 = FromBase64tbl[*instr++];
+		int s2 = FromBase64tbl[*instr++];
+		int s3 = FromBase64tbl[*instr++];
+		int s4 = FromBase64tbl[*instr++];
 		*p++ = (unsigned char)((s1 << 2) | (s2 >> 4));
 		*p++ = (unsigned char)(((s2 & 0x0f) << 4) | (s3 >> 2));
 		*p++ = (unsigned char)(((s3 & 0x03) << 6) | s4);

@@ -74,7 +74,7 @@ public:
 	int             Pos(const char* pattern, int pos = 0) const;
 	unsigned int    copy(char* str, unsigned int slen, int index) const;
 	wString&        replace(int index, unsigned int len, const wString& repstr);
-	wString         dump(void* ptr, int vlen);
+	wString         dump(void) const;
 
 	unsigned int    size(void) const;
 	unsigned int    length(void) const;
@@ -88,7 +88,6 @@ public:
 	wString         Trim(void);
 	wString         RTrim(void);
 	wString         LTrim(void);
-	//void            LTrim(void);
 	static void     Rtrimch(char* sentence, const unsigned char cut_char);
 	int             sprintf(const char* format, ...);
 	int             cat_sprintf(const char* format, ...);
@@ -134,6 +133,7 @@ public:
 	static wString  FileStats(const wString& str, int mode = 0);
 	static int      FileExists(const char* str);
 	static int      FileExists(const wString& str);
+	int             FileExists(void);
 	static wString  ExtractFileDir(wString& str);
 	static wString  ExtractFileName(const char* str, const char* delim = DELIMITER);
 	static wString  ExtractFileName(const wString& str, const char* delim = DELIMITER);
@@ -146,7 +146,7 @@ public:
 	static wString  EnumFolderjson(const wString& Path);
 	static bool     checkUrl(const wString& url);
 	int             LoadFromFile(const char* FileName);
-	void            LoadFromFile(const wString& str);
+	int             LoadFromFile(const wString& str);
 	void            LoadFromCSV(const char* FileName);
 	void            LoadFromCSV(const wString& str);
 	int             SaveToFile(const char* FileName);

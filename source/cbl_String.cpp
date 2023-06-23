@@ -44,22 +44,19 @@
 #include <time.h>
 #include "define.h"
 #ifndef strrstr
-//*********************************************************
-// strrstr()
-//   文字列 から 文字列 を検索する。
-//   最後 に現れた文字列の先頭を指す ポインタ を返す。
-//   文字列が見つからない場合は null を返す。
-//   pattern が 空文字列 の場合は常に 文字列終端 を返す。
-//   文字列終端文字 '\0' は検索対象とならない。
-//   半角英字 の 大文字と小文字 を区別する。
-//
-// const char *string
-//   検索対象となる文字列
-//
-// const char *pattern
-//   文字列から検索する文字列
-//
-//*********************************************************
+///---------------------------------------------------------------------------
+/// <summary>
+/// strrstr()
+///   文字列 から 文字列 を検索する。
+///   最後 に現れた文字列の先頭を指す ポインタ を返す。
+///   文字列が見つからない場合は null を返す。
+///   pattern が 空文字列 の場合は常に 文字列終端 を返す。
+///   文字列終端文字 '\0' は検索対象とならない。
+///   半角英字 の 大文字と小文字 を区別する。
+/// </summary>
+/// <param name="string">検索対象となる文字列</param>
+/// <param name="pattern">文字列から検索する文字列</param>
+/// <returns></returns>
 char* // 文字列へのポインタ
 strrstr(const char* string, const char* pattern)
 {
@@ -78,12 +75,10 @@ strrstr(const char* string, const char* pattern)
 	return (char*)last;
 }//strrstr
 #endif
-//---------------------------------------------------------------------------
-//source
-//---------------------------------------------------------------------------
-const int wString::npos = (int)(-1);
-//---------------------------------------------------------------------------
 
+/// <summary>検索失敗時の値</summary>
+const int wString::npos = (int)(-1);
+///---------------------------------------------------------------------------
 /// <summary>
 /// 文字列クラス　ディフォールトコンストラクタ
 /// </summary>
@@ -95,7 +90,7 @@ wString::wString(void)
 	String = static_cast<char*>(new char[1]);
 	*String = 0;
 }
-
+///---------------------------------------------------------------------------
 /// <summary>
 /// 文字列クラス文字数指定（内容は０）
 /// </summary>
@@ -110,7 +105,7 @@ wString::wString(int mylen)
 	String = static_cast<char*>(new char[mylen + 1]);
 	*String = 0;
 }
-
+///---------------------------------------------------------------------------
 /// <summary>
 /// 文字列クラス文字列コンストラクタ
 /// </summary>
@@ -130,8 +125,11 @@ wString::wString(const char* str)
 		String[0] = 0;
 	}
 }
-//---------------------------------------------------------------------------
-//コピーコンストラクタ
+///---------------------------------------------------------------------------
+/// <summary>
+/// コピーコンストラクタ
+/// </summary>
+/// <param name="str">コピーする文字列</param>
 wString::wString(const wString& str)
 {
 	//初期化
@@ -148,60 +146,77 @@ wString::wString(const wString& str)
 		String[0] = 0;
 	}
 }
-//---------------------------------------------------------------------------
-//デストラクタ
+///---------------------------------------------------------------------------
+/// <summary>
+/// デストラクタ
+/// </summary>
 wString::~wString()
 {
 	delete[] String;
 }
-//---------------------------------------------------------------------------
-//ディープコピーメソッド
-//void wString::copy(wString* dst,const wString* src)
-//{
-//    src->resize(src->total);
-//    memcpy( dst->String, src->String, src->total);
-//    dst->len = src->len;
-//}
-//---------------------------------------------------------------------------
-//ディープコピーメソッド
-//void wString::copy(wString* dst,const wString& src)
-//{
-//    dst->resize(src.total);
-//    memcpy( dst->String, src.String, src.total);
-//    dst->len = src.len;
-//}
-//---------------------------------------------------------------------------
+///---------------------------------------------------------------------------
+/// <summary>
+/// プラスメソッドa+b
+/// </summary>
+/// <param name="str">プラスするwString</param>
+/// <returns>プラス結果</returns>
 wString wString::operator+(const wString& str) const
 {
 	wString temp(*this);
 	temp += str;
 	return temp;
 }
-//---------------------------------------------------------------------------
+///---------------------------------------------------------------------------
+/// <summary>
+/// プラスメソッドa+b
+/// </summary>
+/// <param name="str">プラスする文字列</param>
+/// <returns>プラス結果</returns>
 wString wString::operator+(const char* str) const
 {
 	wString temp(*this);
 	temp += str;
 	return temp;
 }
-//---------------------------------------------------------------------------
+///---------------------------------------------------------------------------
+/// <summary>
+/// プラスメソッド+(a,b)
+/// </summary>
+/// <param name="str1">元文字列</param>
+/// <param name="str2">プラスするwString</param>
+/// <returns>プラス結果</returns>
 wString operator+(const char* str1, const wString str2)
 {
 	wString temp(str1);
 	temp += str2;
 	return temp;
 }
+///---------------------------------------------------------------------------
+
 //---------------------------------------------------------------------------
+
+/// <summary>
+/// プラスメソッドa+=b
+/// </summary>
+/// <param name="str">プラスするwString</param>
 void wString::operator+=(const wString& str)
 {
 	unsigned int newLen = len + str.len;
-	resize(newLen + 1);
+	resize(newLen);
 	memcpy(String + len, str.String, str.len);
 	String[newLen] = 0;
 	len = newLen;
 	return;
 }
+///---------------------------------------------------------------------------
+
 //---------------------------------------------------------------------------
+
+
+/// <summary>
+/// プラスメソッドa+=b
+/// </summary>
+/// <param name="str">プラスする文字列</param>
 void wString::operator+=(const char* str)
 {
 	auto slen = static_cast<unsigned int>(strlen(str));
@@ -211,21 +226,22 @@ void wString::operator+=(const char* str)
 	len = newLen;
 	return;
 }
-//---------------------------------------------------------------------------
-
+///---------------------------------------------------------------------------
 /// <summary>
-/// バイナリ文字列の設定
+/// バイナリ文字列の設定a.setBinary(mem,len)
 /// </summary>
 /// <param name="mem">設定バイナリ</param>
 /// <param name="addLen">設定長さ</param>
-void wString::setBinary(const void* mem,int binaryLength)
+void wString::setBinary(const void* mem, int binaryLength)
 {
 	auto newLen = binaryLength + len;
 	resize(newLen);
-	memcpy((void*)(String + len), mem, binaryLength);
+	memcpy(static_cast<void*>(String + len), mem, binaryLength);
 	len = newLen;
 	return;
 }
+///---------------------------------------------------------------------------
+
 //---------------------------------------------------------------------------
 /// <summary>
 /// 先頭文字列の比較（バイナリ非対応）
@@ -236,6 +252,8 @@ bool wString::startsWith(const char* needle)
 {
 	return strstr(String, needle) == String;
 }
+///---------------------------------------------------------------------------
+
 //---------------------------------------------------------------------------
 void wString::operator+=(const char ch)
 {
@@ -245,6 +263,8 @@ void wString::operator+=(const char ch)
 	String[len] = 0;
 	return;
 }
+///---------------------------------------------------------------------------
+
 //---------------------------------------------------------------------------
 bool wString::operator==(const wString& str) const
 {
@@ -253,6 +273,8 @@ bool wString::operator==(const wString& str) const
 	}
 	return(strncmp(String, str.String, len) == 0);
 }
+///---------------------------------------------------------------------------
+
 //---------------------------------------------------------------------------
 bool wString::operator==(const char* str) const
 {
@@ -262,6 +284,8 @@ bool wString::operator==(const char* str) const
 	}
 	return(strncmp(String, str, len) == 0);
 }
+///---------------------------------------------------------------------------
+
 //---------------------------------------------------------------------------
 bool wString::operator!=(const wString& str) const
 {
@@ -592,9 +616,9 @@ unsigned int wString::length(void) const
 /// ファイル読み込み
 /// </summary>
 /// <param name="str">読み込むファイルのフルファイル名</param>
-void wString::LoadFromFile(const wString& str)
+int wString::LoadFromFile(const wString& str)
 {
-	LoadFromFile(str.String);
+	return LoadFromFile(str.String);
 }
 //---------------------------------------------------------------------------
 // ファイル読み込み
@@ -928,6 +952,11 @@ int wString::FileExists(const wString& str)
 	return FileExists(str.String);
 }
 //---------------------------------------------------------------------------
+int wString::FileExists(void)
+{
+	return FileExists(String);
+}
+//---------------------------------------------------------------------------
 //パス部分を抽出
 wString wString::ExtractFileDir(wString& str)
 {
@@ -1169,13 +1198,14 @@ wString wString::EnumFolderjson(const wString& Path)
 	return temp;
 #else
 	DIR* dir;
-	struct dirent* ent;
 	wString              temp;
 	wString              Path2;
-	std::vector<wString> list;
+
 	Path2 = Path;
 	//Directoryオープン
 	if ((dir = opendir(Path.String)) != NULL) {
+		struct dirent* ent;
+		std::vector<wString> list;
 		//ファイルリスト
 		while ((ent = readdir(dir)) != NULL) {
 			if (strcmp(ent->d_name, ".") != 0 &&
@@ -1208,13 +1238,15 @@ wString wString::EnumFolderjson(const wString& Path)
 	return temp;
 #endif
 }
-wString wString::dump(void* ptr, int vlen)
+wString wString::dump() const
 {
 	wString tmp;
-	char* out = static_cast<char*>(ptr);
+	void* ptr = String;
+	int vlen = len;
+	unsigned char* out = static_cast<unsigned char*>(ptr);
 	for (int start = 0; start < vlen; start += 16)
 	{
-		tmp.cat_sprintf( "%04d:", start);
+		tmp.cat_sprintf("%04d:", start);
 		for (int line = start; line < start + 16 && line < vlen; line++)
 		{
 			tmp.cat_sprintf("%02X ", out[line]);
@@ -1231,8 +1263,8 @@ wString wString::dump(void* ptr, int vlen)
 			}
 		}
 		tmp.cat_sprintf("\r\n");
-		return tmp;
 	}
+	return tmp;
 }
 
 //---------------------------------------------------------------------------
@@ -1356,7 +1388,7 @@ int wString::vtsprintf(const char* fmt, va_list arg) {
 				size = tsprintf_string(va_arg(arg, char*));
 				break;
 			default:        /* コントロールコード以外の文字 */
-			/* %%(%に対応)はここで対応される */
+				/* %%(%に対応)はここで対応される */
 				len++;
 				*this += *fmt;
 				break;
@@ -1638,7 +1670,7 @@ int wString::sprintf(const char* format, ...)
 	len = stat;
 	return stat;
 #endif
-	}
+}
 //---------------------------------------------------------------------------
 //wString 可変引数
 int wString::cat_sprintf(const char* format, ...)
@@ -1668,16 +1700,13 @@ int wString::cat_sprintf(const char* format, ...)
 #endif
 }
 //---------------------------------------------------------------------------
-//文字列をデリミタで切って、デリミタ後の文字を返す
-//引数
-//wString str           :入力文字列
-//const char* delimstr  :切断文字列
-//戻り値
-//wString               :切断後の文字列
-//見つからない場合は長さ０の文字列
+/// <summary>
+/// 文字列をデリミタで切って、デリミタ後の文字を返す
+/// </summary>
+/// <param name="delimstr">切断文字列</param>
+/// <returns>切断後の文字列。見つからない場合は長さ０の文字列</returns>
 wString wString::strsplit(const char* delimstr)
 {
-
 	wString tmp;
 	char* ptr = c_str();
 	auto delimlen = (int)strlen(delimstr);
@@ -1690,7 +1719,7 @@ wString wString::strsplit(const char* delimstr)
 			{
 				ptr[i] = 0;
 				tmp.Add(&ptr[start]);
-				start = i+1;
+				start = i + 1;
 				break;
 			}
 		}
@@ -1700,15 +1729,6 @@ wString wString::strsplit(const char* delimstr)
 		tmp.Add(&ptr[start]);
 	}
 	return tmp;
-/*
-
-
-
-	auto pos = Pos(delimstr);
-	if (pos != npos) {
-		tmp = substr(pos + delimlen);
-	}
-	return tmp*/;
 }
 //---------------------------------------------------------------------------
 //
@@ -1982,7 +2002,7 @@ wString wString::nkfcnv(const wString& option)
 	//=================================================
 	// libnkf 実行
 	//=================================================
-	nkf((const char*)String, (char*)ptr.c_str(), len * 3, (const char*)option.c_str());
+	nkf(static_cast<const char*>(String), static_cast<char*>(ptr.c_str()), len * 3, static_cast<const char*>(option.c_str()));
 	// 文字列の長さの調整
 	ptr.len = (unsigned int)strlen(ptr.c_str());
 	return ptr;
@@ -2124,7 +2144,7 @@ wString wString::GetListString(int pos)
 #define HTTP_STR_BUF_SIZE (1024)
 wString wString::HTTPGet(const wString& url, off_t offset)
 {
-	int         recv_len;                       //読み取り長さ
+	//int         recv_len;                       //読み取り長さ
 	wString     buf;
 	wString     ptr;
 	wString     host;                           //ホスト名
@@ -2180,7 +2200,7 @@ wString wString::HTTPGet(const wString& url, off_t offset)
 		if (send(server_socket, ptr.String, ptr.len, 0) != SOCKET_ERROR) {
 
 			//初回分からヘッダを削除
-			recv_len = recv(server_socket, ptr.String, ptr.Total() - 1, 0);
+			auto recv_len = recv(server_socket, ptr.String, ptr.Total() - 1, 0);
 			ptr.String[recv_len] = 0;
 			ptr.len = recv_len;
 			//見つからない
@@ -2232,7 +2252,7 @@ wString wString::HTTPGet(const wString& url, off_t offset)
 wString wString::HTTPRest(const wString& methods, const wString& url, const wString& data)
 {
 	//static char* methods[5]={"HEAD","GET","POST","PUT","DELETE"};
-	int         recv_len;                       //読み取り長さ
+	//int         recv_len;                       //読み取り長さ
 	wString     buf;
 	wString     ptr;
 	wString     host;                           //ホスト名
@@ -2303,6 +2323,7 @@ wString wString::HTTPRest(const wString& methods, const wString& url, const wStr
 			ptr.SetLength(HTTP_STR_BUF_SIZE + 1);
 			char buff[1024];
 			ptr = "";
+			int recv_len;
 			//初回分からヘッダを削除
 			for (;;) {
 				recv_len = recv(server_socket, buff, sizeof(buff) - 1, 0);
@@ -2401,7 +2422,7 @@ SOCKET wString::sock_connect(const char* host, const int port)
 bool wString::checkUrl(const wString& url)
 {
 	wString buf;
-	int     recv_len;
+	//int     recv_len;
 	bool    access_flag = false;
 	wString host_name;
 	wString file_path;
@@ -2431,7 +2452,7 @@ bool wString::checkUrl(const wString& url)
 		int dd = send(server_socket, buf.c_str(), buf.Length(), 0);
 		if (dd != SOCKET_ERROR) {
 			buf.SetLength(1024);
-			recv_len = recv(server_socket, buf.c_str(), buf.Total() - 1, 0);
+			auto recv_len = recv(server_socket, buf.c_str(), buf.Total() - 1, 0);
 			buf.ResetLength(recv_len);
 			//見つからない
 			ptr = atoi(buf.String + (buf.Pos(" ") + 1));
@@ -2449,7 +2470,7 @@ bool wString::checkUrl(const wString& url)
 int wString::HTTPSize(const wString& url)
 {
 
-	int         recv_len;                       //読み取り長さ
+	//int         recv_len;                       //読み取り長さ
 	wString     buf;
 	int         work1;
 	int         work2;
@@ -2501,7 +2522,7 @@ int wString::HTTPSize(const wString& url)
 		if (send(server_socket, buf.c_str(), buf.Length(), 0) != SOCKET_ERROR) {
 			//初回分からヘッダを削除
 			buf.SetLength(HTTP_STR_BUF_SIZE);
-			recv_len = recv(server_socket, buf.c_str(), buf.Total() - 1, 0);
+			auto recv_len = recv(server_socket, buf.c_str(), buf.Total() - 1, 0);
 			//\r\n\r\nを探す
 			buf.ResetLength(recv_len);      //糸止め
 			work1 = atoi(buf.String + (buf.Pos(" ") + 1));
@@ -2659,7 +2680,13 @@ wString& wString::replace(int index, unsigned int slen, const wString& repstr)
 	}
 	return *this;
 }
+
 #define ToBase64tbl "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+/// <summary>
+/// BASE64エンコード
+/// </summary>
+/// <param name="">エンコードする文字列</param>
+/// <returns>エンコードした文字列</returns>
 wString wString::base64(void)
 {
 	wString tmpout;
@@ -2698,14 +2725,14 @@ wString wString::base64(void)
 	}
 	return tmpout;
 }
+/// <summary>
+/// BASE64デコード
+/// </summary>
+/// <param name="">デコードする文字列</param>
+/// <returns>デコードされた文字列</returns>
 wString wString::unbase64(void)
 {
 	unsigned char* instr = reinterpret_cast<unsigned char*>(String);
-
-	int s1;
-	int s2;
-	int s3;
-	int s4;
 
 	char FromBase64tbl[256] = { 0 };
 	wString tmpout;
@@ -2720,10 +2747,10 @@ wString wString::unbase64(void)
 	10 14 09 03
 	*/
 	while (*instr) {
-		s1 = FromBase64tbl[*instr++];
-		s2 = FromBase64tbl[*instr++];
-		s3 = FromBase64tbl[*instr++];
-		s4 = FromBase64tbl[*instr++];
+		int s1 = FromBase64tbl[*instr++];
+		int s2 = FromBase64tbl[*instr++];
+		int s3 = FromBase64tbl[*instr++];
+		int s4 = FromBase64tbl[*instr++];
 		tmpout += (char)((s1 << 2) | (s2 >> 4));
 		tmpout += (char)(((s2 & 0x0f) << 4) | (s3 >> 2));
 		tmpout += (char)(((s3 & 0x03) << 6) | s4);
@@ -2751,7 +2778,7 @@ int wString::LineRcv(SOCKET accept_socket)
 			else {
 				return -1;
 			}
-			}
+		}
 		else if (recv_len < 0) { // 受信失敗チェック
 #ifdef linux
 			debug_log_output("header read error cnt = %d error=%s\n", recv_len, strerror(errno));
@@ -2771,9 +2798,9 @@ int wString::LineRcv(SOCKET accept_socket)
 			// バッファにセット
 			*this += (char)byte_buf;
 		}
-		}
-	return len;
 	}
+	return len;
+}
 //***************************************************************************
 // sentence文字列の、cut_charが最初に出てきた所から前を削除
 // もし、cut_charがsentence文字列に入っていなかった場合、文字列全部削除
@@ -2808,11 +2835,12 @@ void   wString::cut_after_character(const char cut_char)
 	return;
 }
 //////////////////////////////////////////////////////////////////////////
-// 最初に出て来たcut_charの前後を分割。
-// pattern:切り出し文字列
-// split1:前の文字列&元の文字列
-// split2:後の文字列
-//////////////////////////////////////////////////////////////////////////
+/// <summary>
+/// pos位置に指定文字を挿入(バイナリ単位）
+/// </summary>
+/// <param name="pos">挿入位置</param>
+/// <param name="fill">挿入文字</param>
+/// <returns>挿入された文字</returns>
 wString wString::insert(int pos, const wString& fill)
 {
 	wString str1;

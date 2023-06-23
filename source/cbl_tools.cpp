@@ -43,19 +43,12 @@ static char debug_log_initialize_flag = (1);	// デバッグログ初期化フ�
 static void cut_before_n_length(char* sentence, unsigned int n);
 static void cut_after_n_length(char* sentence, unsigned int n);
 
-char* seekCRLF(char* start, char* end)
-{
-	while (start <= end-2)
-	{
-		if (*start++ == '\r')
-		{
-			if (*start++ == '\n')
-			{
-				return start;
-			}
-		}
-	}
-}
+/// <summary>
+/// CRLFCRLFのパターンを見つけて文字列化
+/// </summary>
+/// <param name="start">開始ポインタ</param>
+/// <param name="end">終端ポインタ</param>
+/// <returns>パターンのエンドポイント</returns>
 char* seekCRLFCRLF(char* start, char* end)
 {
 	while (start <= end-4)
@@ -89,7 +82,7 @@ char* seekCRLFCRLF(char* start, char* end)
 /// <returns></returns>
 void* memmem(const void* haystack, size_t haystacklen, const void* needle, size_t needlelen)
 {
-	const char* begin = (const char*)haystack;
+	const char* begin = static_cast<const char*>(haystack);
 	const char* last = begin + haystacklen - needlelen;
 
 	if (needlelen == 0) {
@@ -131,29 +124,6 @@ bool split(const char* pattern, wString& split1, wString& split2)
 /********************************************************************************/
 void replace_character(char* sentence, const char* key, const char* rep)
 {
-#if 0
-	int sentence_buf_size = 4096;
-	int malloc_size;
-	char* p, * buf;
-	if (strlen(key) == 0) {
-		return;
-	}
-	malloc_size = strlen(sentence) * 4;
-	buf = mymalloc(malloc_size);
-	if (buf == NULL)
-		return;
-	p = strstr(sentence, key);
-	while (p != NULL) {
-		*p = '\0';
-		strncpy(buf, p + strlen(key), malloc_size);
-		strncat(sentence, rep, sentence_buf_size - strlen(sentence));
-		strncat(sentence, buf, sentence_buf_size - strlen(sentence));
-		p = strstr(p + strlen(rep), key);
-	}
-	myfree(buf);
-	return;
-
-#else
 	int klen = (int)strlen(key);
 	int rlen = (int)strlen(rep);
 	int slen = (int)strlen(sentence);
@@ -200,7 +170,6 @@ void replace_character(char* sentence, const char* key, const char* rep)
 	}
 	//myfree(buf);
 	return;
-#endif
 }
 /// <summary>
 /// entence文字列内の最初のkey文字列をrep文字列で置換する。
@@ -261,88 +230,6 @@ char* cut_after_character(char* sentence, char cut_char)
 	}
 	return symbol_p;
 }
-#if 0
-//***************************************************************************
-// sentence文字列の、cut_charが最初に出てきた所から前を削除
-// もし、cut_charがsentence文字列に入っていなかった場合、文字列全部削除
-//***************************************************************************
-void    cut_before_character(char* sentence, char cut_char)
-{
-	char* symbol_p;
-	char* malloc_p;
-	int                 sentence_len;
-	if (sentence == NULL || *sentence == 0) {
-		return;
-	}
-	sentence_len = strlen(sentence);
-	// 削除対象キャラクターが最初に出てくる所を探す。
-	symbol_p = strchr(sentence, cut_char);
-	if (symbol_p == NULL) {
-		// 発見できなかった場合、文字列全部削除。
-		strncpy(sentence, "", sentence_len);
-		return;
-	}
-	symbol_p++;
-	// テンポラリエリアmalloc.
-	malloc_p = (char*)malloc(sentence_len + 10);
-	if (malloc_p == NULL) {
-		return;
-	}
-	// 削除対象キャラクターの後ろから最後までの文字列をコピー
-	strncpy(malloc_p, symbol_p, sentence_len + 10);
-	// sentence書き換え
-	strncpy(sentence, malloc_p, sentence_len);
-	free(malloc_p);
-	return;
-}
-//************************************************************************
-// sentence文字列の、cut_charが最後に出てきた所から前を削除
-// もし、cut_charがsentence文字列に入っていなかった場合、なにもしない。
-//************************************************************************
-void    cut_before_last_character(char* sentence, char cut_char)
-{
-#if 1
-	char* p;
-	if (sentence == NULL || *sentence == 0) {
-		return;
-	}
-	// 削除対象キャラクターが最後に出てくる所を探す。
-	p = strrchr(sentence, cut_char);
-	if (p++) {
-		// 削除対象キャラクターの後ろから最後までの文字列をコピー
-		while (*p) {
-			*sentence++ = *p++;
-		}
-		*sentence = 0;
-	}
-#else
-	char* symbol_p;
-	char* malloc_p;
-	int                         sentence_len;
-	if (sentence == NULL || *sentence == 0)
-		return;
-	sentence_len = strlen(sentence);
-	// 削除対象キャラクターが最後に出てくる所を探す。
-	symbol_p = strrchr(sentence, cut_char);
-	if (symbol_p == NULL) {
-		// 発見できなかった場合、なにもしない。
-		return;
-	}
-	symbol_p++;
-	// テンポラリエリアmalloc.
-	malloc_p = (char*)mymalloc(sentence_len + 10);
-	if (malloc_p == NULL) {
-		return;
-	}
-	// 削除対象キャラクターの後ろから最後までの文字列をコピー
-	strncpy(malloc_p, symbol_p, sentence_len + 10);
-	// sentence書き換え
-	strncpy(sentence, malloc_p, sentence_len);
-	myfree(malloc_p);
-	return;
-#endif
-}
-#endif
 //************************************************************************
 // sentence文字列の、cut_charが最後に出てきた所から後ろをCUT
 // もし、cut_charがsentence文字列に入っていなかった場合、文字列全部削除。
@@ -362,9 +249,12 @@ void 	cut_after_last_character(char* sentence, char cut_char)
 	}
 	*symbol_p = '\0';
 }
-//******************************************************************
-// sentenceの、後ろ n byteを残して削除。
-//******************************************************************
+
+/// <summary>
+/// sentenceの、後ろ n byteを残して削除。
+/// </summary>
+/// <param name="sentence">対象文字列</param>
+/// <param name="n">バイト数</param>
 void    cut_before_n_length(char* sentence, unsigned int n)
 {
 #if 0
@@ -401,10 +291,12 @@ void    cut_before_n_length(char* sentence, unsigned int n)
 	return;
 #endif
 }
-//******************************************************************
-// sentenceの、後ろ n byteを削除
-//  全長がn byteに満たなかったら、文字列全部削除
-//******************************************************************
+/// <summary>
+/// sentenceの、後ろ n byteを削除
+/// 全長がn byteに満たなかったら、文字列全部削除
+/// </summary>
+/// <param name="sentence"></param>
+/// <param name="n"></param>
 void    cut_after_n_length(char* sentence, unsigned int n)
 {
 	if (sentence == NULL || *sentence == 0) {
@@ -424,12 +316,13 @@ void    cut_after_n_length(char* sentence, unsigned int n)
 	*work_p = '\0';
 	return;
 }
-//******************************************************************
-// sentence文字列の、cut_charを抜く。
-//******************************************************************
+/// <summary>
+/// sentence文字列の、cut_charを抜く。
+/// </summary>
+/// <param name="sentence">対象文字列</param>
+/// <param name="cut_char">カットする文字</param>
 void    cut_character(char* sentence, char cut_char)
 {
-#if 1
 	char* work1;
 	char* work2;
 	if (sentence == NULL || *sentence == 0) {
@@ -450,39 +343,6 @@ void    cut_character(char* sentence, char cut_char)
 	// '\0' をコピー。
 	*work2 = '\0';
 	return;
-#else
-	char* symbol_p;
-	char* malloc_p;
-	char* work_p;
-	int                         sentence_len;
-	if (sentence == NULL || *sentence == 0)
-		return;
-	sentence_len = strlen(sentence);
-	// テンポラリエリアmalloc.
-	malloc_p = mymalloc(sentence_len + 10);
-	if (malloc_p == NULL)
-		return;
-	symbol_p = sentence;
-	work_p = malloc_p;
-	// 処理ループ。
-	while (*symbol_p != '\0') {
-		// 削除対象のキャラクターがいたら、それを飛ばす。
-		if (*symbol_p == cut_char) {
-			symbol_p++;
-		}
-		else {// 削除対象キャラクター意外だったら、コピー。
-			*work_p = *symbol_p;
-			work_p++;
-			symbol_p++;
-		}
-	}
-	// '\0' をコピー。
-	*work_p = *symbol_p;
-	// sentence書き換え
-	strncpy(sentence, malloc_p, sentence_len);
-	myfree(malloc_p);
-	return;
-#endif
 }
 /// <summary>
 /// 文字列の左端文字削除
@@ -491,7 +351,6 @@ void    cut_character(char* sentence, char cut_char)
 /// <param name="cut_char">削除文字（省略値=' '）</param>
 void ltrim(char* sentence, char cut_char)
 {
-#if 1
 	char* p = sentence;
 	if (sentence == NULL || *sentence == 0) {
 		return;
@@ -510,29 +369,6 @@ void ltrim(char* sentence, char cut_char)
 		//strcpy((char*)sentence, (char*)p);
 	}
 	return;
-#else
-	char* malloc_p;
-	char* work_p;
-	int                         sentence_len;
-	if (sentence == NULL || *sentence == 0)
-		return;
-	sentence_len = strlen(sentence);
-	// テンポラリエリアmalloc.
-	malloc_p = (char*)mymalloc(1024);//sentence_len + 10);
-	if (malloc_p == NULL) {
-		return;
-	}
-	strncpy(malloc_p, sentence, sentence_len + 10);
-	work_p = malloc_p;
-	// 削除対象キャラクターがあるかぎり進める。
-	while ((*work_p == cut_char) && (*work_p != '\0')) {
-		work_p++;
-	}
-	// sentence書き換え
-	strncpy(sentence, work_p, sentence_len);
-	myfree(malloc_p);
-	return;
-#endif
 }
 
 /// <summary>
@@ -564,7 +400,6 @@ void rtrim(char* sentence, char cut_char)
 /********************************************************************************/
 void duplex_character_to_unique(char* sentence, char unique_char)
 {
-#if 1
 	char* p1;
 	char* p2;
 	int                 unique_char_count = 0;
@@ -594,45 +429,6 @@ void duplex_character_to_unique(char* sentence, char unique_char)
 	}
 	*p2 = '\0';
 	return;
-#else
-	char* source_p, * work_p;
-	char* work_malloc_p;
-	char       unique_char_count = 0;
-	int                         org_sentence_len;
-	if (sentence == NULL || *sentence == 0) {
-		return;
-	}
-	// オリジナル文字列長を保存。
-	org_sentence_len = strlen(sentence);
-	// ワークバッファ確保。
-	work_malloc_p = (char*)mymalloc(org_sentence_len + 10);
-	if (work_malloc_p == NULL) {
-		return;
-	}
-	source_p = sentence;
-	work_p = work_malloc_p;
-	// sensense文字列から、unique_char以外をワークへコピー。
-	while (*source_p != '\0') {
-		if (*source_p == unique_char) {// unique_char発見
-			if (unique_char_count == 0) {// 最初の一つならコピー。それ以外ならスキップ。
-				*work_p = *source_p;
-				work_p++;
-			}
-			unique_char_count++;
-		}
-		else {// unique_char 以外ならコピー。
-			unique_char_count = 0;
-			*work_p = *source_p;
-			work_p++;
-		}
-		source_p++;
-	}
-	*work_p = '\0';
-	// ワークから、sentenceへ、結果を書き戻す。
-	strncpy(sentence, work_malloc_p, org_sentence_len);
-	myfree(work_malloc_p);    // Mem Free.
-	return;
-#endif
 }
 //*********************************************************
 // sentence文字列より、最初に出て来たcut_charの前後を分割。
@@ -649,7 +445,6 @@ void duplex_character_to_unique(char* sentence, char unique_char)
 //*********************************************************
 int sentence_split(char* sentence, char cut_char, char* split1, char* split2)
 {
-#if 1
 	char* p = sentence;
 	char* pos;
 	// エラーチェック。
@@ -680,42 +475,6 @@ int sentence_split(char* sentence, char cut_char, char* split1, char* split2)
 	*split1 = 0;
 	*split2 = 0;
 	return 0; // 正常終了。
-#else
-	char* p;
-	char* malloc_p;
-	int                         sentence_len;
-	// エラーチェック。
-	if (sentence == NULL || *sentence == 0 ||
-		split1 == NULL ||
-		split2 == NULL) {
-		return 1;       // 引数にNULLまじり。
-	}
-	// sentence の長さをGet.
-	sentence_len = strlen(sentence);
-	// ワーク領域malloc.
-	malloc_p = mymalloc(sentence_len + 10);
-	if (malloc_p == NULL) {
-		// malloc 失敗。エラー。
-		return 1;
-	}
-	// sentence文字列をワークにコピー。
-	strncpy(malloc_p, sentence, sentence_len + 10);
-	// sentence 内に、cut_char が有るかチェック。無ければエラー。
-	p = strchr(malloc_p, cut_char);
-	if (p == NULL) {
-		myfree(malloc_p);
-		return 1;       // 分割文字発見できず。
-	}
-	// cut_charより、後ろをカット。
-	*p = '\0';
-	// 前半部分をコピー。
-	strncpy(split1, malloc_p, sentence_len);
-	// 後半部分をコピー。
-	p++;
-	strncpy(split2, p, sentence_len);
-	myfree(malloc_p);
-	return 0; // 正常終了。
-#endif
 }
 //******************************************************************
 // filenameから、拡張子を取り出す('.'も消す）
@@ -742,44 +501,44 @@ void filename_to_extension(char* filename, char* extension_buf, unsigned int ext
 // 次の行の頭のポインタをreturn。
 // Errorか'\0'が現れたらNULLが戻る。
 // **************************************************************************
-char* buffer_distill_line(char* text_buf_p, char* line_buf_p, unsigned int line_buf_size)
-{
-	char* p;
-	unsigned int                counter = 0;
-	p = text_buf_p;
-	// ------------------
-	// CR/LF '\0'を探す
-	// ------------------
-	while (1) {
-		if (*p == '\r') { // CR
-			p++;
-			continue;
-		}
-		if (*p == '\n') { // LF
-			p++;
-			break;
-		}
-		if (*p == '\0') {
-			break;
-		}
-		p++;
-		counter++;
-	}
-	// --------------------------------------------------
-	// 数えた文字数だけ、line_buf_p に文字列をコピー
-	// --------------------------------------------------
-	memset(line_buf_p, '\0', line_buf_size);
-	if (counter >= line_buf_size) {
-		counter = (line_buf_size - 1);
-	}
-	strncpy(line_buf_p, text_buf_p, counter);
-	if (*p == '\0') {
-		return NULL;            // バッファの最後
-	}
-	else {
-		return p;               // バッファの途中
-	}
-}
+//char* buffer_distill_line(char* text_buf_p, char* line_buf_p, unsigned int line_buf_size)
+//{
+//	char* p;
+//	unsigned int                counter = 0;
+//	p = text_buf_p;
+//	// ------------------
+//	// CR/LF '\0'を探す
+//	// ------------------
+//	while (1) {
+//		if (*p == '\r') { // CR
+//			p++;
+//			continue;
+//		}
+//		if (*p == '\n') { // LF
+//			p++;
+//			break;
+//		}
+//		if (*p == '\0') {
+//			break;
+//		}
+//		p++;
+//		counter++;
+//	}
+//	// --------------------------------------------------
+//	// 数えた文字数だけ、line_buf_p に文字列をコピー
+//	// --------------------------------------------------
+//	memset(line_buf_p, '\0', line_buf_size);
+//	if (counter >= line_buf_size) {
+//		counter = (line_buf_size - 1);
+//	}
+//	strncpy(line_buf_p, text_buf_p, counter);
+//	if (*p == '\0') {
+//		return NULL;            // バッファの最後
+//	}
+//	else {
+//		return p;               // バッファの途中
+//	}
+//}
 // **************************************************************************
 //  URIエンコードを行います.
 //  機能 : URIデコードを行う
@@ -791,54 +550,54 @@ char* buffer_distill_line(char* text_buf_p, char* line_buf_p, unsigned int line_
 //                 src_len 変換元の文字の長さ.
 //  返値 : エンコードした文字の数(そのままも含む)
 // **************************************************************************
-int uri_encode(char* dst, unsigned int dst_len, const char* src, unsigned int src_len)
-{
-	unsigned int idx_src;
-	unsigned int idx_dst;
-	int cnt;
-	// 引数チェック
-	if ((dst == NULL) || (dst_len < 1) || (src == NULL) || (src_len < 1)) {
-		return 0;
-	}
-	cnt = 0;
-	for (idx_src = idx_dst = 0; (idx_src < src_len) && (idx_dst < dst_len) && (src[idx_src] != '\0'); idx_src++) {
-		/* ' '(space) はちと特別扱いにしないとまずい */
-		if (src[idx_src] == ' ') {
-			//dst[idx_dst++] = '+';
-			dst[idx_dst++] = '%';
-			dst[idx_dst++] = '2';
-			dst[idx_dst++] = '0';
-		}
-		/* エンコードしない文字全員集合 */
-		else if (strchr("!$()*,-./:;?@[]^_`{}~", src[idx_src]) != NULL) {
-			dst[idx_dst] = src[idx_src];
-			idx_dst += 1;
-		}
-		/* アルファベットと数字はエンコードせずそのまま */
-		else if (isalnum(src[idx_src])) {
-			dst[idx_dst] = src[idx_src];
-			idx_dst += 1;
-		}
-		/* \マークはエンコード */
-		else if (strchr(DELIMITER, src[idx_src]) != NULL) {
-			dst[idx_dst++] = '%';
-			dst[idx_dst++] = '5';
-			dst[idx_dst++] = 'C';
-		}
-		/* それ以外はすべてエンコード */
-		else {
-			if ((idx_dst + 3) > dst_len)
-				break;
-			idx_dst += sprintf(&dst[idx_dst], "%%%2X", (unsigned char)(src[idx_src]));
-		}
-		cnt++;
-		if ((idx_dst + 1) < dst_len) {
-			dst[idx_dst] = '\0';
-		}
-	}
-	return cnt;
-	// 2004/10/01 Update end
-}
+//int uri_encode(char* dst, unsigned int dst_len, const char* src, unsigned int src_len)
+//{
+//	unsigned int idx_src;
+//	unsigned int idx_dst;
+//	int cnt;
+//	// 引数チェック
+//	if ((dst == NULL) || (dst_len < 1) || (src == NULL) || (src_len < 1)) {
+//		return 0;
+//	}
+//	cnt = 0;
+//	for (idx_src = idx_dst = 0; (idx_src < src_len) && (idx_dst < dst_len) && (src[idx_src] != '\0'); idx_src++) {
+//		/* ' '(space) はちと特別扱いにしないとまずい */
+//		if (src[idx_src] == ' ') {
+//			//dst[idx_dst++] = '+';
+//			dst[idx_dst++] = '%';
+//			dst[idx_dst++] = '2';
+//			dst[idx_dst++] = '0';
+//		}
+//		/* エンコードしない文字全員集合 */
+//		else if (strchr("!$()*,-./:;?@[]^_`{}~", src[idx_src]) != NULL) {
+//			dst[idx_dst] = src[idx_src];
+//			idx_dst += 1;
+//		}
+//		/* アルファベットと数字はエンコードせずそのまま */
+//		else if (isalnum(src[idx_src])) {
+//			dst[idx_dst] = src[idx_src];
+//			idx_dst += 1;
+//		}
+//		/* \マークはエンコード */
+//		else if (strchr(DELIMITER, src[idx_src]) != NULL) {
+//			dst[idx_dst++] = '%';
+//			dst[idx_dst++] = '5';
+//			dst[idx_dst++] = 'C';
+//		}
+//		/* それ以外はすべてエンコード */
+//		else {
+//			if ((idx_dst + 3) > dst_len)
+//				break;
+//			idx_dst += sprintf(&dst[idx_dst], "%%%2X", (unsigned char)(src[idx_src]));
+//		}
+//		cnt++;
+//		if ((idx_dst + 1) < dst_len) {
+//			dst[idx_dst] = '\0';
+//		}
+//	}
+//	return cnt;
+//	// 2004/10/01 Update end
+//}
 // **************************************************************************
 // URIデコードを行います.
 //  機能 : URIデコードを行う
@@ -1045,95 +804,22 @@ void debug_log_output(const char* fmt, ...)
 	// =====================
 	if(fd < 0 ) {
 		fd = myopen(debug_log_filename, O_CREAT | O_APPEND | O_WRONLY | O_BINARY, S_IREAD | S_IWRITE);
-		return;
+		if (fd < 0) {
+			return;
+		}
 	}
 	// 出力
-	if (write(fd, buf, (unsigned int)strlen(buf)) < 0) {
-		// メッセージ実体を出力
-	    close(fd);
-		// ファイルクローズ
-		fd = -1;
-	}
-	else
-	{
-		fd = -1;
-	}
+	write(fd, buf, (unsigned int)strlen(buf));
+	// メッセージ実体を出力
+	//close(fd);
+	// ファイルクローズ
+	//fd = -1;
 	return;
 	//DEBUGが定義されてない場合ログ出力しない
 #else
 	IGNORE_PARAMETER(fmt);
 #endif
 }
-#if 0
-// **************************************************************************
-// 拡張子変更処理。追加用。
-//      extension_convert_listに従い、org → rename への変換を行う。
-//
-// 例) "hogehoge.m2p" → "hogehoge.m2p.mpg"
-// **************************************************************************
-void extension_add_rename(char* rename_filename_p, size_t rename_filename_size)
-{
-	int i;
-	char       ext[FILENAME_MAX];
-	if (rename_filename_p == NULL)
-		return;
-	filename_to_extension(rename_filename_p, ext, sizeof(ext));
-	if (strlen(ext) <= 0) return;
-	for (i = 0; extension_convert_list[i].org_extension != NULL; i++) {
-		debug_log_output("org='%s', rename='%s'"
-			, extension_convert_list[i].org_extension
-			, extension_convert_list[i].rename_extension);
-		// 拡張子一致？
-		if (strcasecmp(ext, extension_convert_list[i].org_extension) == 0) {
-			debug_log_output(" HIT!!!");
-			// 拡張子を「追加」
-			strncat(rename_filename_p, "."
-				, rename_filename_size - strlen(rename_filename_p));
-			strncat(rename_filename_p
-				, extension_convert_list[i].rename_extension
-				, rename_filename_size - strlen(rename_filename_p));
-			debug_log_output("rename_filename_p='%s'", rename_filename_p);
-			break;
-		}
-	}
-	return;
-}
-// **************************************************************************
-// 拡張子変更処理。削除用。
-//      extension_convert_listに従い、rename → org への変換を行う。
-//
-// 例) "hogehoge.m2p.mpg" → "hogehoge.m2p"
-// **************************************************************************
-void extension_del_rename(char* rename_filename_p)
-{
-	int i;
-	char       renamed_ext[FILENAME_MAX];
-	char       ext[FILENAME_MAX];
-	if (rename_filename_p == NULL) {
-		return;
-	}
-	for (i = 0; extension_convert_list[i].org_extension != NULL; i++) {
-		debug_log_output("org='%s', rename='%s'"
-			, extension_convert_list[i].org_extension
-			, extension_convert_list[i].rename_extension);
-		snprintf(renamed_ext, sizeof(renamed_ext), ".%s.%s"
-			, extension_convert_list[i].org_extension
-			, extension_convert_list[i].rename_extension);
-		// 比較する拡張子と同じ長さにそろえる。
-		strncpy(ext, rename_filename_p, sizeof(ext));
-		cut_before_n_length(ext, strlen(renamed_ext));
-		// 拡張子一致？
-		if (strcasecmp(ext, renamed_ext) == 0) {
-			debug_log_output(" HIT!!!");
-			// 拡張子を「削除」
-			cut_after_n_length(rename_filename_p, strlen(extension_convert_list[i].rename_extension) + 1);
-			debug_log_output("rename_filename_p='%s'", rename_filename_p);
-			break;
-		}
-	}
-	return;
-}
-#endif
 // **************************************************************************
 // * PNGフォーマットファイルから、画像サイズを得る。
 // **************************************************************************
@@ -1345,14 +1031,13 @@ int myMkdir(wString FileName)
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 #define HTTP_BUF_SIZE (1024*10)
-//HTTPDownload
-//引数
-//char* src:読み取り元URL
-//char* dst:保存先ファイル名
-//char* proxy:未実装
-//off_t offset:０なら全取得,サイズ指定ならサイズに満たない場合、超えた場合全取得
-//戻り値 1:成功 2:サイズ同じ　false:失敗
-
+/// <summary>
+/// HTTPDownload
+/// </summary>
+/// <param name="src">読み取り元URL</param>
+/// <param name="dst">保存先ファイル名</param>
+/// <param name="offset">０なら全取得,サイズ指定ならサイズに満たない場合、超えた場合全取得</param>
+/// <returns>1:成功 2:サイズ同じ　false:失敗</returns>
 int HTTPDownload(char* src, char* dst, off_t offset)
 {
 	time_t         rbgn_time = time(NULL) + NO_RESPONSE_TIMEOUT;

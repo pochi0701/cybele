@@ -21,9 +21,10 @@
 typedef struct {
 	char* mime_name;
 	char* file_extension;
-	int	   stream_type;
-	int	   menu_file_type;
+	STREAM_TYPE	stream_type;
+	MIME_TYPE menu_file_type;
 } MIME_LIST_T;
+
 
 // ==========================================================================
 // 全体パラメータ保存用構造体
@@ -129,6 +130,31 @@ typedef struct {
 	ACCESS_USER_INFO    user_info[MULTI_ACCESS_MAX];
 	int                 list_num;
 } ACCESS_USER_INFO_LIST;
+
+/// <summary>
+/// multipart
+/// </summary>
+class multipart
+{
+public:
+	/// <summary>
+	/// multipart constructor
+	/// </summary>
+	/// <param name=""></param>
+	multipart(void)
+	{
+		content = NULL;
+		length = 0;
+		name[0] = 0;
+		fileName[0] = 0;
+	}
+	void* content;
+	size_t length;
+	char name[256];
+	char fileName[256];
+};
+
+
 // ======================
 // extern いろいろ
 // ======================

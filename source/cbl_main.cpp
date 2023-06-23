@@ -195,7 +195,7 @@ int Cybelemain(void* arg)
 		//かえって遅い気がします。
 		//*HANDLE handle = _beginthreadex(NULL,0,functionptr,(void*)param,0,NULL);
 		//handle = CreateThread(0, 0, (LPTHREAD_START_ROUTINE) batch , NULL, NULL , &id);
-		handle = (HANDLE)_beginthreadex(0, 0, batch, NULL, 0, &id);
+		handle = reinterpret_cast<HANDLE>(_beginthreadex(0, 0, batch, NULL, 0, &id));
 		//標準以下
 		//SetThreadPriority(handle,THREAD_PRIORITY_BELOW_NORMAL);
 #endif

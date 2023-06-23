@@ -202,8 +202,6 @@ public:
 	//条件配列生成
 	int conditionMatTables(Table* tbl, vector<char>& mat)
 	{
-		int    col1;
-		int    col2;
 		wString arg1;
 		wString arg2;
 		CMDS   typ1 = CMDS::TXAND;
@@ -237,8 +235,8 @@ public:
 		//各条件についてAND,a,>,4等
 		for (unsigned int ptr = 0; ptr < cond.cond.size(); ) {
 			CMDS lop;
-			col1 = -1;
-			col2 = -1;
+			auto col1 = -1;
+			auto col2 = -1;
 			if (cond.type[ptr] == CMDS::TXOR || cond.type[ptr] == CMDS::TXAND) {
 				lop = cond.type[ptr];
 			}
@@ -549,7 +547,6 @@ public:
 	}
 #endif
 	/////////////////////////////////////////////////////////////////////////////
-
 	/// <summary>
 	/// ノードサイズ
 	/// </summary>
@@ -565,10 +562,6 @@ public:
 	{
 		wString temp;
 		wString alias;
-		char work[1024];
-		unsigned int i;
-		unsigned int j;
-		unsigned int k;
 
 		if (row == -2) {
 			//count(*)でないとき
@@ -576,9 +569,9 @@ public:
 				temp.resize(Column.size() * Node.size() * 8);
 				//復数DBの場合はtblも表示
 				if (Tables.size() > 1) {
-					for (i = 0; i < Column.size(); i++) {
+					for (auto i = 0; i < Column.size(); i++) {
 						Table* tbl = Tables[Column[i].second];
-						j = Column[i].first;
+						auto j = Column[i].first;
 						if (tbl->column[j]->GetAlias(cond.clmalias, cond.tblalias, alias)) {
 							temp.cat_sprintf("%s%s", (i ? "|" : ""), alias.c_str());
 						}
@@ -589,9 +582,9 @@ public:
 					//単一DBの場合はカラム名のみ
 				}
 				else {
-					for (i = 0; i < Column.size(); i++) {
+					for (auto i = 0; i < Column.size(); i++) {
 						Table* tbl = Tables[Column[i].second];
-						j = Column[i].first;
+						auto j = Column[i].first;
 						if (tbl->column[j]->GetAlias(cond.clmalias, cond.tblalias, alias)) {
 							temp.cat_sprintf("%s%s", (i ? "|" : ""), alias.c_str());
 						}
@@ -604,16 +597,16 @@ public:
 				//ノード表示
 				if (Node.size()) {
 					//各行
-					for (i = 0; i < Node.size(); i++) {
+					for (auto i = 0; i < Node.size(); i++) {
 						int ii = Node[i];
 						//各カラム
 						int cnt = 0;
-						for (j = 0; j < Column.size(); j++) {
+						for (auto j = 0; j < Column.size(); j++) {
 							int    ntbl = Column[j].second;
 							Table* tbl = Tables[ntbl];
-							k = Column[j].first;
+							auto k = Column[j].first;
 							int no = getno(ii, ntbl);
-							//char tmp[1024];
+							char work[1024];
 							sprintf(work, "%s%s", (cnt++ ? "\t" : ""), tbl->node[k]->getNode(no).c_str());
 							temp += work;
 						}
@@ -691,16 +684,12 @@ public:
 		wString temp;
 		wString alias;
 		vector<wString> clm;
-		char work[1024];
-		unsigned int i;
-		unsigned int j;
-		unsigned int k;
 		if (flag == 0) {
 			//復数DBの場合はtblも表示
 			if (Tables.size() > 1) {
-				for (i = 0; i < Column.size(); i++) {
+				for (auto i = 0; i < Column.size(); i++) {
 					Table* tbl = Tables[Column[i].second];
-					j = Column[i].first;
+					auto j = Column[i].first;
 					//エイリアスあれば、エイリアス表示
 					if (tbl->column[j]->GetAlias(cond.clmalias, cond.tblalias, alias)) {
 						clm.push_back(alias);
@@ -712,9 +701,9 @@ public:
 				//単一DBの場合はカラム名のみ
 			}
 			else {
-				for (i = 0; i < Column.size(); i++) {
+				for (auto i = 0; i < Column.size(); i++) {
 					Table* tbl = Tables[Column[i].second];
-					j = Column[i].first;
+					auto j = Column[i].first;
 					//エイリアスあれば、エイリアス表示
 					if (tbl->column[j]->GetAlias(cond.clmalias, cond.tblalias, alias)) {
 						clm.push_back(alias);
@@ -730,16 +719,16 @@ public:
 			temp = "[";
 			if (Node.size()) {
 				//各行
-				for (i = 0; i < Node.size(); i++) {
+				for (auto i = 0; i < Node.size(); i++) {
 					temp.cat_sprintf("%s{", (i ? "," : ""));
 					int ii = Node[i];
 					//各カラム
-					for (j = 0; j < Column.size(); j++) {
+					for (auto j = 0; j < Column.size(); j++) {
 						int    ntbl = Column[j].second;
 						Table* tbl = Tables[ntbl];
-						k = Column[j].first;
+						auto k = Column[j].first;
 						int no = getno(ii, ntbl);
-						//char tmp[1024];
+						char work[1024];
 						sprintf(work, "%s\"%s\":%s", (j ? "," : ""), clm[j].c_str(), tbl->node[k]->getNode(no).c_str());
 						temp += work;
 					}

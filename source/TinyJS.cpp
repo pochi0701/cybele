@@ -128,7 +128,7 @@
 #ifndef ASSERT
 #define ASSERT(X) assert(X)
 #endif
-//#define TINYJS_CALL_STACK
+ //#define TINYJS_CALL_STACK
 
  /* Frees the given link IF it isn't owned by anything else */
 #define CLEAN(x) { CScriptVarLink *__v = x; if (__v && !__v->owned) { delete __v; } }
@@ -203,7 +203,7 @@ inline bool isAlpha(unsigned char ch) {
 //}
 ////////////////////////////////////////////////////////////////////////////////
 //エラー時1行出力
-//char* oneLine(char *s, int ptr,int end)
+//char* oneLine(const char *s, int ptr,int end)
 //{
 //    size_t cnt=0;
 //    static char work[1024];
@@ -226,7 +226,7 @@ inline bool isAlpha(unsigned char ch) {
 //}
 ////////////////////////////////////////////////////////////////////////////////
 //エラー時1行出力
-wString oneLine(char* s, int ptr, int end)
+wString oneLine(const char* s, int ptr, int end)
 {
 	wString work;
 	if (end < ptr) {
@@ -246,11 +246,16 @@ wString oneLine(char* s, int ptr, int end)
 	return work;
 }
 ////////////////////////////////////////////////////////////////////////////////
-/// convert the given wString into a quoted wString suitable for javascript
+/// <summary>
+/// 与えられたwStringをJavaScriptに適した引用符で囲まれたwStringに変換します
+/// </summary>
+/// <param name="str">入力文字</param>
+/// <returns>出力文字</returns>
 wString getJSString(const wString& str) {
 	wString nStr = str;
+	char buffer[6] = { 0 };
 	for (auto i = 0U; i < nStr.size(); i++) {
-		const char* replaceWith = "";
+		char* replaceWith = NULL;
 		bool replace = true;
 
 		switch (nStr[i]) {
@@ -265,11 +270,11 @@ wString getJSString(const wString& str) {
 				// if (nCh < 32 || nCh>127) {
 				// \x00の４文字なので５文字目を０にする必要あり
 				// 2023/04/17
-				char buffer[6] = { 0 };
 				snprintf(buffer, 5, "\\x%02X", nCh);
 				replaceWith = buffer;
 			}
 			else {
+				replaceWith = "";
 				replace = false;
 			}
 		}
@@ -671,13 +676,13 @@ void CScriptLex::getNextToken() {
 				} break;
 				default:
 					if (static_cast<unsigned char>(currCh) >= '0' && static_cast<unsigned char>(currCh) <= '7') {
-					// octal digits
-					char buf[4] = "???";
+						// octal digits
+						char buf[4] = "???";
 						buf[0] = static_cast<char>(currCh);
 						getNextCh(); buf[1] = static_cast<char>(currCh);
 						getNextCh(); buf[2] = static_cast<char>(currCh);
-					tkStr += (char)strtol(buf, 0, 8);
-				}
+						tkStr += (char)strtol(buf, 0, 8);
+					}
 					else {
 						tkStr += static_cast<char>(currCh);
 					}
@@ -1350,7 +1355,7 @@ CScriptVar* CScriptVar::deepCopy() {
 	return newVar;
 }
 
-void CScriptVar::trace(SOCKET socket, wString indentStr, const wString& name) {
+void CScriptVar::trace(SOCKET socket, const wString& indentStr, const wString& name) {
 	wString work;
 	work.wString::sprintf("%s'%s' = '%s' %s\n", indentStr.c_str(), name.c_str(), getString().c_str(), getFlagsAsString().c_str());
 	send(socket, work.c_str(), work.length(), 0);
@@ -1413,7 +1418,7 @@ wString CScriptVar::getParsableString() {
 	return "undefined";
 }
 
-void CScriptVar::getJSON(wString& destination, const wString linePrefix) {
+void CScriptVar::getJSON(wString& destination, const wString& linePrefix) {
 	if (isObject()) {
 		wString indentedLinePrefix = linePrefix + "  ";
 		// children - handle with bracketed list
@@ -1619,7 +1624,7 @@ CScriptVarLink CTinyJS::evaluateComplex(const wString& code) {
 		do {
 			CLEAN(v);
 			v = base(executes);
-			if (l->tk != LEX_TYPES::LEX_EOF) l->chkread(LEX_TYPES::LEX_SCL);
+			if (l->tk != LEX_TYPES::LEX_EOF) l->chkread(LEX_TYPES::LEX_SMC);
 		} while (l->tk != LEX_TYPES::LEX_EOF);
 	}
 	catch (CScriptException* e) {
@@ -2133,10 +2138,10 @@ CScriptVarLink* CTinyJS::logic(bool& execute) {
 	CScriptVarLink* a = condition(execute);
 	CScriptVarLink* b;
 	while (l->tk == LEX_TYPES::LEX_AND ||
-		   l->tk == LEX_TYPES::LEX_OR ||
-		   l->tk == LEX_TYPES::LEX_HAT ||
-		   l->tk == LEX_TYPES::LEX_ANDAND ||
-		   l->tk == LEX_TYPES::LEX_OROR) {
+		l->tk == LEX_TYPES::LEX_OR ||
+		l->tk == LEX_TYPES::LEX_HAT ||
+		l->tk == LEX_TYPES::LEX_ANDAND ||
+		l->tk == LEX_TYPES::LEX_OROR) {
 		bool noexecute = false;
 		LEX_TYPES op = l->tk;
 		l->chkread(l->tk);
@@ -2280,7 +2285,7 @@ LEX_TYPES  CTinyJS::statement(bool& execute) {
 		l->tk == LEX_TYPES::LEX_MINUS) {
 		/* Execute a simple statement that only contains basic arithmetic... */
 		CLEAN(base(execute));
-		l->chkread(LEX_TYPES::LEX_SCL);
+		l->chkread(LEX_TYPES::LEX_SMC);
 	}
 	else if (l->tk == LEX_TYPES::LEX_LBRA) {
 		/* A block of code */
@@ -2290,18 +2295,18 @@ LEX_TYPES  CTinyJS::statement(bool& execute) {
 			return ret;
 		}
 	}
-	else if (l->tk == LEX_TYPES::LEX_SCL) {
+	else if (l->tk == LEX_TYPES::LEX_SMC) {
 		/* Empty statement - to allow things like ;;; */
-		l->chkread(LEX_TYPES::LEX_SCL);
+		l->chkread(LEX_TYPES::LEX_SMC);
 	}
 	else if (l->tk == LEX_TYPES::LEX_R_BREAK) {
 		l->chkread(LEX_TYPES::LEX_R_BREAK);
-		l->chkread(LEX_TYPES::LEX_SCL);
+		l->chkread(LEX_TYPES::LEX_SMC);
 		return LEX_TYPES::LEX_R_BREAK;
 	}
 	else if (l->tk == LEX_TYPES::LEX_R_CONTINUE) {
 		l->chkread(LEX_TYPES::LEX_R_CONTINUE);
-		l->chkread(LEX_TYPES::LEX_SCL);
+		l->chkread(LEX_TYPES::LEX_SMC);
 		return LEX_TYPES::LEX_R_CONTINUE;
 	}
 	else if (l->tk == LEX_TYPES::LEX_R_VAR) {
@@ -2309,7 +2314,7 @@ LEX_TYPES  CTinyJS::statement(bool& execute) {
 		* hand side. Maybe just have a flag called can_create_var that we
 		* set and then we parse as if we're doing a normal equals.*/
 		l->chkread(LEX_TYPES::LEX_R_VAR);
-		while (l->tk != LEX_TYPES::LEX_SCL) {
+		while (l->tk != LEX_TYPES::LEX_SMC) {
 			CScriptVarLink* a = 0;
 			if (execute)
 				a = scopes.back()->findChildOrCreate(l->tkStr);
@@ -2332,10 +2337,10 @@ LEX_TYPES  CTinyJS::statement(bool& execute) {
 				}
 				CLEAN(var);
 			}
-			if (l->tk != LEX_TYPES::LEX_SCL)
+			if (l->tk != LEX_TYPES::LEX_SMC)
 				l->chkread(LEX_TYPES::LEX_CMA);
 		}
-		l->chkread(LEX_TYPES::LEX_SCL);
+		l->chkread(LEX_TYPES::LEX_SMC);
 		//IF
 	}
 	else if (l->tk == LEX_TYPES::LEX_R_IF) {
@@ -2423,7 +2428,7 @@ LEX_TYPES  CTinyJS::statement(bool& execute) {
 		bool loopCond = execute && cond->var->getBool();
 		CLEAN(cond);
 		CScriptLex* forCond = l->getSubLex(forCondStart);
-		l->chkread(LEX_TYPES::LEX_SCL);
+		l->chkread(LEX_TYPES::LEX_SMC);
 		int forIterStart = l->tokenStart;
 		CLEAN(base(noexecute)); // iterator
 		CScriptLex* forIter = l->getSubLex(forIterStart);
@@ -2479,7 +2484,7 @@ LEX_TYPES  CTinyJS::statement(bool& execute) {
 	else if (l->tk == LEX_TYPES::LEX_R_RETURN) {
 		l->chkread(LEX_TYPES::LEX_R_RETURN);
 		CScriptVarLink* result = 0;
-		if (l->tk != LEX_TYPES::LEX_SCL)
+		if (l->tk != LEX_TYPES::LEX_SMC)
 			result = base(execute);
 		if (execute) {
 			CScriptVarLink* resultVar = scopes.back()->findChild(TINYJS_RETURN_VAR);
@@ -2490,7 +2495,7 @@ LEX_TYPES  CTinyJS::statement(bool& execute) {
 			execute = false;
 		}
 		CLEAN(result);
-		l->chkread(LEX_TYPES::LEX_SCL);
+		l->chkread(LEX_TYPES::LEX_SMC);
 	}
 	else if (l->tk == LEX_TYPES::LEX_R_FUNCTION) {
 		CScriptVarLink* funcVar = parseFunctionDefinition();
@@ -2565,7 +2570,6 @@ CScriptVarLink* CTinyJS::findInScopes(const wString& childName) {
 		if (v) return v;
 	}
 	return NULL;
-
 }
 
 /// Look up in any parent classes of the given object

@@ -59,7 +59,7 @@ size_t HTTP_RECV_INFO::http_header_response(SOCKET accept_socket)
 	size_t  t_content_length;
 	int     send_header_data_len;
 	wString send_http_header_buf;
-	off_t   content_size = FileSize((char*)send_filename);
+	off_t   content_size = FileSize(static_cast<char*>(send_filename));
 
 	// -------------------------------
 	// ファイルサイズチェック
@@ -250,7 +250,7 @@ int copy_body(int in_fd, int out_fd, unsigned int content_length, unsigned int r
 	int             read_length;
 	int             write_length;
 	int             target_read_size;
-	unsigned char*	send_buf_p = (unsigned char*)new char[SEND_BUFFER_SIZE];
+	unsigned char*	send_buf_p = reinterpret_cast<unsigned char*>(new char[SEND_BUFFER_SIZE]);
 	int             current_read_size;
 	unsigned int    total_read_size = 0;
 	unsigned int    total_write_size = 0;
@@ -315,7 +315,7 @@ int copy_body(int in_fd, int out_fd, unsigned int content_length, unsigned int r
 			current_read_size = read_length;
 		}
 		// SOCKET にデータを送信
-		write_length = send(out_fd, (char*)send_buf_p, current_read_size, 0);
+		write_length = send(out_fd, reinterpret_cast<char*>(send_buf_p), current_read_size, 0);
 		//write error
 		if (write_length < 0) {
 			debug_log_output("send() error.%d %s\n", errno, strerror(errno));

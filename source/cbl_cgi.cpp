@@ -31,22 +31,15 @@
 #endif
 #include <errno.h>
 #include <fcntl.h>
+#include <vector>
 #include "cbl.h"
 #include "TinyJS.h"
 #include "TinyJS_Functions.h"
 #include "TinyJS_MathFunctions.h"
 #include "define.h"
-class multipart
-{
-public:
-	multipart(void)
-	{
-	}
-	void* content;
-	size_t length;
-	char name[256];
-	char fileName[256];
-};
+
+//multipart
+vector<multipart*> mp;
 // includes
 wString escape(const wString& str);
 bool split(const char* cut_char, wString& split1, wString& split2);
@@ -74,7 +67,7 @@ int HTTP_RECV_INFO::http_cgi_response(SOCKET accept_socket)
 	}
 	query_string = strchr(request_uri, '?');
 	if (query_string == NULL) {
-		query_string = (char*)"";
+		query_string = static_cast<char*>("");
 	}
 	else {
 		*query_string++ = '\0';
@@ -159,10 +152,6 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 	buffer[size] = 0;
 	close(fd);
 
-	//multipart
-	vector<multipart> mp;
-	//multipart mp[10];
-	//int       mp_count = 0;
 
 	CTinyJS  javaScriptThread(accept_socket);
 	registerFunctions(&javaScriptThread);
@@ -184,10 +173,10 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 		//TODO:まとめて一回で評価する方がよさげ
 		//fastcgi_param  DOCUMENT_URI       $document_uri;
 		// "multipart/form-data; boundary=---------------------------382462320637558520782293981033"
-		if (content_type)   script1.cat_sprintf("var _SERVER.CONTENT_TYPE=\"%s\";", escape(content_type).c_str());
-		if (content_length) script1.cat_sprintf("var _SERVER.CONTENT_LENGTH=\"%s\";", escape(content_length).c_str());
-		if (recv_host)      script1.cat_sprintf("var _SERVER.HTTP_HOST=\"%s\";", escape(recv_host).c_str());
-		if (user_agent)     script1.cat_sprintf("var _SERVER.HTTP_USER_AGENT=\"%s\";", escape(user_agent).c_str());
+		if (*this->content_type)   script1.cat_sprintf("var _SERVER.CONTENT_TYPE=\"%s\";", escape(content_type).c_str());
+		if (*this->content_length) script1.cat_sprintf("var _SERVER.CONTENT_LENGTH=\"%s\";", escape(content_length).c_str());
+		if (*this->recv_host)      script1.cat_sprintf("var _SERVER.HTTP_HOST=\"%s\";", escape(recv_host).c_str());
+		if (*this->user_agent)     script1.cat_sprintf("var _SERVER.HTTP_USER_AGENT=\"%s\";", escape(user_agent).c_str());
 		//SERVER SIGNATURE
 		script1.cat_sprintf("var _SERVER.PATH=\"%s\";", escape(DEFAULT_PATH).c_str());
 		script1.cat_sprintf("var _SERVER.SERVER_SOFTWARE=\"%s\";", escape(SERVER_NAME).c_str());
@@ -224,7 +213,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 		while (script3.length()) {
 			split("&", script1, script3);
 			split("=", script2, script1);
-			script4 += "var _GET." + script2 + (char*)"=\"" + escape(script1.uri_decode()) + (char*)"\";";
+			script4 += "var _GET." + script2 + static_cast<char*>("=\"") + escape(script1.uri_decode()) + static_cast<char*>("\";");
 		}
 		if (script4.Length()) {
 			javaScriptThread.execute(script4);
@@ -238,10 +227,10 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 			split(";", script1, script3);
 			script1 = script1.LTrim();
 			split("=", script2, script1);
-			script4 += "var _COOKIE." + script2 + (char*)"=\"" + escape(script1.uri_decode()) + (char*)"\";";
+			script4 += "var _COOKIE." + script2 + static_cast<char*>("=\"") + escape(script1.uri_decode()) + static_cast<char*>("\";");
 			//SESSIONIDの設定
 			if (script2 == "sid") {
-				script4 += (char*)"var JSSESSID=\"" + escape(script1.uri_decode()) + (char*)"\";";
+				script4 += static_cast<char*>("var JSSESSID=\"") + escape(script1.uri_decode()) + static_cast<char*>("\";");
 			}
 		}
 		if (script4.Length()) {
@@ -280,7 +269,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 			if (strlen(boundary) > 0) {
 				// boundary
 				char* start = script3.c_str();
-
+				script4.clear();
 				int total = script3.length();
 				char* end = script3.c_str() + total;
 				// 一覧の先頭と個数を取得
@@ -301,31 +290,44 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 					start += strlen(boundary) + 2;
 					multipart* multip = new multipart();
 					multip->content = start;
-					mp.push_back(*multip);
+					mp.push_back(multip);
 				}
 				// アドレス正規化
 				for (int i = 0; i < mp.size() - 1; i++)
 				{
-					char* st = static_cast<char*>(mp[i].content);
-					char* ed = static_cast<char*>(mp[i + 1].content);
+					char* st = static_cast<char*>(mp[i]->content);
+					char* ed = static_cast<char*>(mp[i + 1]->content);
 					//boundary
 					char* ptr = seekCRLFCRLF(st, ed);
 					if (ptr == NULL) {
 						//multipartでない
 						break;
 					}
+					wString tmp;
 					wString text(st);
 					wString st2 = text.strsplit("\"");
-					mp[i].content = ptr;
-					mp[i].length = ed - ptr-(strlen(boundary) + 2)+2;
+					mp[i]->content = ptr;
+					mp[i]->length = ed - ptr - (strlen(boundary)) - 4;
+					tmp.setBinary(mp[i]->content, mp[i]->length);
+					wString ttmp = tmp.dump();
 					if (st2.GetListString(0).startsWith(CONTENT_DISPOSITION))
 					{
-						strcpy(mp[i].name, st2.GetListString(1).c_str());
+						strcpy(mp[i]->name, st2.GetListString(1).c_str());
 						if (st2.GetListString(2).Pos("filename=") >= 0)
 						{
-							strcpy(mp[i].fileName, st2.GetListString(3).c_str());
+							strcpy(mp[i]->fileName, st2.GetListString(3).c_str());
 						}
 					}
+					// ファイル名がない場合にはname=valueに変換
+					if (strlen(mp[i]->fileName) == 0)
+					{
+						wString content;
+						content.setBinary(mp[i]->content,mp[i]->length);
+						script4 += static_cast<char*>("var _post.") + wString(mp[i]->name) + static_cast<char*>("=\"") + escape(content.Trim().uri_decode()) + static_cast<char*>("\";");
+					}
+				}
+				if (script4.Length()) {
+					javaScriptThread.execute(script4);
 				}
 			}
 			// normal
@@ -334,7 +336,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 				while (script3.length()) {
 					split("&", script1, script3);
 					split("=", script2, script1);
-					script4 += (char*)"var _POST." + script2 + (char*)"=\"" + escape(script1.uri_decode()) + (char*)"\";";
+					script4 += static_cast<char*>("var _POST.") + script2 + static_cast<char*>("=\"") + escape(script1.uri_decode()) + static_cast<char*>("\";");
 				}
 				if (script4.Length()) {
 					javaScriptThread.execute(script4);
@@ -350,9 +352,20 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 		tmp.sprintf("SCRIPT ERROR: %s\n", e->text.c_str());
 		send(accept_socket, tmp.c_str(), tmp.Length(), 0);
 		delete[] buffer;
+		for (auto p : mp)
+		{
+			delete p;
+		}
+		mp.clear();
 		return;
 	}
 	delete[] buffer;
+	// Destroying the objects
+	for (auto p : mp)
+	{
+		delete p;
+	}
+	mp.clear();
 	debug_log_output("ServerSide JavaScript end");
 	return;
 }

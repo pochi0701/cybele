@@ -41,7 +41,7 @@ public:
 		bufptr = 0;
 		fd = open(file.c_str(), O_RDONLY | O_BINARY);
 		if (fd < 0) return -1;
-		rest = read(fd, (void*)buf, sizeof(buf));
+		rest = read(fd, static_cast<void*>(buf), sizeof(buf));
 		return 0;
 	}
 
@@ -71,7 +71,7 @@ public:
 	/// </summary>
 	/// <param name=""></param>
 	void wclose(void) {
-		write(fd, (void*)buf, bufptr);
+		write(fd, static_cast<void*>(buf), bufptr);
 		close(fd);
 		fd = -1;
 	}
@@ -85,7 +85,7 @@ public:
 			rest -= siz;
 			if (bufptr >= HSIZ) {
 				memcpy(buf, buf + HSIZ, HSIZ);
-				rest += read(fd, (void*)(buf + HSIZ), HSIZ);
+				rest += read(fd, static_cast<void*>(buf + HSIZ), HSIZ);
 				bufptr -= HSIZ;
 			}
 			return 0;
@@ -102,7 +102,7 @@ public:
 		memcpy(buf + bufptr, data, siz);
 		bufptr += siz;
 		if (bufptr >= HSIZ) {
-			int num = write(fd, (void*)buf, HSIZ);
+			int num = write(fd, static_cast<void*>(buf), HSIZ);
 			if (num != HSIZ) {
 				return -1;
 			}
@@ -181,7 +181,7 @@ public:
 			}
 		}
 		else {
-			temp.sprintf("%d", atoi((char*)data[ptr].c_str()));
+			temp.sprintf("%d", atoi(static_cast<char*>(data[ptr].c_str())));
 		}
 		return temp;
 	}

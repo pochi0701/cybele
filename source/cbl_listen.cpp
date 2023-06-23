@@ -47,8 +47,8 @@ SOCKET	listen_socket;	//待ち受けソケット
 void	server_listen(void)
 {
 	int    ret;
-	struct sockaddr_in    saddr;                // サーバソケットアドレス構造体
-	//struct sockaddr_in  caddr;                       // クライアントソケットアドレス構造体
+	struct sockaddr_in    saddr;						// サーバソケットアドレス構造体
+	//struct sockaddr_in  caddr;						// クライアントソケットアドレス構造体
 
 	//socklen_t           caddr_len = sizeof(caddr);   // クライアントソケットアドレス構造体のサイズ
 	int             sock_opt_val;
@@ -117,7 +117,7 @@ void	server_listen(void)
 	//handle2 = CreateThread(0, 0, (LPTHREAD_START_ROUTINE) accessloop , (void*)&listen_socket, 0, &id2);
 	//handle3 = CreateThread(0, 0, (LPTHREAD_START_ROUTINE) accessloop , (void*)&listen_socket, 0, &id3);
 	for (int i = 0; i < MAXTHREAD; i++) {
-		handle[i] = (HANDLE)_beginthreadex(NULL, 0, accessloop, (void*)&listen_socket, 0, &id[i]);
+		handle[i] = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, accessloop, (void*)&listen_socket, 0, &id[i]));
 	}
 
 	WaitForMultipleObjects(3, handle, TRUE, INFINITE);
@@ -139,7 +139,7 @@ void* accessloop(void* arg)
 unsigned int __stdcall accessloop(void* arg)
 #endif
 {
-	int                lis_soc = *(int*)arg;
+	int                lis_soc = *static_cast<int*>(arg);
 	SOCKET             accept_socket;  // 接続Socket
 	struct sockaddr_in caddr;                // クライアントソケットアドレス構造体
 	socklen_t          caddr_len = sizeof(caddr);   // クライアントソケットアドレス構造体のサイズ
@@ -206,7 +206,7 @@ void thread_process(ACCESS_INFO& ac_in)
 	// ==============================
 	access_check_ok = FALSE;
 	// クライアントアドレス
-	strncpy((char*)client_addr_str, inet_ntoa(caddr.sin_addr), sizeof(client_addr_str));
+	strncpy(static_cast<char*>(client_addr_str), inet_ntoa(caddr.sin_addr), sizeof(client_addr_str));
 	// -------------------------------------------------------------------------
 	// Access Allowチェック
 	//  リストが空か、クライアントアドレスが、リストに一致したらＯＫとする。
@@ -219,7 +219,7 @@ void thread_process(ACCESS_INFO& ac_in)
 	else {
 		debug_log_output("Access Check.\n");
 		// クライアントアドレス
-		strncpy(client_addr_str, inet_ntoa(caddr.sin_addr), sizeof(client_addr_str)-1);
+		strncpy(client_addr_str, inet_ntoa(caddr.sin_addr), sizeof(client_addr_str) - 1);
 		// client_addr_strをchar[4]に変換
 		strncat(client_addr_str, ".", sizeof(client_addr_str) - 1);
 		for (i = 0; i < 4; i++) {

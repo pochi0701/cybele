@@ -43,9 +43,9 @@ using namespace std;
 const int TINYJS_LOOP_MAX_ITERATIONS = 8192;
 extern map<wString, wString>* session;
 enum class  LEX_TYPES {
-	LEX_EOF = 0,
-    LEX_LF = '\r',
-    LEX_CR = '\n',
+	LEX_EOF   = 0,
+    LEX_LF    = '\r',
+    LEX_CR    = '\n',
     LEX_EXC   = '!',  /// exclamation
     LEX_DQT   = '"',  /// double quote
     LEX_MOD   = '%',
@@ -60,7 +60,7 @@ enum class  LEX_TYPES {
     LEX_DOT   = '.',
     LEX_DIV   = '/',
     LEX_COL   = ':',
-    LEX_SCL   = ';',
+    LEX_SMC   = ';',
     LEX_LTN   = '<',
     LEX_EQ    = '=',
     LEX_GTN   = '>',
@@ -293,10 +293,10 @@ public:
 	void copyValue(CScriptVar* val); ///< copy the value from the value given
 	CScriptVar* deepCopy(); ///< deep copy this node and return the result
 
-	void trace(SOCKET socket, wString indentStr = "", const wString& name = ""); ///< Dump out the contents of this using trace
+	void trace(SOCKET socket, const wString& indentStr = "", const wString& name = ""); ///< Dump out the contents of this using trace
 	wString trace2(void); ///< Dump out the contents of this using trace
 	wString getFlagsAsString(); ///< For debugging - just dump a string version of the flags
-	void getJSON(wString& destination, const wString linePrefix = ""); ///< Write out all the JS code needed to recreate this script variable to the stream (as JSON)
+	void getJSON(wString& destination, const wString& linePrefix = ""); ///< Write out all the JS code needed to recreate this script variable to the stream (as JSON)
 	void setCallback(JSCallback callback, void* userdata); ///< Set the callback for native functions
 
 

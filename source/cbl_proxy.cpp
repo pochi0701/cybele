@@ -284,7 +284,7 @@ SOCKET HTTP_RECV_INFO::send_header()
         port = atoi(p_target_host_name.substr(num+1).c_str());
         p_target_host_name = p_target_host_name.substr(0,num);
     }
-    debug_log_output("header:target_host_name: %s", (char*)p_target_host_name.c_str());
+    debug_log_output("header:target_host_name: %s", static_cast<char*>(p_target_host_name.c_str()));
     debug_log_output("header:base_url: %s", base_url.c_str());
     debug_log_output("header:port: %d", port);
     debug_log_output("header:authenticate: %s", p_auth.Length() ? p_auth.c_str() : "NULL");
@@ -329,7 +329,7 @@ SOCKET HTTP_RECV_INFO::send_header()
     }
     //認証
     if (p_auth.Length() != 0) {
-        send_http_header_buf.cat_sprintf("Authorization: Basic %s\r\n", (char*)p_auth.base64().c_str());
+        send_http_header_buf.cat_sprintf("Authorization: Basic %s\r\n", static_cast<char*>(p_auth.base64().c_str()));
     }
     send_http_header_buf.cat_sprintf("\r\n");
 

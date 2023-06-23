@@ -34,4 +34,5 @@
 /// Register useful functions with the TinyJS interpreter
 extern void registerFunctions(CTinyJS *tinyJS);
 
+
 #endif
