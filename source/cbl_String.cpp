@@ -116,7 +116,7 @@ wString::wString(const char* str)
 	len = static_cast<unsigned int>(strlen(str));
 	if (len) {
 		total = len + 1;
-		String = (char*)new char[total];
+		String = static_cast<char*>(new char[total]);
 		strcpy(String, str);
 	}
 	else {
@@ -252,9 +252,25 @@ bool wString::startsWith(const char* needle)
 {
 	return strstr(String, needle) == String;
 }
-///---------------------------------------------------------------------------
-
 //---------------------------------------------------------------------------
+/// <summary>
+/// 末尾文字列の比較（バイナリ非対応）
+/// </summary>
+/// <param name="needle">検索する文字列</param>
+/// <returns>先頭と一致すればtrue</returns>
+bool wString::endsWith(const char* needle)
+{
+	int clen = strlen(needle);
+	if (clen == 0 || clen > len) {
+		return false;
+	}
+	return strcmp(String + len - clen, needle) == 0;
+}
+///---------------------------------------------------------------------------
+/// <summary>
+/// 文字列に1バイト文字加算
+/// </summary>
+/// <param name="ch">加算する1バイト文字</param>
 void wString::operator+=(const char ch)
 {
 	int tmpl = ((len >> 4) + 1) << 4;
@@ -264,8 +280,11 @@ void wString::operator+=(const char ch)
 	return;
 }
 ///---------------------------------------------------------------------------
-
-//---------------------------------------------------------------------------
+/// <summary>
+/// wStringとwStringの比較
+/// </summary>
+/// <param name="str">比較する文字列</param>
+/// <returns>ture:同一、false:異なる場合</returns>
 bool wString::operator==(const wString& str) const
 {
 	if (len != str.len) {
@@ -1736,7 +1755,7 @@ wString wString::strsplit(const char* delimstr)
 void wString::resize(const int newsize)
 {
 	if (len >= total) {
-		printf("not good %d %d", len, total);
+		printf("not good %u %u", len, total);
 		exit(1);
 	}
 	if ((int)total <= newsize) {
@@ -2848,6 +2867,151 @@ wString wString::insert(int pos, const wString& fill)
 	str1 = substr(0, pos);
 	str2 = substr(pos);
 	return str1 + fill + str2;
+}
+
+//////////////////////////////////////////////////////////////////////////
+/// <summary>
+/// PNGフォーマットファイルから、画像サイズを得る。
+/// </summary>
+/// <param name="png_filename"></param>
+/// <returns>json:{"x":</returns>
+wString wString::png_size(const wString& png_filename)
+{
+	int         fd;
+	unsigned char       buf[255] = { 0 };
+	ssize_t     read_len;
+	auto x = 0;
+	auto y = 0;
+	fd = myopen(png_filename.c_str(), O_BINARY | O_RDONLY);
+	if (fd < 0) {
+		return "null";
+	}
+	// ヘッダ+サイズ(0x18byte)  読む
+	//memset(buf, 0, sizeof(buf));
+	read_len = read(fd, reinterpret_cast<char*>(buf), 0x18);
+	if (read_len == 0x18) {
+		x = (buf[0x10] << 24) +
+			(buf[0x11] << 16) +
+			(buf[0x12] << 8) +
+			(buf[0x13]);
+		y = (buf[0x14] << 24) +
+			(buf[0x15] << 16) +
+			(buf[0x16] << 8) +
+			(buf[0x17]);
+	}
+	close(fd);
+	wString tmp;
+	tmp.sprintf("{\"x\":%d,\"y\":%d}", x, y);
+	return tmp;
+}
+/// <summary>
+///  GIFフォーマットファイルから、画像サイズを得る
+/// </summary>
+/// <param name="gif_filename"></param>
+/// <returns></returns>
+wString wString::gif_size(const wString& gif_filename)
+{
+	int         fd;
+	unsigned char       buf[255] = { 0 };
+	ssize_t     read_len;
+	auto x = 0;
+	auto y = 0;
+	fd = myopen(gif_filename.c_str(), O_BINARY | O_RDONLY);
+	if (fd < 0) {
+		return "null";
+	}
+	// ヘッダ+サイズ(10byte)  読む
+	//memset(buf, 0, sizeof(buf));
+	read_len = read(fd, reinterpret_cast<char*>(buf), 10);
+	if (read_len == 10) {
+		x = buf[6] + (buf[7] << 8);
+		y = buf[8] + (buf[9] << 8);
+	}
+	close(fd);
+	wString tmp;
+	tmp.sprintf("{\"x\":%d,\"y\":%d}", x, y);
+	return tmp;
+}
+/// <summary>
+///  JPEGフォーマットファイルから、画像サイズを得る。
+/// </summary>
+/// <param name="jpeg_filename"></param>
+/// <returns></returns>
+wString wString::jpeg_size(const wString& jpeg_filename)
+{
+	int                 fd;
+	unsigned char       buf[255];
+	ssize_t             read_len;
+	off_t               length;
+	auto x = 0;
+	auto y = 0;
+	//debug_log_output("jpeg_size: '%s'.", jpeg_filename);
+	fd = myopen(jpeg_filename.c_str(), O_BINARY | O_RDONLY);
+	if (fd < 0) {
+		return "null";
+	}
+	while (1) {
+		// マーカ(2byte)  読む
+		read_len = read(fd, buf, 2);
+		if (read_len != 2) {
+			//debug_log_output("fraed() EOF.\n");
+			break;
+		}
+		// Start of Image.
+		if ((buf[0] == 0xFF) && (buf[1] == 0xD8)) {
+			continue;
+		}
+		// Start of Frame 検知
+		if ((buf[0] == 0xFF) && (buf[1] >= 0xC0) && (buf[1] <= 0xC3)) { // SOF 検知
+			//debug_log_output("SOF0 Detect.");
+			// sof データ読み込み
+			memset(buf, 0, sizeof(buf));
+			read_len = read(fd, buf, 0x11);
+			if (read_len != 0x11) {
+				debug_log_output("fraed() error.\n");
+				break;
+			}
+			y = (buf[3] << 8) + buf[4];
+			x = (buf[5] << 8) + buf[6];
+			break;
+		}
+		// SOS検知
+		if ((buf[0] == 0xFF) && (buf[1] == 0xDA)) { // SOS 検知
+			//debug_log_output("Start Of Scan.\n");
+			// 0xFFD9 探す。
+			while (1) {
+				// 1byte 読む
+				read_len = read(fd, buf, 1);
+				if (read_len != 1) {
+					//debug_log_output("fraed() error.\n");
+					break;
+				}
+				// 0xFFだったら、もう1byte読む
+				if (buf[0] == 0xFF) {
+					buf[0] = 0;
+					if (read(fd, buf, 1) != 1) {
+						break;
+					}
+					// 0xD9だったら 終了
+					if (buf[0] == 0xD9) {
+						//debug_log_output("End Of Scan.\n");
+						break;
+					}
+				}
+			}
+			continue;
+		}
+		// length 読む
+		memset(buf, 0, sizeof(buf));
+		auto dummy = read(fd, buf, 2);
+		length = (buf[0] << 8) + buf[1];
+		// length分とばす
+		lseek(fd, length - 2, SEEK_CUR);
+	}
+	close(fd);
+	wString tmp;
+	tmp.sprintf("{\"x\":%d,\"y\":%d}", x, y);
+	return tmp;
 }
 
 

@@ -54,11 +54,6 @@ extern char*    path_sanitize(char* dir, size_t dir_size);
 // DebugLog 出力
 extern void     debug_log_initialize(const char* set_debug_log_filename);
 extern void     debug_log_output(const char* fmt, ...);
-// 画像系
-extern void     jpeg_size(char* jpeg_filename, unsigned int* x, unsigned int* y);
-extern void     gif_size(char* gif_filename, unsigned int* x, unsigned int* y);
-extern void     png_size(char* png_filename, unsigned int* x, unsigned int* y);
-extern void     filename_to_extension(char* filename, char* extension_buf, unsigned int extension_buf_size);
 
 //システム処理
 extern int      sClose(SOCKET socket);

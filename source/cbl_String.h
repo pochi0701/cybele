@@ -63,6 +63,7 @@ public:
 	char     operator[](unsigned int index) const;
 	//STRING FUNCTION
 	bool            startsWith(const char* str);
+	bool            endsWith(const char* str);
 	void            setBinary(const void* str, int addLen);
 	char            at(unsigned int index) const;
 	wString         SubString(int start, int mylen)   const;
@@ -109,7 +110,6 @@ public:
 	wString         addSlashes(void);
 	wString         base64(void);
 	wString         unbase64(void);
-
 	//ANISSTRING
 	bool            SetListString(wString& src, int pos);
 	bool            SetListString(const char* src, int pos);
@@ -145,6 +145,9 @@ public:
 	static wString  EnumFolder(const wString& Path);
 	static wString  EnumFolderjson(const wString& Path);
 	static bool     checkUrl(const wString& url);
+	static wString  png_size(const wString& png_filename);
+	static wString  gif_size(const wString& gif_filename);
+	static wString  jpeg_size(const wString& jpeg_filename);
 	int             LoadFromFile(const char* FileName);
 	int             LoadFromFile(const wString& str);
 	void            LoadFromCSV(const char* FileName);

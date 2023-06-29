@@ -289,23 +289,33 @@ void server_http_process(SOCKET accept_socket, char* access_host, char* client_a
 	return;
 }
 /////////////////////////////////////////////////////////////////////////////////
+
+/// <summary>
+/// 各種indexファイルのアクセス
+/// html,htm,php,jssの順
+/// </summary>
+/// <param name=""></param>
+/// <returns></returns>
 FILETYPES HTTP_RECV_INFO::http_index(void)
 {
-	char       document_path[FILENAME_MAX];
-	char       read_filename[FILENAME_MAX];
+	//char       document_path[FILENAME_MAX];
+	//char       read_filename[FILENAME_MAX];
 	char       file_extension[16];
+
+	wString read_filename;
 	//Path Normalize.
-	strncpy(document_path, send_filename, sizeof(document_path)-1);
-	if (document_path[strlen(document_path) - 1] != DELIMITER[0]) {// 最後が'/'じゃなかったら、'/'を追加
-		strncat(document_path, DELIMITER, sizeof(document_path) - 1);
+	wString document_path = send_filename;
+	if (!document_path.endsWith(DELIMITER))
+	{
+		document_path += DELIMITER;
 	}
 	// ----------------------------------------------
-	// document_root/index.* のフルパス生成
-	// ----------------------------------------------
-	snprintf(read_filename, sizeof(read_filename), "%sindex.html", document_path);
-	if (access(read_filename, 0) == 0) {
+    // document_root/index.* のフルパス生成
+    // ----------------------------------------------
+	read_filename.sprintf("%sindex.html", document_path.c_str());
+	if (access(read_filename.c_str(), 0) == 0) {
 		strcat(request_uri, "index.html");
-		strcpy(send_filename, read_filename);
+		strcpy(send_filename, read_filename.c_str());
 		// ファイルの拡張子より、Content-type を決定
 		filename_to_extension(send_filename, file_extension, sizeof(file_extension));
 		debug_log_output("send_filename='%s', file_extension='%s'\n", send_filename, file_extension);
@@ -313,10 +323,10 @@ FILETYPES HTTP_RECV_INFO::http_index(void)
 		check_file_extension_to_mime_type(file_extension, mime_type, sizeof(mime_type));
 		return FILETYPES::_FILE;
 	}
-	snprintf(read_filename, sizeof(read_filename), "%sindex.htm", document_path);
-	if (access(read_filename, 0) == 0) {
+	read_filename.sprintf("%sindex.htm", document_path.c_str());
+	if (access(read_filename.c_str(), 0) == 0) {
 		strcat(request_uri, "index.htm");
-		strcpy(send_filename, read_filename);
+		strcpy(send_filename, read_filename.c_str());
 		// ファイルの拡張子より、Content-type を決定
 		filename_to_extension(send_filename, file_extension, sizeof(file_extension));
 		debug_log_output("send_filename='%s', file_extension='%s'\n", send_filename, file_extension);
@@ -324,10 +334,10 @@ FILETYPES HTTP_RECV_INFO::http_index(void)
 		check_file_extension_to_mime_type(file_extension, mime_type, sizeof(mime_type));
 		return FILETYPES::_FILE;
 	}
-	snprintf(read_filename, sizeof(read_filename), "%sindex.php", document_path);
-	if (access(read_filename, 0) == 0) {
+	read_filename.sprintf("%sindex.php", document_path.c_str());
+	if (access(read_filename.c_str(), 0) == 0) {
 		strcat(request_uri, "index.php");
-		strcpy(send_filename, read_filename);
+		strcpy(send_filename, read_filename.c_str());
 		// ファイルの拡張子より、Content-type を決定
 		filename_to_extension(send_filename, file_extension, sizeof(file_extension));
 		debug_log_output("send_filename='%s', file_extension='%s'\n", send_filename, file_extension);
@@ -335,10 +345,10 @@ FILETYPES HTTP_RECV_INFO::http_index(void)
 		check_file_extension_to_mime_type(file_extension, mime_type, sizeof(mime_type));
 		return FILETYPES::_CGI;
 	}
-	snprintf(read_filename, sizeof(read_filename), "%sindex.jss", document_path);
-	if (access(read_filename, 0) == 0) {
+	read_filename.sprintf("%sindex.jss", document_path.c_str());
+	if (access(read_filename.c_str(), 0) == 0) {
 		strcat(request_uri, "index.jss");
-		strcpy(send_filename, read_filename);
+		strcpy(send_filename, read_filename.c_str());
 		// ファイルの拡張子より、Content-type を決定
 		filename_to_extension(send_filename, file_extension, sizeof(file_extension));
 		debug_log_output("send_filename='%s', file_extension='%s'\n", send_filename, file_extension);
@@ -610,7 +620,7 @@ FILETYPES HTTP_RECV_INFO::http_file_check(void)
 			strcasecmp(file_extension, "php") == 0 ||
 			strcasecmp(file_extension, "exe") == 0) {
 			// CGIの実行が不許可なら、Not Found.
-			return (global_param.flag_execute_cgi ? FILETYPES::_CGI : FILETYPES::_NOTFOUND);  // cgiファイ
+			return (global_param.flag_execute_cgi ? FILETYPES::_CGI : FILETYPES::_NOTFOUND);  // cgiファイル
 		}
 		else {
 			return (FILETYPES::_FILE);	// File実体
@@ -749,7 +759,12 @@ int line_receive(int accept_socket, char* line_buf_p, int line_max)
 	return line_len;
 }
 #endif
-//301コードを送出
+/// <summary>
+/// 301(redirect)コードを送出
+/// </summary>
+/// <param name="accept_socket">SOCKET</param>
+/// <param name="location">リダイレクト先</param>
+/// <returns>0</returns>
 int HTTP_RECV_INFO::http_redirect_response(SOCKET accept_socket, char* location)
 {
 	wString buffer;
@@ -759,7 +774,11 @@ int HTTP_RECV_INFO::http_redirect_response(SOCKET accept_socket, char* location)
 	sClose(accept_socket);
 	return 0;
 }
-//404コードを送出
+/// <summary>
+/// 404(Not Found)コードを送出
+/// </summary>
+/// <param name="accept_socket">SOCKER</param>
+/// <returns>0</returns>
 int HTTP_RECV_INFO::http_not_found_response(SOCKET accept_socket)
 {
 	wString buffer;

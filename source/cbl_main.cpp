@@ -91,6 +91,7 @@ int Cybelemain(void* arg)
 	// =============================================
 	Initialize();
 	global_param_init();
+	//wString aaa = wString::jpeg_size("c:\\0001.jpg");
 	//wString str = "abcdefg";
 	//int res1 = dregex::match("あじのもとのあみのさん", "/あ.*ん/");
 	//wString ret = "";

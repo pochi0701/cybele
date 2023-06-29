@@ -1,3 +1,4 @@
 start cybele.exe
 TIMEOUT /T 5
-start http://localhost:8000
+REM EDGEはディフォールトでlocalhsotアクセス禁止
+start http://127.0.0.1:8000

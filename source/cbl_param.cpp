@@ -36,7 +36,7 @@ static void line_buffer_sanitize(char* line_buf);
 // MIME リスト
 // とりあえず知ってる限り書いておく。
 // ********************************************
-MIME_LIST_T     mime_list[] = {
+MIME_LIST_T     mime_list[38] = {
 	//  {mime_name           ,file_extension  ,stream_type     ,   menu_file_type  },
 	{(char*)"text/plain"      ,(char*)"txt"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },
 	{(char*)"text/html"       ,(char*)"htm"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },

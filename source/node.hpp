@@ -30,7 +30,13 @@ private:
 	int           fd;
 	unsigned int  rest;
 public:
-	bufrd(void) {}
+	bufrd()
+	{
+		*buf = 0;
+		bufptr = 0;
+		fd = 0;
+		rest = 0;
+	}
 
 	/// <summary>
 	/// 読み込みオープン

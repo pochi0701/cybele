@@ -182,16 +182,6 @@ enum class MIME_TYPE
 	TYPE_URL = 11,
 	NOT_MIME = -1,
 };
-//#define		TYPE_UNKNOWN			(0)
-//#define		TYPE_DIRECTORY			(1)
-//#define		TYPE_MOVIE		        (2)
-//#define		TYPE_MUSIC			    (3)
-//#define		TYPE_IMAGE			    (4)
-//#define		TYPE_DOCUMENT			(5)
-//#define		TYPE_PLAYLIST			(7)
-//#define		TYPE_MUSICLIST			(9)
-//#define		TYPE_JPEG			    (10)
-//#define		TYPE_URL			    (11)
 #define		NO_RESPONSE_TIMEOUT		(300)
 
 #define		MULTI_ACCESS_MAX		(5)

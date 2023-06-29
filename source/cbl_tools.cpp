@@ -482,9 +482,8 @@ int sentence_split(char* sentence, char cut_char, char* split1, char* split2)
 //******************************************************************
 void filename_to_extension(char* filename, char* extension_buf, unsigned int extension_buf_size)
 {
-	char* p;
 	// 拡張子の存在チェック。
-	p = strrchr(filename, '.');
+	auto p = strrchr(filename, '.');
 	if ((p == NULL) || (strlen(p) > extension_buf_size)) {
 		*extension_buf = 0;
 		//strncpy(extension_buf, "", extension_buf_size );
@@ -819,137 +818,6 @@ void debug_log_output(const char* fmt, ...)
 #else
 	IGNORE_PARAMETER(fmt);
 #endif
-}
-// **************************************************************************
-// * PNGフォーマットファイルから、画像サイズを得る。
-// **************************************************************************
-void png_size(char* png_filename, unsigned int* x, unsigned int* y)
-{
-	int         fd;
-	unsigned char       buf[255] = { 0 };
-	ssize_t     read_len;
-	*x = 0;
-	*y = 0;
-	fd = myopen(png_filename, O_BINARY | O_RDONLY);
-	if (fd < 0) {
-		return;
-	}
-	// ヘッダ+サイズ(0x18byte)  読む
-	//memset(buf, 0, sizeof(buf));
-	read_len = read(fd, reinterpret_cast<char*>(buf), 0x18);
-	if (read_len == 0x18) {
-		*x = (buf[0x10] << 24) +
-			 (buf[0x11] << 16) +
-			 (buf[0x12] << 8) +
-			 (buf[0x13]);
-		*y = (buf[0x14] << 24) +
-			 (buf[0x15] << 16) +
-			 (buf[0x16] << 8) +
-			 (buf[0x17]);
-	}
-	close(fd);
-	return;
-}
-// **************************************************************************
-// * GIFフォーマットファイルから、画像サイズを得る。
-// **************************************************************************
-void gif_size(char* gif_filename, unsigned int* x, unsigned int* y)
-{
-	int         fd;
-	unsigned char       buf[255] = { 0 };
-	ssize_t     read_len;
-	*x = 0;
-	*y = 0;
-	fd = myopen(gif_filename, O_BINARY | O_RDONLY);
-	if (fd < 0) {
-		return;
-	}
-	// ヘッダ+サイズ(10byte)  読む
-	//memset(buf, 0, sizeof(buf));
-	read_len = read(fd, reinterpret_cast<char*>(buf), 10);
-	if (read_len == 10) {
-		*x = buf[6] + (buf[7] << 8);
-		*y = buf[8] + (buf[9] << 8);
-	}
-	close(fd);
-	return;
-}
-// **************************************************************************
-// * JPEGフォーマットファイルから、画像サイズを得る。
-// **************************************************************************
-void  jpeg_size(char* jpeg_filename, unsigned int* x, unsigned int* y)
-{
-	int                 fd;
-	unsigned char       buf[255];
-	ssize_t             read_len;
-	off_t               length;
-	*x = 0;
-	*y = 0;
-	//debug_log_output("jpeg_size: '%s'.", jpeg_filename);
-	fd = myopen(jpeg_filename, O_BINARY | O_RDONLY);
-	if (fd < 0) {
-		return;
-	}
-	while (1) {
-		// マーカ(2byte)  読む
-		read_len = read(fd, buf, 2);
-		if (read_len != 2) {
-			//debug_log_output("fraed() EOF.\n");
-			break;
-		}
-		// Start of Image.
-		if ((buf[0] == 0xFF) && (buf[1] == 0xD8)) {
-			continue;
-		}
-		// Start of Frame 検知
-		if ((buf[0] == 0xFF) && (buf[1] >= 0xC0) && (buf[1] <= 0xC3)) { // SOF 検知
-			//debug_log_output("SOF0 Detect.");
-			// sof データ読み込み
-			memset(buf, 0, sizeof(buf));
-			read_len = read(fd, buf, 0x11);
-			if (read_len != 0x11) {
-				debug_log_output("fraed() error.\n");
-				break;
-			}
-			*y = (buf[3] << 8) + buf[4];
-			*x = (buf[5] << 8) + buf[6];
-			break;
-		}
-		// SOS検知
-		if ((buf[0] == 0xFF) && (buf[1] == 0xDA)) { // SOS 検知
-			//debug_log_output("Start Of Scan.\n");
-			// 0xFFD9 探す。
-			while (1) {
-				// 1byte 読む
-				read_len = read(fd, buf, 1);
-				if (read_len != 1) {
-					//debug_log_output("fraed() error.\n");
-					break;
-				}
-				// 0xFFだったら、もう1byte読む
-				if (buf[0] == 0xFF) {
-					buf[0] = 0;
-					if (read(fd, buf, 1) != 1) {
-						break;
-					}
-					// 0xD9だったら 終了
-					if (buf[0] == 0xD9) {
-						//debug_log_output("End Of Scan.\n");
-						break;
-					}
-				}
-			}
-			continue;
-		}
-		// length 読む
-		memset(buf, 0, sizeof(buf));
-		auto dummy = read(fd, buf, 2);
-		length = (buf[0] << 8) + buf[1];
-		// length分とばす
-		lseek(fd, length - 2, SEEK_CUR);
-	}
-	close(fd);
-	return;
 }
 //---------------------------------------------------------------------------
 char* path_sanitize(char* orig_dir, size_t dir_size)

@@ -9,7 +9,7 @@
 **2.Start**
   Cybele.exeを起動してください。(linuxではcybele)
   セキュリティ許可画面が出る場合は許可してください。
-  ブラウザに localhost:8000と入れてください。画面が表示されます。
+  ブラウザに 127.0.0.1:8000と入れてください。画面が表示されます。
   または[[http://neon.cx/cybele/]]にアクセスしてください。
 
 **3.Execute**
@@ -31,7 +31,7 @@
 　と入力してください。エディタ左上のSaveボタンを押して保存します。
 　次にその隣のView Fileボタンを押してください。
 　アプリケーションが表示されます。
-　内臓関数はActionの[[http://localhost:8000/system/edit/wiki.jss?page=JavaScript|Wiki]]からJavaScript解説に記載してあります。
+　内臓関数はActionの[[http://127.0.0.1:8000/system/edit/wiki.jss?page=JavaScript|Wiki]]からJavaScript解説に記載してあります。
 
 **5.shutdown**
   メニューからツールを選んでshutdownを押し、パスワード(cbl.confに記載)を入力すると終了します。

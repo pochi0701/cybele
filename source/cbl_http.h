@@ -55,6 +55,24 @@ public:
     char   boundary[128];            // multipart/fomr-dataの時のboundary
     QUERY_METHOD    isGet;		     // GETなら1HEADなら2POSTなら3
 
+	HTTP_RECV_INFO()
+	{
+		*recv_range = 0;
+		*content_length = 0;
+		*content_type = 0;
+		*cookie = 0;
+		*recv_uri = 0;
+		*user_agent = 0;
+		*recv_host = 0;
+		range_start_pos = 0;
+		range_end_pos = 0;
+		*mime_type = 0;
+		*send_filename = 0;
+		*action = 0;
+		*request_uri = 0;
+		*boundary = 0;
+		isGet = QUERY_METHOD::NONE;
+	};
     // JavaScript実行
     void jss(SOCKET accpet_socket, char* script_filename, char* query_string);
     // CGI解析＆返信
