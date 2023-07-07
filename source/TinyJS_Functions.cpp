@@ -734,8 +734,10 @@ void scFileCopy(CScriptVar* c, void* userdata) {
 }
 void scMp3Id3Tag(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
+	mp3* mp3instance = new mp3();
 	wString path = c->getParameter("path")->getString();
-	wString res = mp3::mp3_id3_tag(path);
+	wString res = mp3instance->mp3_id3_tag(path);
+	delete mp3instance;
 	c->getReturnVar()->setString(res);
 }
 void scShutDown(CScriptVar* c, void* userdata) {

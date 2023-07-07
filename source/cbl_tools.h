@@ -70,20 +70,21 @@ char* mycalloc(size_t size1, int num);
 void  myfree(char* ptr);
 bool  split(const char* cut_char, wString& split1, wString& split2);
 class mp3 {
+private:
+	unsigned char   mp3_id3v1_flag;         // MP3 タグ 存在フラグ
+	unsigned char   mp3_id3v1_title[128];   // MP3 曲名
+	unsigned char   mp3_id3v1_album[128];   // MP3 アルバム名
+	unsigned char   mp3_id3v1_artist[128];  // MP3 アーティスト
+	unsigned char   mp3_id3v1_year[128];    // MP3 制作年度
+	unsigned char   mp3_id3v1_comment[128]; // MP3 コメント
 public:
-	static unsigned char   mp3_id3v1_flag;         // MP3 タグ 存在フラグ
-	static unsigned char   mp3_id3v1_title[128];   // MP3 曲名
-	static unsigned char   mp3_id3v1_album[128];   // MP3 アルバム名
-	static unsigned char   mp3_id3v1_artist[128];  // MP3 アーティスト
-	static unsigned char   mp3_id3v1_year[128];    // MP3 制作年度
-	static unsigned char   mp3_id3v1_comment[128]; // MP3 コメント
 	//int init;
-	static wString mp3_id3_tag(const char* filename);
-	static wString mp3_id3_tag(const wString& filename);
-	static int     mp3_id3_tag_read(const char* mp3_filename);
-	static int     mp3_id3v1_tag_read(const char* mp3_filename);
-	static int     mp3_id3v2_tag_read(const char* mp3_filename);
-	static unsigned int id3v2_len(unsigned char* buf);
+	wString mp3_id3_tag(const char* filename);
+	wString mp3_id3_tag(const wString& filename);
+	int     mp3_id3_tag_read(const char* mp3_filename);
+	int     mp3_id3v1_tag_read(const char* mp3_filename);
+	int     mp3_id3v2_tag_read(const char* mp3_filename);
+	unsigned int id3v2_len(unsigned char* buf);
 };
 extern struct tm* gmtime_r(const time_t* timer, struct tm* tmbuf);
 extern struct tm* localtime_r(const time_t* timer, struct tm* tmbuf);

@@ -247,8 +247,6 @@ int copy_descriptors(int in_fd, int out_fd, unsigned int content_length, JOINT_F
 /// <returns> -1:ERROR  0:END</returns>
 int copy_body(int in_fd, int out_fd, unsigned int content_length, unsigned int range_start_pos)
 {
-	int             read_length;
-	int             write_length;
 	int             target_read_size;
 	unsigned char*	send_buf_p = reinterpret_cast<unsigned char*>(new char[SEND_BUFFER_SIZE]);
 	int             current_read_size;
@@ -268,7 +266,7 @@ int copy_body(int in_fd, int out_fd, unsigned int content_length, unsigned int r
 		}
 
 		// ファイルからデータを読み込む。必ず読める前提
-		read_length = read(in_fd, send_buf_p, target_read_size);
+		auto read_length = read(in_fd, send_buf_p, target_read_size);
 		//read end
 		if (read_length == 0)
 		{
@@ -315,7 +313,7 @@ int copy_body(int in_fd, int out_fd, unsigned int content_length, unsigned int r
 			current_read_size = read_length;
 		}
 		// SOCKET にデータを送信
-		write_length = send(out_fd, reinterpret_cast<char*>(send_buf_p), current_read_size, 0);
+		auto write_length = send(out_fd, reinterpret_cast<char*>(send_buf_p), current_read_size, 0);
 		//write error
 		if (write_length < 0) {
 			debug_log_output("send() error.%d %s\n", errno, strerror(errno));

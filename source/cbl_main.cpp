@@ -90,7 +90,8 @@ int Cybelemain(void* arg)
 	// 各種初期化
 	// =============================================
 	Initialize();
-	global_param_init();
+
+	global_param.global_param_init();
 	//wString aaa = wString::jpeg_size("c:\\0001.jpg");
 	//wString str = "abcdefg";
 	//int res1 = dregex::match("あじのもとのあみのさん", "/あ.*ん/");
@@ -131,7 +132,7 @@ int Cybelemain(void* arg)
 	// =============================================
 	// コンフィグファイル読む(cbl.conf)
 	// =============================================
-	config_file_read();
+	global_param.config_file_read();
 	// デーモンモードについては、コマンドラインパラメータを優先
 	if (flag_daemon)
 	{
@@ -154,7 +155,7 @@ int Cybelemain(void* arg)
 		debug_log_output("\n%s boot up.", SERVER_NAME);
 		debug_log_output("debug log output start..\n");
 	}
-	config_sanity_check();
+	global_param.config_sanity_check();
 	// =================
 	// daemon化する。
 	// =================
@@ -282,6 +283,10 @@ int Initialize(void)
 	session = new map<wString, wString>;
 	//DB初期化
 	catalog = new DBCatalog();
+
+	// 構造体まとめて初期化
+	memset(&global_param, 0, sizeof(global_param));
+	memset(access_allow_list, 0, sizeof(access_allow_list));
 	return 0;
 }
 // **************************************************************************

@@ -897,47 +897,63 @@ void wString::LTrim(void)
 #endif
 #if 1
 //--------------------------------------------------------------------
+/// <summary>
+/// ファイル情報
+/// </summary>
+/// <param name="str">ファイル名</param>
+/// <param name="mode">1:ファイル情報,0:日付のみ</param>
+/// <returns>ファイル情報(JSON {"permission":permittion,"size":size,"date":date}) 存在しないときundefined</returns>
 wString wString::FileStats(const char* str, int mode)
 {
 	struct stat      stat_buf;
-	wString buf;
-	if (stat(str, &stat_buf) == 0 && mode == 0) {
-		/* ファイル情報を表示 */
+	wString buf = "undefined";
+	if (stat(str, &stat_buf) == 0) {
+		if (mode == 0) {
+			/* ファイル情報を表示 */
 
 #ifdef linux
-		buf.sprintf("{\"permission\":\"%o\",\"size\":%d,\"date\":\"%s\"}", stat_buf.st_mode, stat_buf.st_size, ctime(&stat_buf.st_mtime));
+			buf.sprintf("{\"permission\":\"%o\",\"size\":%d,\"date\":\"%s\"}", stat_buf.st_mode, stat_buf.st_size, ctime(&stat_buf.st_mtime));
 #else
-		buf.sprintf("{\"permission\":\"%o\",\"size\":%d,\"date\":\"%s\"}", stat_buf.st_mode, stat_buf.st_size, ctimew(&stat_buf.st_mtime).c_str());
+			buf.sprintf("{\"permission\":\"%o\",\"size\":%d,\"date\":\"%s\"}", stat_buf.st_mode, stat_buf.st_size, ctimew(&stat_buf.st_mtime).c_str());
 #endif
-		//printf("デバイスID : %d\n",stat_buf.st_dev);
-		//printf("inode番号 : %d\n",stat_buf.st_ino);
-		//printf("アクセス保護 : %o\n",stat_buf.st_mode );
-		//printf("ハードリンクの数 : %d\n",stat_buf.st_nlink);
-		//printf("所有者のユーザID : %d\n",stat_buf.st_uid);
-		//printf("所有者のグループID : %d\n",stat_buf.st_gid);
-		//printf("デバイスID（特殊ファイルの場合） : %d\n",stat_buf.st_rdev);
-		//printf("容量（バイト単位） : %d\n",stat_buf.st_size);
-		//printf("ファイルシステムのブロックサイズ : %d\n",stat_buf.st_blksize);
-		//printf("割り当てられたブロック数 : %d\n",stat_buf.st_blocks);
-		//printf("最終アクセス時刻 : %s",ctime(&stat_buf.st_atime));
-		//printf("最終修正時刻 : %s",ctime(&stat_buf.st_mtime));
-		//printf("最終状態変更時刻 : %s",ctime(&stat_buf.st_ctime));
-	}
-	else {
-		//date
-		if (mode == 1) {
-			//char s[128] = {0};
-			//time_t timer;
-			//struct tm *timeptr;
-			//timer = time(NULL);
-			//timeptr = localtime(&stat_buf.st_mtime);
-			//strftime(s, 128, "%Y/%m/%d %H:%M:%S", timeptr);
-			buf.sprintf("%d", stat_buf.st_mtime);
+			//printf("デバイスID : %d\n",stat_buf.st_dev);
+			//printf("inode番号 : %d\n",stat_buf.st_ino);
+			//printf("アクセス保護 : %o\n",stat_buf.st_mode );
+			//printf("ハードリンクの数 : %d\n",stat_buf.st_nlink);
+			//printf("所有者のユーザID : %d\n",stat_buf.st_uid);
+			//printf("所有者のグループID : %d\n",stat_buf.st_gid);
+			//printf("デバイスID（特殊ファイルの場合） : %d\n",stat_buf.st_rdev);
+			//printf("容量（バイト単位） : %d\n",stat_buf.st_size);
+			//printf("ファイルシステムのブロックサイズ : %d\n",stat_buf.st_blksize);
+			//printf("割り当てられたブロック数 : %d\n",stat_buf.st_blocks);
+			//printf("最終アクセス時刻 : %s",ctime(&stat_buf.st_atime));
+			//printf("最終修正時刻 : %s",ctime(&stat_buf.st_mtime));
+			//printf("最終状態変更時刻 : %s",ctime(&stat_buf.st_ctime));
+		}
+		else
+		{
+			//date
+			if (mode == 1) {
+				//char s[128] = {0};
+				//time_t timer;
+				//struct tm *timeptr;
+				//timer = time(NULL);
+				//timeptr = localtime(&stat_buf.st_mtime);
+				//strftime(s, 128, "%Y/%m/%d %H:%M:%S", timeptr);
+				buf.sprintf("%d", stat_buf.st_mtime);
+			}
 		}
 	}
 	return buf;
 }
 //---------------------------------------------------------------------------
+
+/// <summary>
+/// ファイル情報
+/// </summary>
+/// <param name="str">ファイル名</param>
+/// <param name="mode">1:ファイル情報,0:日付のみ</param>
+/// <returns>ファイル情報(JSON {"permission":permittion,"size":size,"date":date}) 存在しないときundefined</returns>
 wString wString::FileStats(const wString& str, int mode)
 {
 	return FileStats(str.String, mode);
@@ -1148,14 +1164,14 @@ int wString::DirectoryExists(const wString& str)
 {
 	return DirectoryExists(str.String);
 }
-/********************************************************************************/
-// sentence文字列内のkey文字列をrep文字列で置換する。
-// sentence:元文字列
-// slen:元文字列の長さ
-// p:置換前の位置
-// klen:置換前の長さ
-// rep:置換後文字列
-/********************************************************************************/
+/// <summary>
+/// sentence文字列内のkey文字列を置換先文字列で置換する。
+/// </summary>
+/// <param name="sentence">置換対象文字列</param>
+/// <param name="slen">置換対象文字列の長さ</param>
+/// <param name="p">置換の位置</param>
+/// <param name="klen">置換する長さ</param>
+/// <param name="rep">置換先文字列</param>
 void wString::replace_character_len(const char* sentence, int slen, const char* p, int klen, const char* rep)
 {
 	auto rlen = (int)strlen(const_cast<char*>(rep));
@@ -1180,10 +1196,12 @@ void wString::replace_character_len(const char* sentence, int slen, const char* 
 	}
 	return;
 }
-//---------------------------------------------------------------------------
-// フォルダのファイルを数える
-// 引数　wString Path:
-// 戻値　ファイルリスト。ほっておいていいが、コピーしてほしい
+///---------------------------------------------------------------------------
+/// <summary>
+/// フォルダ内のファイルを列挙する
+/// </summary>
+/// <param name="Path">フォルダパス</param>
+/// <returns>一覧のJSON文字列。コピーしてほしい</returns>
 wString wString::EnumFolderjson(const wString& Path)
 {
 #ifdef linux
@@ -1257,39 +1275,15 @@ wString wString::EnumFolderjson(const wString& Path)
 	return temp;
 #endif
 }
-wString wString::dump() const
-{
-	wString tmp;
-	void* ptr = String;
-	int vlen = len;
-	unsigned char* out = static_cast<unsigned char*>(ptr);
-	for (int start = 0; start < vlen; start += 16)
-	{
-		tmp.cat_sprintf("%04d:", start);
-		for (int line = start; line < start + 16 && line < vlen; line++)
-		{
-			tmp.cat_sprintf("%02X ", out[line]);
-		}
-		for (int line = start; line < start + 16 && line < vlen; line++)
-		{
-			if (out[line] >= ' ' && out[line] < 0x7f)
-			{
-				tmp.cat_sprintf("%c", out[line]);
-			}
-			else
-			{
-				tmp.cat_sprintf(".");
-			}
-		}
-		tmp.cat_sprintf("\r\n");
-	}
-	return tmp;
-}
 
-//---------------------------------------------------------------------------
-// フォルダのファイルを数える
-// 引数　wString Path:
-// 戻値　ファイルリスト。ほっておいていいが、コピーしてほしい
+
+
+///---------------------------------------------------------------------------
+/// <summary>
+/// フォルダ内のファイルを列挙する
+/// </summary>
+/// <param name="Path">フォルダパス</param>
+/// <returns>一覧のJSON文字列。コピーしてほしい</returns>
 wString wString::EnumFolder(const wString& Path)
 {
 #ifdef linux
@@ -1357,7 +1351,46 @@ wString wString::EnumFolder(const wString& Path)
 #endif
 	return temp;
 }
+/// <summary>
+/// 文字列（バイナリ含む）ダンプ
+/// </summary>
+/// <returns>ダンプした文字列</returns>
+wString wString::dump() const
+{
+	wString tmp;
+	void* ptr = String;
+	int vlen = len;
+	unsigned char* out = static_cast<unsigned char*>(ptr);
+	for (int start = 0; start < vlen; start += 16)
+	{
+		tmp.cat_sprintf("%04d:", start);
+		for (int line = start; line < start + 16 && line < vlen; line++)
+		{
+			tmp.cat_sprintf("%02X ", out[line]);
+		}
+		for (int line = start; line < start + 16 && line < vlen; line++)
+		{
+			if (out[line] >= ' ' && out[line] < 0x7f)
+			{
+				tmp.cat_sprintf("%c", out[line]);
+			}
+			else
+			{
+				tmp.cat_sprintf(".");
+			}
+		}
+		tmp.cat_sprintf("\r\n");
+	}
+	return tmp;
+}
 #ifndef va_copy
+
+/// <summary>
+/// 可変フォーマッティング
+/// </summary>
+/// <param name="fmt"></param>
+/// <param name="arg"></param>
+/// <returns></returns>
 int wString::vtsprintf(const char* fmt, va_list arg) {
 	int len = 0;
 	int size = 0;
@@ -1423,11 +1456,13 @@ int wString::vtsprintf(const char* fmt, va_list arg) {
 	va_end(arg);
 	return (len);
 }
-
-
-/*
-数値 => 10進文字列変換
-*/
+/// <summary>
+/// 数値 => 10進文字列変換
+/// </summary>
+/// <param name="val"></param>
+/// <param name="zerof"></param>
+/// <param name="width"></param>
+/// <returns></returns>
 int wString::tsprintf_decimal(signed long val, int zerof, int width)
 {
 	//末尾０を保証
@@ -1488,9 +1523,13 @@ int wString::tsprintf_decimal(signed long val, int zerof, int width)
 	*this += (ptmp + 1);
 	return (len);
 }
-/*
-数値 => 10進文字列変換
-*/
+/// <summary>
+/// 数値 => 10進文字列変換
+/// </summary>
+/// <param name="val"></param>
+/// <param name="zerof"></param>
+/// <param name="width"></param>
+/// <returns></returns>
 int wString::tsprintf_decimalu(unsigned long val, int zerof, int width)
 {
 	char tmp[22] = { 0 };
@@ -1540,9 +1579,13 @@ int wString::tsprintf_decimalu(unsigned long val, int zerof, int width)
 	*this += (ptmp + 1);
 	return (len);
 }
-/*
-数値 => 8進文字列変換
-*/
+/// <summary>
+/// 数値 => 8進文字列変換
+/// </summary>
+/// <param name="val"></param>
+/// <param name="zerof"></param>
+/// <param name="width"></param>
+/// <returns></returns>
 int wString::tsprintf_octadecimal(unsigned long val, int zerof, int width)
 {
 	char tmp[22] = { 0 };
@@ -1592,9 +1635,14 @@ int wString::tsprintf_octadecimal(unsigned long val, int zerof, int width)
 	*this += (ptmp + 1);
 	return (len);
 }
-/*
-数値 => 16進文字列変換
-*/
+/// <summary>
+/// 数値 => 16進文字列変換
+/// </summary>
+/// <param name="val"></param>
+/// <param name="capital"></param>
+/// <param name="zerof"></param>
+/// <param name="width"></param>
+/// <returns></returns>
 int wString::tsprintf_hexadecimal(unsigned long val, int capital, int zerof, int width)
 {
 	char tmp[22] = { 0 };
@@ -1642,19 +1690,21 @@ int wString::tsprintf_hexadecimal(unsigned long val, int capital, int zerof, int
 	*this += (ptmp + 1);
 	return(len);
 }
-
-/*
-数値 => 1文字キャラクタ変換
-*/
+/// <summary>
+/// 数値 => 1文字キャラクタ変換
+/// </summary>
+/// <param name="ch"></param>
+/// <returns></returns>
 int wString::tsprintf_char(int ch)
 {
 	*this += (char)ch;
 	return(1);
 }
-
-/*
-数値 => ASCIIZ文字列変換
-*/
+/// <summary>
+/// 数値 => ASCIIZ文字列変換
+/// </summary>
+/// <param name="str"></param>
+/// <returns></returns>
 int wString::tsprintf_string(char* str)
 {
 	*this += str;
@@ -1662,7 +1712,15 @@ int wString::tsprintf_string(char* str)
 }
 #endif
 //---------------------------------------------------------------------------
-//wString 可変引数
+//wString 
+
+
+/// <summary>
+/// 可変引数フォーマッティング
+/// </summary>
+/// <param name="format"></param>
+/// <param name=""></param>
+/// <returns></returns>
 int wString::sprintf(const char* format, ...)
 {
 #ifndef va_copy
@@ -1690,8 +1748,12 @@ int wString::sprintf(const char* format, ...)
 	return stat;
 #endif
 }
-//---------------------------------------------------------------------------
-//wString 可変引数
+/// <summary>
+/// 可変引数追加フォーマッティング
+/// </summary>
+/// <param name="format"></param>
+/// <param name=""></param>
+/// <returns></returns>
 int wString::cat_sprintf(const char* format, ...)
 {
 #ifndef va_copy
@@ -1749,9 +1811,10 @@ wString wString::strsplit(const char* delimstr)
 	}
 	return tmp;
 }
-//---------------------------------------------------------------------------
-//
-//---------------------------------------------------------------------------
+/// <summary>
+/// 文字列容量の変更
+/// </summary>
+/// <param name="newsize"></param>
 void wString::resize(const int newsize)
 {
 	if (len >= total) {
@@ -1771,8 +1834,12 @@ void wString::resize(const int newsize)
 		//指定サイズが元より小さいので何もしない
 	}
 }
-//---------------------------------------------------------------------------
-//HTML特殊文字に変換
+///---------------------------------------------------------------------------
+/// <summary>
+/// HTML特殊文字に変換
+/// </summary>
+/// <param name=""></param>
+/// <returns>HTML特殊文字</returns>
 wString wString::htmlspecialchars(void)
 {
 	wString temp;
@@ -1793,7 +1860,7 @@ wString wString::htmlspecialchars(void)
 }
 //---------------------------------------------------------------------------
 // **************************************************************************
-//  URIエンコードを行います.
+//  います.
 //  機能 : URIデコードを行う
 //  書式 : int uri_encode
 //  (char* dst,size_t dst_len,const char* src,int src_len);
@@ -1803,6 +1870,13 @@ wString wString::htmlspecialchars(void)
 //                 src_len 変換元の文字の長さ.
 //  返値 : エンコードした文字の数(そのままも含む)
 // **************************************************************************
+
+
+/// <summary>
+/// URIエンコードを行う
+/// </summary>
+/// <param name="">変換元文字列</param>
+/// <returns>URIエンコードした文字列</returns>
 wString wString::uri_encode(void)
 {
 	unsigned int is;

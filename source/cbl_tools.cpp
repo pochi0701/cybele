@@ -101,8 +101,8 @@ void* memmem(const void* haystack, size_t haystacklen, const void* needle, size_
 /// 最初に出て来たcut_charの前後を分割
 /// </summary>
 /// <param name="pattern">切り出し対象文字列</param>
-/// <param name="split1">前の文字列&元の文字列</param>
-/// <param name="split2">後の文字列</param>
+/// <param name="split1">前の文字列</param>
+/// <param name="split2">後の文字列&元の文字列</param>
 /// <returns>成功:true/失敗:false</returns>
 bool split(const char* pattern, wString& split1, wString& split2)
 {
@@ -257,18 +257,6 @@ void 	cut_after_last_character(char* sentence, char cut_char)
 /// <param name="n">バイト数</param>
 void    cut_before_n_length(char* sentence, unsigned int n)
 {
-#if 0
-	unsigned int len;
-	if (sentence == NULL || *sentence == 0) {
-		return;
-	}
-	len = strlen(sentence);
-	// sentence が、nよりも同じか短いならばreturn
-	if (len <= n) {
-		return;
-	}
-	strncpy(sentence, (sentence + len - n), n + 1);
-#else
 	if (sentence == NULL || *sentence == 0) {
 		return;
 	}
@@ -289,7 +277,6 @@ void    cut_before_n_length(char* sentence, unsigned int n)
 	strncpy(sentence, malloc_p, sentence_len);
 	free(malloc_p);
 	return;
-#endif
 }
 /// <summary>
 /// sentenceの、後ろ n byteを削除
@@ -1702,12 +1689,12 @@ int  mp3::mp3_id3v2_tag_read(const char* mp3_filename)
 		len -= (frame_len + 10); /* フレーム本体 + フレームヘッダ */
 	}
 	close(fd);
-	return mp3_id3v1_flag ? 0 : -1;
+	return this->mp3_id3v1_flag ? 0 : -1;
 }
-unsigned char   mp3::mp3_id3v1_flag;         // MP3 タグ 存在フラグ
-unsigned char   mp3::mp3_id3v1_title[128];   // MP3 曲名
-unsigned char   mp3::mp3_id3v1_album[128];   // MP3 アルバム名
-unsigned char   mp3::mp3_id3v1_artist[128];  // MP3 アーティスト
-unsigned char   mp3::mp3_id3v1_year[128];    // MP3 制作年度
-unsigned char   mp3::mp3_id3v1_comment[128]; // MP3 コメント
+//unsigned char   mp3::mp3_id3v1_flag;         // MP3 タグ 存在フラグ
+//unsigned char   mp3::mp3_id3v1_title[128];   // MP3 曲名
+//unsigned char   mp3::mp3_id3v1_album[128];   // MP3 アルバム名
+//unsigned char   mp3::mp3_id3v1_artist[128];  // MP3 アーティスト
+//unsigned char   mp3::mp3_id3v1_year[128];    // MP3 制作年度
+//unsigned char   mp3::mp3_id3v1_comment[128]; // MP3 コメント
 

@@ -240,7 +240,6 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 		//POSTの展開
 		if (isGet == QUERY_METHOD::POST) {
 			char buf[1025] = { 0 };
-			int num;
 			int contentsize = atoi(content_length);
 			int readsize;
 			script3.clear();
@@ -253,7 +252,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 					readsize = 1024;
 				}
 				//num = read( accept_socket, buf, readsize);
-				num = recv(accept_socket, buf, readsize, 0);
+				auto num = recv(accept_socket, buf, readsize, 0);
 				////wString* tmp;
 				if (num <= 0) {
 					break;

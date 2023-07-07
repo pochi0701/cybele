@@ -143,7 +143,6 @@ unsigned int __stdcall accessloop(void* arg)
 	SOCKET             accept_socket;  // 接続Socket
 	struct sockaddr_in caddr;                // クライアントソケットアドレス構造体
 	socklen_t          caddr_len = sizeof(caddr);   // クライアントソケットアドレス構造体のサイズ
-	ACCESS_INFO        ac_in;
 	char               access_host[256] = { 0 };
 
 
@@ -169,6 +168,7 @@ unsigned int __stdcall accessloop(void* arg)
 			sClose(accept_socket);       // Socketクローズ
 			break;
 		}
+		ACCESS_INFO ac_in;
 		ac_in.accept_socket = (unsigned int)accept_socket;
 		ac_in.access_host = access_host;
 		ac_in.caddr = caddr;
@@ -229,8 +229,9 @@ void thread_process(ACCESS_INFO& ac_in)
 		}
 		// リストの存在する数だけループ
 		for (i = 0; i < ACCESS_ALLOW_LIST_MAX; i++) {
-			if (access_allow_list[i].flag == FALSE) // リスト終了
+			if (access_allow_list[i].flag == FALSE) { // リスト終了
 				break;
+			}
 			// masked_client_address 生成
 			masked_client_address[0] = client_address[0] & access_allow_list[i].netmask[0];
 			masked_client_address[1] = client_address[1] & access_allow_list[i].netmask[1];
