@@ -69,6 +69,7 @@ char* mymalloc(size_t size);
 char* mycalloc(size_t size1, int num);
 void  myfree(char* ptr);
 bool  split(const char* cut_char, wString& split1, wString& split2);
+/// <summary>クラスmp3</summary>
 class mp3 {
 private:
 	unsigned char   mp3_id3v1_flag;         // MP3 タグ 存在フラグ
