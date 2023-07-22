@@ -67,7 +67,7 @@ int HTTP_RECV_INFO::http_cgi_response(SOCKET accept_socket)
 	}
 	query_string = strchr(request_uri, '?');
 	if (query_string == NULL) {
-		query_string = static_cast<char*>("");
+		query_string = const_cast<char*>("");
 	}
 	else {
 		*query_string++ = '\0';
@@ -213,7 +213,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 		while (script3.length()) {
 			split("&", script1, script3);
 			split("=", script2, script1);
-			script4 += "var _GET." + script2 + static_cast<char*>("=\"") + escape(script1.uri_decode()) + static_cast<char*>("\";");
+			script4 += "var _GET." + script2 + const_cast<char*>("=\"") + escape(script1.uri_decode()) + const_cast<char*>("\";");
 		}
 		if (script4.Length()) {
 			javaScriptThread.execute(script4);
@@ -227,10 +227,10 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 			split(";", script1, script3);
 			script1 = script1.LTrim();
 			split("=", script2, script1);
-			script4 += "var _COOKIE." + script2 + static_cast<char*>("=\"") + escape(script1.uri_decode()) + static_cast<char*>("\";");
+			script4 += "var _COOKIE." + script2 + const_cast<char*>("=\"") + escape(script1.uri_decode()) + const_cast<char*>("\";");
 			//SESSIONIDの設定
 			if (script2 == "sid") {
-				script4 += static_cast<char*>("var JSSESSID=\"") + escape(script1.uri_decode()) + static_cast<char*>("\";");
+				script4 += const_cast<char*>("var JSSESSID=\"") + escape(script1.uri_decode()) + const_cast<char*>("\";");
 			}
 		}
 		if (script4.Length()) {
@@ -322,7 +322,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 					{
 						wString content;
 						content.setBinary(mp[i]->content,mp[i]->length);
-						script4 += static_cast<char*>("var _post.") + wString(mp[i]->name) + static_cast<char*>("=\"") + escape(content.Trim().uri_decode()) + static_cast<char*>("\";");
+						script4 += const_cast<char*>("var _post.") + wString(mp[i]->name) + const_cast<char*>("=\"") + escape(content.Trim().uri_decode()) + const_cast<char*>("\";");
 					}
 				}
 				if (script4.Length()) {
@@ -335,7 +335,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 				while (script3.length()) {
 					split("&", script1, script3);
 					split("=", script2, script1);
-					script4 += static_cast<char*>("var _POST.") + script2 + static_cast<char*>("=\"") + escape(script1.uri_decode()) + static_cast<char*>("\";");
+					script4 += const_cast<char*>("var _POST.") + script2 + const_cast<char*>("=\"") + escape(script1.uri_decode()) + const_cast<char*>("\";");
 				}
 				if (script4.Length()) {
 					javaScriptThread.execute(script4);

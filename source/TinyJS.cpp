@@ -259,11 +259,11 @@ wString getJSString(const wString& str) {
 		bool replace = true;
 
 		switch (nStr[i]) {
-		case '\\': replaceWith = "\\\\"; break;
-		case '\n': replaceWith = "\\n"; break;
-		case '\r': replaceWith = "\\r"; break;
-		case '\a': replaceWith = "\\a"; break;
-		case '"':  replaceWith = "\\\""; break;
+		case '\\': replaceWith = const_cast<char*>("\\\\"); break;
+		case '\n': replaceWith = const_cast<char*>("\\n"); break;
+		case '\r': replaceWith = const_cast<char*>("\\r"); break;
+		case '\a': replaceWith = const_cast<char*>("\\a"); break;
+		case '"':  replaceWith = const_cast<char*>("\\\""); break;
 		default: {
 			int nCh = ((int)nStr[i]) & 0xFF;
 			if (nCh < 32) {
@@ -274,7 +274,7 @@ wString getJSString(const wString& str) {
 				replaceWith = buffer;
 			}
 			else {
-				replaceWith = "";
+				replaceWith = const_cast<char*>("");
 				replace = false;
 			}
 		}
