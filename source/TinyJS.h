@@ -73,6 +73,11 @@ enum class  LEX_TYPES {
     LEX_OR    = '|',
     LEX_RBRA  = '}',
     LEX_TLD   = '~',
+	LEX_a = 'a',
+	LEX_n = 'n',
+	LEX_r = 'r',
+	LEX_t = 't',
+	LEX_x = 'x',
 
 	LEX_ID = 256,
 	LEX_INT,

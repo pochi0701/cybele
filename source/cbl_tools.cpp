@@ -1386,10 +1386,9 @@ int readLine(int fd, char* line_buf_p, int line_max)
 {
 	char byte_buf;
 	int  line_len = 0;
-	int	 recv_len;
 	// １行受信実行
 	while (1) {
-		recv_len = read(fd, &byte_buf, 1);
+		auto recv_len = read(fd, &byte_buf, 1);
 		if (recv_len != 1) { // 受信失敗チェック
 			return (-1);
 		}

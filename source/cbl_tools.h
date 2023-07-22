@@ -80,6 +80,14 @@ private:
 	unsigned char   mp3_id3v1_comment[128]; // MP3 コメント
 public:
 	//int init;
+	mp3() {
+		mp3_id3v1_flag = 0;
+		*mp3_id3v1_title = 0;
+		*mp3_id3v1_album = 0;
+		*mp3_id3v1_artist = 0;
+		*mp3_id3v1_year = 0;
+		*mp3_id3v1_comment = 0;
+	};
 	wString mp3_id3_tag(const char* filename);
 	wString mp3_id3_tag(const wString& filename);
 	int     mp3_id3_tag_read(const char* mp3_filename);

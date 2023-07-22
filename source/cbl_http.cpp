@@ -39,7 +39,7 @@ void server_http_process(SOCKET accept_socket, char* access_host, char* client_a
 	IGNORE_PARAMETER(client_addr_str);
 	FILETYPES		result;
 	HTTP_RECV_INFO	http_recv_info;	//HTTP受信情報保存構造体
-	int                 ret;
+	int             ret;
 	time_t nowtime;         //現在時刻
 	time(&nowtime);
 	//    user_info_list.list_num = 0;
@@ -380,7 +380,6 @@ FILETYPES HTTP_RECV_INFO::http_index(void)
 int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 {
 	int result = 0;
-	int	recv_len;
 	wString     wb1;
 	wString     wb2;
 	wString 	split1;
@@ -392,7 +391,7 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 	// ================================
 	for (i = 0;; i++) {
 		// 1行受信 実行。
-		recv_len = line.LineRcv(accept_socket);
+		auto recv_len = line.LineRcv(accept_socket);
 		//strcpy( line_buf,line.c_str());
 		// 受信した内容をチェック。
 		if (recv_len == 0) { // 空行検知。ヘッダ受信終了。

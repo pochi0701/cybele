@@ -288,8 +288,12 @@ wString getJSString(const wString& str) {
 	return "\"" + nStr + "\"";
 }
 
-/** Is the wString alphanumeric */
-//英字+[英字|数値]
+/// <summary>
+/// Is the wString alphanumeric
+/// 英字+[英字|数値]
+/// </summary>
+/// <param name="str"></param>
+/// <returns></returns>
 bool isAlphaNum(const wString& str) {
 	if (str.size() == 0) {
 		return true;
@@ -304,6 +308,7 @@ bool isAlphaNum(const wString& str) {
 	}
 	return true;
 }
+
 #ifdef web
 void JSTRACE(SOCKET socket, const char* format, ...)
 {
@@ -639,9 +644,10 @@ void CScriptLex::getNextToken() {
 			if (currCh == LEX_TYPES::LEX_ESC) {
 				getNextCh();
 				switch (currCh) {
-				case static_cast<LEX_TYPES>('n'): tkStr += '\n'; break;
-				case static_cast<LEX_TYPES>('r'): tkStr += '\r'; break;
-				case static_cast<LEX_TYPES>('t'): tkStr += '\t'; break;
+				case LEX_TYPES::LEX_n: tkStr += '\n'; break;
+				case LEX_TYPES::LEX_a: tkStr += '\a'; break;
+				case LEX_TYPES::LEX_r: tkStr += '\r'; break;
+				case LEX_TYPES::LEX_t: tkStr += '\t'; break;
 				case LEX_TYPES::LEX_DQT: tkStr += '"'; break;
 				case LEX_TYPES::LEX_ESC: tkStr += '\\'; break;
 				default: tkStr += static_cast<unsigned char>(currCh);
@@ -662,13 +668,13 @@ void CScriptLex::getNextToken() {
 			if (currCh == LEX_TYPES::LEX_ESC) {
 				getNextCh();
 				switch (currCh) {
-				case static_cast<LEX_TYPES>('n'): tkStr += '\n'; break;
-				case static_cast<LEX_TYPES>('a'): tkStr += '\a'; break;
-				case static_cast<LEX_TYPES>('r'): tkStr += '\r'; break;
-				case static_cast<LEX_TYPES>('t'): tkStr += '\t'; break;
+				case LEX_TYPES::LEX_n: tkStr += '\n'; break;
+				case LEX_TYPES::LEX_a: tkStr += '\a'; break;
+				case LEX_TYPES::LEX_r: tkStr += '\r'; break;
+				case LEX_TYPES::LEX_t: tkStr += '\t'; break;
 				case LEX_TYPES::LEX_SQT: tkStr += '\''; break;
 				case LEX_TYPES::LEX_ESC: tkStr += '\\'; break;
-				case static_cast<LEX_TYPES>('x'): { // hex digits
+				case LEX_TYPES::LEX_x: { // hex digits
 					char buf[3] = "??";
 					getNextCh(); buf[0] = static_cast<char>(currCh);
 					getNextCh(); buf[1] = static_cast<char>(currCh);
@@ -803,7 +809,11 @@ wString CScriptLex::getSubString(int lastPosition) {
 	}
 }
 
-//部分語彙を返す
+/// <summary>
+/// 部分語彙を返す
+/// </summary>
+/// <param name="lastPosition"></param>
+/// <returns></returns>
 CScriptLex* CScriptLex::getSubLex(int lastPosition) {
 	int lastCharIdx = tokenLastEnd + 1;
 	if (lastCharIdx < dataEnd)
@@ -835,8 +845,12 @@ wString CScriptLex::getPosition(int pos) {
 	return buf;
 }
 
-// ----------------------------------------------------------------------------------- CSCRIPTVARLINK
-
+////////////////////////////////////////////////////////////////////////////////////// CSCRIPTVARLINK
+/// <summary>
+/// 変数への値の設定
+/// </summary>
+/// <param name="var"></param>
+/// <param name="myname"></param>
 CScriptVarLink::CScriptVarLink(CScriptVar* var, const wString& myname) {
 	this->name = myname;
 	this->nextSibling = 0;
@@ -845,6 +859,10 @@ CScriptVarLink::CScriptVarLink(CScriptVar* var, const wString& myname) {
 	this->owned = false;
 }
 
+/// <summary>
+/// 変数のコピー（浅い参照）
+/// </summary>
+/// <param name="link"></param>
 CScriptVarLink::CScriptVarLink(const CScriptVarLink& link) {
 	// Copy constructor
 	this->name = link.name;
@@ -854,6 +872,7 @@ CScriptVarLink::CScriptVarLink(const CScriptVarLink& link) {
 	this->owned = false;
 }
 
+/// <summary>デストラクタ</summary>
 CScriptVarLink::~CScriptVarLink() {
 	var->unref();
 }
@@ -1304,6 +1323,10 @@ CScriptVar* CScriptVar::mathsOp(CScriptVar* b, LEX_TYPES op) {
 	//return 0;
 }
 
+/// <summary>
+/// copy value of val to this.
+/// </summary>
+/// <param name="val">varable copy from.</param>
 void CScriptVar::copySimpleData(CScriptVar* val) {
 	data = val->data;
 	intData = val->intData;
@@ -1336,6 +1359,10 @@ void CScriptVar::copyValue(CScriptVar* val) {
 	}
 }
 
+/// <summary>
+/// Deep copy
+/// </summary>
+/// <returns>new variable.</returns>
 CScriptVar* CScriptVar::deepCopy() {
 	CScriptVar* newVar = new CScriptVar();
 	newVar->copySimpleData(this);
@@ -1872,12 +1899,12 @@ CScriptVarLink* CTinyJS::factor(bool& execute) {
 						/* if we haven't found this defined yet, use the built-in
 						'length' properly */
 						if (a->var->isArray() && name == "length") {
-							int ll = a->var->getArrayLength();
+							int ll = static_cast<int>(a->var->getArrayLength());
 							//aa = 1;
 							child = new CScriptVarLink(new CScriptVar(ll));
 						}
 						else if (a->var->isString() && name == "length") {
-							int ll = a->var->getString().size();
+							int ll = static_cast<int>(a->var->getString().size());
 
 							child = new CScriptVarLink(new CScriptVar(ll));
 						}

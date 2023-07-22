@@ -161,9 +161,10 @@ private:
 	/// </summary>
 	/// <returns></returns>
 	static int config_file_open(void);
-
-
-
+	/// <summary>
+	/// 行整理
+	/// </summary>
+	/// <param name="line_buf">整理する行</param>
 	static void line_buffer_sanitize(char* line_buf);
 };
 // IPアドレスアクセスコントロール用
@@ -198,20 +199,20 @@ typedef struct {
 } ACCESS_INFO;
 // 2004/08/02 Add test
 // 2004/08/11 Add test
-typedef struct {
-	char			access_ip[32];					// アクセスしてきたIP
-	char*			user_name;						// ユーザー名
-	char*			user_pass;						// ユーザーパスワード
-	int				login_flag;						// ログインフラグ
-	time_t			login_time;						// ログイン時刻
-	int				file_send_flag;					// ファイル転送中フラグ(ファイル転送中はタイムアウトさせないため)
-	char			recv_uri_log[FILENAME_MAX];		// 受信したURI(decoded)のログ
-	char			recv_uri_last[FILENAME_MAX];	// 受信したURI(decoded)のログ
-} ACCESS_USER_INFO;
-typedef struct {
-	ACCESS_USER_INFO    user_info[MULTI_ACCESS_MAX];
-	int                 list_num;
-} ACCESS_USER_INFO_LIST;
+//typedef struct {
+//	char			access_ip[32];					// アクセスしてきたIP
+//	char*			user_name;						// ユーザー名
+//	char*			user_pass;						// ユーザーパスワード
+//	int				login_flag;						// ログインフラグ
+//	time_t			login_time;						// ログイン時刻
+//	int				file_send_flag;					// ファイル転送中フラグ(ファイル転送中はタイムアウトさせないため)
+//	char			recv_uri_log[FILENAME_MAX];		// 受信したURI(decoded)のログ
+//	char			recv_uri_last[FILENAME_MAX];	// 受信したURI(decoded)のログ
+//} ACCESS_USER_INFO;
+//typedef struct {
+//	ACCESS_USER_INFO    user_info[MULTI_ACCESS_MAX];
+//	int                 list_num;
+//} ACCESS_USER_INFO_LIST;
 
 /// <summary>
 /// multipart
@@ -228,7 +229,7 @@ public:
 		fileName[0] = 0;
 	}
 	void* content;
-	size_t length;
+	int length;
 	char name[256];
 	char fileName[256];
 };
@@ -243,7 +244,7 @@ public:
 extern GLOBAL_PARAM_T           global_param;
 //extern MIME_LIST_T              mime_list[];
 extern ACCESS_CHECK_LIST_T      access_allow_list[ACCESS_ALLOW_LIST_MAX];     // アクセス許可リスト
-extern ACCESS_USER_INFO_LIST    user_info_list;
+//extern ACCESS_USER_INFO_LIST    user_info_list;
 // ------------------
 // グローバル関数
 // ------------------

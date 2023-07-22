@@ -392,7 +392,7 @@ public:
 		//vector<int>    select;
 		vector<pair<int, int> > tmpclm;
 		for (auto i = 0U; i < (unsigned int)Clm.size(); i++) {
-			for (int j = Column.size() - 1; j >= 0; j--) {
+			for (int j = static_cast<int>(Column.size()) - 1; j >= 0; j--) {
 				int tblno = Column[j].second;
 				Table* tbl = Tables[tblno];
 				unsigned int k = Column[j].first;
@@ -715,7 +715,7 @@ public:
 			}
 			//データ作る[{"aaa":1,"bbb":2},{"aaa":1,"bbb":2}]
 			//ノード表示
-			temp.resize(Column.size() * Node.size() * 8);
+			temp.resize(static_cast<int>(Column.size()) * static_cast<int>(Node.size()) * 8);
 			temp = "[";
 			if (Node.size()) {
 				//各行
@@ -1091,10 +1091,9 @@ Table::Table(const char* myname, const char* mycolumn) {
 	//clmnsにCSVインサート
 	unsigned char work[4096] = { 0 };
 	unsigned char token[256];
-	CMDS ret;
 	strcpy(reinterpret_cast<char*>(work), mycolumn);
 	for (;;) {
-		ret = getData(work, token);
+		auto ret = getData(work, token);
 		if (ret != CMDS::TXPRM) {
 			err("INVALID COLUMN NAME");
 			writeEnd();
@@ -1104,10 +1103,9 @@ Table::Table(const char* myname, const char* mycolumn) {
 		ret = getData(work, token);
 		if (ret != CMDS::TXCM) break;
 	}
-	dataType typs;
 	for (unsigned int i = 0; i < clmns.size(); i++) {
 		int ptr = clmns[i].find(":");
-		typs = dataType::STRING;
+		auto typs = dataType::STRING;
 		if (ptr != wString::npos) {
 			wString tp_ = clmns[i].substr(ptr + 1);
 			clmns[i] = clmns[i].substr(0, ptr);
@@ -1257,12 +1255,11 @@ int Table::Insert(const char* data) {
 	vector<wString> tmp;
 	unsigned char work[4096] = { 0 };
 	unsigned char token[1024];
-	CMDS ret;
 	writeStart();
 	//実行開始
 	strcpy(reinterpret_cast<char*>(work), const_cast<char*>(data));
 	for (;;) {
-		ret = getData(work, token);
+		auto ret = getData(work, token);
 		if (ret == CMDS::TXPRM) {
 			tmp.push_back(reinterpret_cast<char*>(token));
 		}
@@ -1322,15 +1319,13 @@ int Table::Insert(const vector<wString>& data) {
 //条件配列生成
 int Table::condition_mat(condition& cond, vector<char>& mat)
 {
-	int    col1;
-	int    col2;
-	wString arg1;
-	wString arg2;
-	CMDS   typ1;
-	CMDS   typ2;
-	wString op;
-	wString rarg1;
-	wString rarg2;
+	//wString arg1;
+	//wString arg2;
+	//CMDS   typ1;
+	//CMDS   typ2;
+	//wString op;
+	//wString rarg1;
+	//wString rarg2;
 	dataType dtyp1 = dataType::STRING;
 	dataType dtyp2 = dataType::STRING;
 	//新テーブルひな形
@@ -1347,8 +1342,8 @@ int Table::condition_mat(condition& cond, vector<char>& mat)
 	//各条件についてAND,a,>,4等
 	for (unsigned int ptr = 0; ptr < cond.cond.size(); ) {
 		CMDS lop;
-		col1 = -1;
-		col2 = -1;
+		auto col1 = -1;
+		auto col2 = -1;
 		if (cond.type[ptr] == CMDS::TXOR || cond.type[ptr] == CMDS::TXAND) {
 			lop = cond.type[ptr];
 		}
@@ -1357,11 +1352,11 @@ int Table::condition_mat(condition& cond, vector<char>& mat)
 			return -1;
 		}
 		//条件のコピー
-		arg1 = cond.cond[ptr + 1];
-		typ1 = cond.type[ptr + 1];
-		op = cond.cond[ptr + 2];
-		arg2 = cond.cond[ptr + 3];
-		typ2 = cond.type[ptr + 3];
+		auto arg1 = cond.cond[ptr + 1];
+		auto typ1 = cond.type[ptr + 1];
+		auto op = cond.cond[ptr + 2];
+		auto arg2 = cond.cond[ptr + 3];
+		auto typ2 = cond.type[ptr + 3];
 		//カラムチェック
 		for (unsigned int i = 0; i < column.size(); i++) {
 			if (column[i]->Compare(arg1, cond.clmalias, cond.tblalias)) {
@@ -1381,8 +1376,8 @@ int Table::condition_mat(condition& cond, vector<char>& mat)
 			continue;
 		}
 		//コンディション計算
-		rarg1 = arg1;
-		rarg2 = arg2;
+		auto rarg1 = arg1;
+		auto rarg2 = arg2;
 		for (unsigned int i = 0; i < node[0]->size(); i++) {
 			if (col1 >= 0) rarg1 = node[col1]->getNodeNative(i);
 			if (col2 >= 0) rarg2 = node[col2]->getNodeNative(i);
@@ -2149,7 +2144,7 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 			}
 			//DROP実行処理
 			if (nctyp == CMDS::TXDROP) {   //TXDROP
-				for (int i = columns.size() - 1; i >= 0; i--) {
+				for (int i = static_cast<int>(columns.size()) - 1; i >= 0; i--) {
 					tbl->column.erase(tbl->column.begin() + colpos[i]);
 					tbl->node.erase(tbl->node.begin() + colpos[i]);
 				}
@@ -2474,7 +2469,7 @@ int DBCatalog::SaveToFile(void)
 DBCatalog::DBCatalog(void)
 {
 	//MUTEX初期化
-
+	refs = 0;
 #ifdef linux
 	pthread_mutexattr_t attr;
 	pthread_mutexattr_init(&attr);

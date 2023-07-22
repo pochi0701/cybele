@@ -110,20 +110,20 @@ void	server_listen(void)
 	}
 #else
 
-	HANDLE handle[MAXTHREAD] = { 0 };
+	HANDLE thread_handle[MAXTHREAD] = {};
 	unsigned int  id[MAXTHREAD];
 
 	//handle1 = CreateThread(0, 0, (LPTHREAD_START_ROUTINE) accessloop , (void*)&listen_socket, 0, &id1);
 	//handle2 = CreateThread(0, 0, (LPTHREAD_START_ROUTINE) accessloop , (void*)&listen_socket, 0, &id2);
 	//handle3 = CreateThread(0, 0, (LPTHREAD_START_ROUTINE) accessloop , (void*)&listen_socket, 0, &id3);
-	for (int i = 0; i < MAXTHREAD; i++) {
-		handle[i] = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, accessloop, (void*)&listen_socket, 0, &id[i]));
+	for (auto i = 0; i < MAXTHREAD; i++) {
+		thread_handle[i] = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, accessloop, (void*)&listen_socket, 0, &id[i]));
 	}
 
-	WaitForMultipleObjects(3, handle, TRUE, INFINITE);
-	for (int i = 0; i < MAXTHREAD; i++) {
-		if (handle[i]) {
-			CloseHandle(handle[i]);
+	WaitForMultipleObjects(MAXTHREAD, thread_handle, TRUE, INFINITE);
+	for (auto i = 0; i < MAXTHREAD; i++) {
+		if (thread_handle[i]) {
+			CloseHandle(thread_handle[i]);
 		}
 	}
 #endif
@@ -187,8 +187,6 @@ void thread_process(ACCESS_INFO& ac_in)
 	char       client_addr_str[32] = { 0 };
 	char       client_address[4];
 	char       masked_client_address[4];
-	char       work1[32];
-	char       work2[32];
 	char       access_host[256] = { 0 };
 	//ローカルに保存して縁を切る
 	SOCKET accept_socket = (unsigned int)ac_in.accept_socket;
@@ -223,6 +221,8 @@ void thread_process(ACCESS_INFO& ac_in)
 		// client_addr_strをchar[4]に変換
 		strncat(client_addr_str, ".", sizeof(client_addr_str) - 1);
 		for (i = 0; i < 4; i++) {
+			char       work1[32];
+			char       work2[32];
 			sentence_split(client_addr_str, '.', work1, work2);
 			client_address[i] = (unsigned char)atoi(work1);
 			strncpy(client_addr_str, work2, sizeof(client_addr_str));

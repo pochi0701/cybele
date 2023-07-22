@@ -49,10 +49,10 @@ int HTTP_RECV_INFO::http_cgi_response(SOCKET accept_socket)
 	char* query_string;
 	char script_filename[1024];
 	char* script_exec_name;
-	char cwd[FILENAME_MAX];
 	char ext[4];
 	//WINDOWSでドライブから始まる場合
 	if (send_filename[1] != ':') {
+		char cwd[FILENAME_MAX];
 		debug_log_output("WARNING: send_filename[1] != ':', send_filename = '%s'", send_filename);
 		if (getcwd(cwd, sizeof(cwd)) == NULL) {
 			debug_log_output("getcwd() failed. err = %s", strerror(errno));
@@ -306,9 +306,9 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 					wString text(st);
 					wString st2 = text.strsplit("\"");
 					mp[i]->content = ptr;
-					mp[i]->length = ed - ptr - (strlen(boundary)) - 4;
+					mp[i]->length = static_cast<int>(ed - ptr) - static_cast<int>(strlen(boundary)) - 4;
 					tmp.setBinary(mp[i]->content, mp[i]->length);
-					wString ttmp = tmp.dump();
+					//wString ttmp = tmp.dump();
 					if (st2.GetListString(0).startsWith(CONTENT_DISPOSITION))
 					{
 						strcpy(mp[i]->name, st2.GetListString(1).c_str());

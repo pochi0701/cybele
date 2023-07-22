@@ -149,7 +149,7 @@ int ssdp_client(wString& str, int loops)
 				//printf("Error in Receiving=%d",Ret);
 				break;
 			}
-			rcvdbuff[Ret - 1] = '\0';
+			rcvdbuff[Ret] = '\0';
 			if (str.find(rcvdbuff) == wString::npos) {
 				if (str.Length() == 0) {
 					str += "[\"";

@@ -125,7 +125,8 @@ size_t HTTP_RECV_INFO::http_header_response(SOCKET accept_socket)
 			, mime_type
 		);
 	}
-	send_header_data_len = send_http_header_buf.length();
+	// todo:なくして大丈夫？
+	//send_header_data_len = send_http_header_buf.length();
 
 	// --------------
 	// ヘッダ返信

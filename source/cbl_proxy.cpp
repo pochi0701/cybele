@@ -88,7 +88,6 @@ int HTTP_RECV_INFO::http_proxy_response(SOCKET accept_socket)
     int  content_is_html=0;
     int  t_content_length=0;
 
-
     int  line = getHeader(sock,lines, content_is_html, t_content_length);
     if(  line < 0 ){
         sClose(sock);
@@ -104,8 +103,7 @@ int HTTP_RECV_INFO::http_proxy_response(SOCKET accept_socket)
     // <link rel="http://some_host/some_url"
     // <form action="http://some_host/some_url"
     if ( content_is_html) {
-        char* ptr;
-        char* new_ptr;
+
         wString wb;
         //char work_buf[LINE_BUF_SIZE + 10];
         //char work[LINE_BUF_SIZE + 10];
@@ -144,7 +142,8 @@ int HTTP_RECV_INFO::http_proxy_response(SOCKET accept_socket)
             *   タグの途中に改行があると失敗するだろう.
             *   面倒なのでたいした置換はしていない
             */
-            ptr = wb.c_str();
+            auto ptr = wb.c_str();
+            char* new_ptr;
             while( 1 ){
                 ptr = strcasestr(ptr, " href");
                 if( ptr == NULL ) break;
@@ -419,15 +418,13 @@ int getHeader(SOCKET sock,wString& lines, int& content_is_html,int &t_content_le
 int copy_all(SOCKET in_fd,SOCKET out_fd)
 {
     char buf[BUFFERSIZE];
-    int  rlen;
-    int  wlen;
     // ================
     // 実体転送開始
     // ================
     while ( 1 )
     {
         // ファイルからデータを読み込む。必ず読める前提
-        rlen = recv(in_fd, buf, BUFFERSIZE,0);
+        auto rlen = recv(in_fd, buf, BUFFERSIZE,0);
         //read end
         if ( rlen == 0 ){
             debug_log_output("copy end");
@@ -439,7 +436,7 @@ int copy_all(SOCKET in_fd,SOCKET out_fd)
         }
         //読み込み正常終了
         // SOCKET にデータを送信
-        wlen = send(out_fd, buf, rlen,0);
+        auto wlen = send(out_fd, buf, rlen,0);
 
         //write error
         if ( rlen != wlen) {
