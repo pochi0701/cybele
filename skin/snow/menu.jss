@@ -103,7 +103,9 @@ me=_SERVER.SCRIPT_NAME;
                             if( fl.indexOf(base)>=0){
                                 fl = dirname(fl.substring(base.length,fl.length));
                             }
-                            fl= fl+"/";
+                            if(fl.substr(fl.length-1,1) != "/"){
+                                fl = fl+"/";
+                            }
                             ext = extractFileExt(file).toLowerCase();
                             if( ext != "bak"){
                                 fname = basename(file).nkfconv("Sw");
