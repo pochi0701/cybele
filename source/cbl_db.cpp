@@ -1319,13 +1319,6 @@ int Table::Insert(const vector<wString>& data) {
 //条件配列生成
 int Table::condition_mat(condition& cond, vector<char>& mat)
 {
-	//wString arg1;
-	//wString arg2;
-	//CMDS   typ1;
-	//CMDS   typ2;
-	//wString op;
-	//wString rarg1;
-	//wString rarg2;
 	dataType dtyp1 = dataType::STRING;
 	dataType dtyp2 = dataType::STRING;
 	//新テーブルひな形
