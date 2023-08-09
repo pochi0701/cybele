@@ -97,8 +97,8 @@ CCybeleTrayWnd::CCybeleTrayWnd() :
 	//最初がいいからここでＰＲＯＸＹ設定すっかな。
 	//ついでにFireWall登録しちゃうわｗ
 	TRegistry* reg = new TRegistry;
-	char buffer[1024] = { 0 };
-	char tmp[1024] = { 0 };
+	char buffer[1024] = {};
+	char tmp[1024] = {};
 	int* pnum;
 	AnsiString str;
 	int pos;

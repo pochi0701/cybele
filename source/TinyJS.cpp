@@ -253,7 +253,7 @@ wString oneLine(const char* s, int ptr, int end)
 /// <returns>出力文字</returns>
 wString getJSString(const wString& str) {
 	wString nStr = str;
-	char buffer[6] = { 0 };
+	char buffer[6] = {};
 	for (auto i = 0U; i < nStr.size(); i++) {
 		char* replaceWith = NULL;
 		bool replace = true;
@@ -1082,7 +1082,7 @@ void CScriptVar::removeAllChildren() {
 }
 
 CScriptVar* CScriptVar::getArrayIndex(int idx) {
-	char sIdx[64] = { 0 };
+	char sIdx[64] = {};
 	snprintf(sIdx, sizeof(sIdx), "%d", idx);
 	CScriptVarLink* link = findChild(sIdx);
 	if (link) return link->var;
@@ -1090,7 +1090,7 @@ CScriptVar* CScriptVar::getArrayIndex(int idx) {
 }
 
 void CScriptVar::setArrayIndex(int idx, CScriptVar* value) {
-	char sIdx[64] = { 0 };
+	char sIdx[64] = {};
 	snprintf(sIdx, sizeof(sIdx), "%d", idx);
 	CScriptVarLink* link = findChild(sIdx);
 
@@ -1982,7 +1982,7 @@ CScriptVarLink* CTinyJS::factor(bool& execute) {
 		int idx = 0;
 		while (l->tk != LEX_TYPES::LEX_RBKT) {
 			if (execute) {
-				char idx_str[16] = { 0 }; // big enough for 2^32
+				char idx_str[16] = {}; // big enough for 2^32
 				snprintf(idx_str, sizeof(idx_str), "%d", idx);
 
 				CScriptVarLink* a = base(execute);

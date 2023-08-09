@@ -110,6 +110,7 @@ public:
 	wString         addSlashes(void);
 	wString         base64(void);
 	wString         unbase64(void);
+	static wString  escape(const wString& str);
 	//ANISSTRING
 	bool            SetListString(wString& src, int pos);
 	bool            SetListString(const char* src, int pos);

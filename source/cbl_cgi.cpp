@@ -40,14 +40,12 @@
 
 //multipart
 vector<multipart*> mp;
-// includes
-wString escape(const wString& str);
 bool split(const char* cut_char, wString& split1, wString& split2);
 //////////////////////////////////////////////////////////////////////////
 int HTTP_RECV_INFO::http_cgi_response(SOCKET accept_socket)
 {
 	char* query_string;
-	char script_filename[1024];
+	char script_filename[1024] = {};
 	char* script_exec_name;
 	char ext[4];
 	//WINDOWSでドライブから始まる場合
@@ -107,11 +105,11 @@ int HTTP_RECV_INFO::http_cgi_response(SOCKET accept_socket)
 void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* query_string)
 {
 	//実行
-	char server_port[100] = { 0 };
-	char remote_port[100] = { 0 };
-	struct sockaddr_in saddr;
+	char server_port[100] = {};
+	char remote_port[100] = {};
+	struct sockaddr_in saddr = {};
 	socklen_t socklen;
-	char next_cwd[FILENAME_MAX] = { 0 };
+	char next_cwd[FILENAME_MAX] = {};
 
 	//指定フォルダにcd
 	strncpy(next_cwd, script_filename, sizeof(next_cwd));
@@ -173,37 +171,37 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 		//TODO:まとめて一回で評価する方がよさげ
 		//fastcgi_param  DOCUMENT_URI       $document_uri;
 		// "multipart/form-data; boundary=---------------------------382462320637558520782293981033"
-		if (*this->content_type)   script1.cat_sprintf("var _SERVER.CONTENT_TYPE=\"%s\";", escape(content_type).c_str());
-		if (*this->content_length) script1.cat_sprintf("var _SERVER.CONTENT_LENGTH=\"%s\";", escape(content_length).c_str());
-		if (*this->recv_host)      script1.cat_sprintf("var _SERVER.HTTP_HOST=\"%s\";", escape(recv_host).c_str());
-		if (*this->user_agent)     script1.cat_sprintf("var _SERVER.HTTP_USER_AGENT=\"%s\";", escape(user_agent).c_str());
+		if (*this->content_type)   script1.cat_sprintf("var _SERVER.CONTENT_TYPE=\"%s\";", wString::escape(content_type).c_str());
+		if (*this->content_length) script1.cat_sprintf("var _SERVER.CONTENT_LENGTH=\"%s\";", wString::escape(content_length).c_str());
+		if (*this->recv_host)      script1.cat_sprintf("var _SERVER.HTTP_HOST=\"%s\";", wString::escape(recv_host).c_str());
+		if (*this->user_agent)     script1.cat_sprintf("var _SERVER.HTTP_USER_AGENT=\"%s\";", wString::escape(user_agent).c_str());
 		//SERVER SIGNATURE
-		script1.cat_sprintf("var _SERVER.PATH=\"%s\";", escape(DEFAULT_PATH).c_str());
-		script1.cat_sprintf("var _SERVER.SERVER_SOFTWARE=\"%s\";", escape(SERVER_NAME).c_str());
-		script1.cat_sprintf("var _SERVER.SERVER_NAME=\"%s\";", escape(global_param.server_name).c_str());
+		script1.cat_sprintf("var _SERVER.PATH=\"%s\";", wString::escape(DEFAULT_PATH).c_str());
+		script1.cat_sprintf("var _SERVER.SERVER_SOFTWARE=\"%s\";", wString::escape(SERVER_NAME).c_str());
+		script1.cat_sprintf("var _SERVER.SERVER_NAME=\"%s\";", wString::escape(global_param.server_name).c_str());
 		//SERVER PORT
 		socklen = sizeof(saddr);
 		getsockname(accept_socket, (struct sockaddr*)&saddr, &socklen);
-		script1.cat_sprintf("var _SERVER.SERVER_ADDR=\"%s\";", escape(inet_ntoa(saddr.sin_addr)).c_str());
+		script1.cat_sprintf("var _SERVER.SERVER_ADDR=\"%s\";", wString::escape(inet_ntoa(saddr.sin_addr)).c_str());
 		snprintf(server_port, sizeof(server_port), "%u", ntohs(saddr.sin_port));
-		script1.cat_sprintf("var _SERVER.SERVER_PORT=\"%s\";", escape(server_port).c_str());
-		script1.cat_sprintf("var _SERVER.DOCUMENT_ROOT=\"%s\";", escape(global_param.document_root).c_str());
+		script1.cat_sprintf("var _SERVER.SERVER_PORT=\"%s\";", wString::escape(server_port).c_str());
+		script1.cat_sprintf("var _SERVER.DOCUMENT_ROOT=\"%s\";", wString::escape(global_param.document_root).c_str());
 		//REMOTE ADDR
 		socklen = sizeof(saddr);
 		getpeername(accept_socket, (struct sockaddr*)&saddr, &socklen);
-		script1.cat_sprintf("var _SERVER.REMOTE_ADDR=\"%s\";", escape(inet_ntoa(saddr.sin_addr)).c_str());
+		script1.cat_sprintf("var _SERVER.REMOTE_ADDR=\"%s\";", wString::escape(inet_ntoa(saddr.sin_addr)).c_str());
 		//REMOTE PORT
 		snprintf(remote_port, sizeof(remote_port), "%u", ntohs(saddr.sin_port));
-		script1.cat_sprintf("var _SERVER.REMOTE_PORT=\"%s\";", escape(remote_port).c_str());
-		script1.cat_sprintf("var _SERVER.SCRIPT_FILENAME=\"%s\";", escape(script_filename).c_str());
+		script1.cat_sprintf("var _SERVER.REMOTE_PORT=\"%s\";", wString::escape(remote_port).c_str());
+		script1.cat_sprintf("var _SERVER.SCRIPT_FILENAME=\"%s\";", wString::escape(script_filename).c_str());
 		script1.cat_sprintf("var _SERVER.GATEWAY_INTERFACE=\"%s\";", "CGI/1.1");
 		script1.cat_sprintf("var _SERVER.SERVER_PROTOCOL=\"%s\";", "HTTP/1.0");
 		char GETPOST[4][5] = { "","GET","HEAD","POST" };
 		script1.cat_sprintf("var _SERVER.REQUEST_METHOD=\"%s\";", GETPOST[(int)isGet]);
 
-		script1.cat_sprintf("var _SERVER.QUERY_STRING=\"%s\";", escape(query_string).c_str());
-		script1.cat_sprintf("var _SERVER.REQUEST_URI=\"%s\";", escape(request_uri).c_str());
-		script1.cat_sprintf("var _SERVER.SCRIPT_NAME=\"%s\";", escape(request_uri).c_str());
+		script1.cat_sprintf("var _SERVER.QUERY_STRING=\"%s\";", wString::escape(query_string).c_str());
+		script1.cat_sprintf("var _SERVER.REQUEST_URI=\"%s\";", wString::escape(request_uri).c_str());
+		script1.cat_sprintf("var _SERVER.SCRIPT_NAME=\"%s\";", wString::escape(request_uri).c_str());
 		javaScriptThread.execute(script1);
 
 
@@ -213,7 +211,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 		while (script3.length()) {
 			split("&", script1, script3);
 			split("=", script2, script1);
-			script4 += "var _GET." + script2 + const_cast<char*>("=\"") + escape(script1.uri_decode()) + const_cast<char*>("\";");
+			script4 += "var _GET." + script2 + const_cast<char*>("=\"") + wString::escape(script1.uri_decode()) + const_cast<char*>("\";");
 		}
 		if (script4.Length()) {
 			javaScriptThread.execute(script4);
@@ -227,10 +225,10 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 			split(";", script1, script3);
 			script1 = script1.LTrim();
 			split("=", script2, script1);
-			script4 += "var _COOKIE." + script2 + const_cast<char*>("=\"") + escape(script1.uri_decode()) + const_cast<char*>("\";");
+			script4 += "var _COOKIE." + script2 + const_cast<char*>("=\"") + wString::escape(script1.uri_decode()) + const_cast<char*>("\";");
 			//SESSIONIDの設定
 			if (script2 == "sid") {
-				script4 += const_cast<char*>("var JSSESSID=\"") + escape(script1.uri_decode()) + const_cast<char*>("\";");
+				script4 += const_cast<char*>("var JSSESSID=\"") + wString::escape(script1.uri_decode()) + const_cast<char*>("\";");
 			}
 		}
 		if (script4.Length()) {
@@ -239,7 +237,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 
 		//POSTの展開
 		if (isGet == QUERY_METHOD::POST) {
-			char buf[1025] = { 0 };
+			char buf[1025] = {};
 			int contentsize = atoi(content_length);
 			int readsize;
 			script3.clear();
@@ -322,7 +320,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 					{
 						wString content;
 						content.setBinary(mp[i]->content,mp[i]->length);
-						script4 += const_cast<char*>("var _post.") + wString(mp[i]->name) + const_cast<char*>("=\"") + escape(content.Trim().uri_decode()) + const_cast<char*>("\";");
+						script4 += const_cast<char*>("var _post.") + wString(mp[i]->name) + const_cast<char*>("=\"") + wString::escape(content.Trim().uri_decode()) + const_cast<char*>("\";");
 					}
 				}
 				if (script4.Length()) {
@@ -335,7 +333,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 				while (script3.length()) {
 					split("&", script1, script3);
 					split("=", script2, script1);
-					script4 += const_cast<char*>("var _POST.") + script2 + const_cast<char*>("=\"") + escape(script1.uri_decode()) + const_cast<char*>("\";");
+					script4 += const_cast<char*>("var _POST.") + script2 + const_cast<char*>("=\"") + wString::escape(script1.uri_decode()) + const_cast<char*>("\";");
 				}
 				if (script4.Length()) {
 					javaScriptThread.execute(script4);
@@ -368,27 +366,4 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 	debug_log_output("ServerSide JavaScript end");
 	return;
 }
-/// <summary>
-/// 文字列中の引用符、エスケープを二重エスケープ
-/// </summary>
-/// <param name="str">エスケープする文字列</param>
-/// <returns>エスケープ結果</returns>
-wString escape(const wString& str)
-{
 
-	wString dst;
-	unsigned int len = str.Length();
-	// 引数チェック
-	for (auto is = 0U; is < len; is++) {
-		if (str[is] == '\"') {
-			dst += "\\\"";
-		}
-		else if (str[is] == '\\') {
-			dst += "\\\\";
-		}
-		else {
-			dst += str[is];
-		}
-	}
-	return dst;
-}

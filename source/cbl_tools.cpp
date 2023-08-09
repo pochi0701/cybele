@@ -51,7 +51,7 @@ static void cut_after_n_length(char* sentence, unsigned int n);
 /// <returns>パターンのエンドポイント</returns>
 char* seekCRLFCRLF(char* start, char* end)
 {
-	while (start <= end-4)
+	while (start <= end - 4)
 	{
 		char* nptr = start;
 		if (*start++ == '\r')
@@ -598,7 +598,7 @@ int uri_decode(char* dst, unsigned int dst_len, const char* src, unsigned int sr
 	unsigned int    idx_src;
 	unsigned int    idx_dst;
 	int             cnt;
-	char            work[3] = { 0 };
+	char            work[3] = {};
 	//const char    *ptr_stop;
 	char* strtol_end_ptr;
 	int             code;
@@ -708,7 +708,7 @@ void make_datetime_string(char* sentence)
 		now.tm_hour,					// 時刻
 		now.tm_min,						// 分
 		now.tm_sec,						// 秒
-		(int)total_usec.tv_usec/1000);	// ミリ秒
+		(int)total_usec.tv_usec / 1000);	// ミリ秒
 	return;
 
 }
@@ -739,10 +739,10 @@ void debug_log_output(const char* fmt, ...)
 {
 #ifdef _DEBUG
 	static int        fd = -1;
-	char       buf[1024 * 5 + 1] = { 0 };
-	char       work_buf[1024 * 4 + 1] = { 0 };
+	char       buf[1024 * 5 + 1] = {};
+	char       work_buf[1024 * 4 + 1] = {};
 	char       date_and_time[80];
-	char       replace_date_and_time[256] = { 0 };
+	char       replace_date_and_time[256] = {};
 #ifdef linux
 	struct timeval tv;
 #endif
@@ -752,7 +752,7 @@ void debug_log_output(const char* fmt, ...)
 	// =========================================
 	if (debug_log_initialize_flag != 0) {
 		return;
-    }
+	}
 	// =========================================
 	// Debug出力文字列生成。
 	// 行頭に、date_and_time を挿入しておく
@@ -788,7 +788,7 @@ void debug_log_output(const char* fmt, ...)
 	// =====================
 	// ログファイル出力
 	// =====================
-	if(fd < 0 ) {
+	if (fd < 0) {
 		fd = myopen(debug_log_filename, O_CREAT | O_APPEND | O_WRONLY | O_BINARY, S_IREAD | S_IWRITE);
 		if (fd < 0) {
 			return;
@@ -895,17 +895,16 @@ int myMkdir(wString FileName)
 /// <returns>1:成功 2:サイズ同じ　false:失敗</returns>
 int HTTPDownload(char* src, char* dst, off_t offset)
 {
-	time_t         rbgn_time = time(NULL) + NO_RESPONSE_TIMEOUT;
+	time_t      rbgn_time = time(NULL) + NO_RESPONSE_TIMEOUT;
 
-	char* buf;                           //バッファ
 	int         recv_len;                       //読み取り長さ
 	int         content_length = 0;
 	int         len;
 	char* work1;
 	char* work2;
-	int         fd = -1;                          //ファイルディスクリプタ
-	char        host[256] = { 0 };
-	char        server[256];
+	int         fd = -1;                        //ファイルディスクリプタ
+	char        host[256] = {};
+	char        server[256] = {};
 	SOCKET      server_socket;                  //サーバーソケット
 	int         status = true;
 	int         server_port = HTTP_SERVER_PORT;
@@ -916,7 +915,7 @@ int HTTPDownload(char* src, char* dst, off_t offset)
 
 	//準備
 	//領域の取得
-	buf = mycalloc(HTTP_BUF_SIZE, 1);
+	auto buf = mycalloc(HTTP_BUF_SIZE, 1);
 	//ホスト名の設定
 	strncpy(host, src, sizeof(host));
 	//先頭のHTTP://を抜く
@@ -1194,7 +1193,7 @@ void myfree(char* ptr)
 SOCKET sock_connect(char* host, int port)
 {
 	SOCKET sock;
-	struct sockaddr_in sockadd = { 0 };     //ＳＯＣＫＥＴ構造体
+	struct sockaddr_in sockadd = {};     //ＳＯＣＫＥＴ構造体
 	struct hostent* hent;
 	debug_log_output("sock_connect: %s:%d", host, port);
 	//ＳＯＣＫＥＴ作成
@@ -1246,7 +1245,7 @@ SOCKET sock_connect(char* host, int port)
 /********************************************************************************/
 void convert_language_code(const char* in, char* out, size_t len, int in_flag, int out_flag)
 {
-	char       nkf_option[8] = { 0 };
+	char       nkf_option[8] = {};
 	memset(nkf_option, '\0', sizeof(nkf_option));
 	//=====================================================================
 	// in_flag, out_flagをみて、libnkfへのオプションを組み立てる。
@@ -1334,7 +1333,7 @@ int myopen(const char* filename, int amode, int option)
 	while (work[ptr]) {
 		if (work[ptr] == '/') {
 			work[ptr] = '\\';
-}
+		}
 		ptr++;
 	}
 	if (option != 0) {
@@ -1367,7 +1366,7 @@ int sClose(SOCKET socket)
 	ret = closesocket(socket);
 	if (ret != 0) {
 		debug_log_output("close error=%s,%d,%d", strerror(errno), errno, socket);
-}
+	}
 #endif
 	return ret;
 }
@@ -1553,8 +1552,8 @@ unsigned int mp3::id3v2_len(unsigned char* buf)
 int  mp3::mp3_id3v2_tag_read(const char* mp3_filename)
 {
 	int fd;
-	unsigned char  buf[1024] = { 0 };
-	unsigned char  buf2[1024] = { 0 };
+	unsigned char  buf[1024] = {};
+	unsigned char  buf2[1024] = {};
 	unsigned char* frame;
 	unsigned int   len;
 	struct _copy_list {

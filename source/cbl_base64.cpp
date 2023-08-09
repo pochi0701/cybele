@@ -69,7 +69,7 @@ unsigned char* base64(unsigned char* instr)
 /// <returns>変換した文字列</returns>
 unsigned char* unbase64(unsigned char* instr)
 {
-	char FromBase64tbl[256] = { 0 };
+	char FromBase64tbl[256] = {};
 	unsigned char* p = tmpout;
 	//逆テーブルの作成,=も０になる
 	for (unsigned int i = 0; i < sizeof(ToBase64tbl); i++) {

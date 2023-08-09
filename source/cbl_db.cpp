@@ -1089,7 +1089,7 @@ Table::Table(const char* myname, const char* mycolumn) {
 	writeStart();
 	name = myname;
 	//clmnsにCSVインサート
-	unsigned char work[4096] = { 0 };
+	unsigned char work[4096] = {};
 	unsigned char token[256];
 	strcpy(reinterpret_cast<char*>(work), mycolumn);
 	for (;;) {
@@ -1253,7 +1253,7 @@ void  Table::copy(Table* tbl)
 /// <returns></returns>
 int Table::Insert(const char* data) {
 	vector<wString> tmp;
-	unsigned char work[4096] = { 0 };
+	unsigned char work[4096] = {};
 	unsigned char token[1024];
 	writeStart();
 	//実行開始
@@ -1588,7 +1588,7 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 	condition        cond;
 	unsigned char    token[256];
 	unsigned char    token2[256];
-	unsigned char    sql[2048] = { 0 };
+	unsigned char    sql[2048] = {};
 	vector<Column*>  columns;
 	vector<wString>  colnams;
 	//　テーブル名
@@ -2411,7 +2411,7 @@ int DBCatalog::LoadFromFile(void)
 	unsigned int len;
 	unsigned int max;
 	int    fd;
-	char   name[1024] = { 0 };
+	char   name[1024] = {};
 	dblist.clear();
 	//オープン
 	if (!wString::FileExists(CATFILE)) return 0;
@@ -2491,7 +2491,7 @@ wString _DBConnect(wString& database)
 	}
 	//乱数生成
 	srand((unsigned)time(NULL));
-	unsigned char work[27] = { 0 };
+	unsigned char work[27] = {};
 	wString temp;
 	while (1) {
 		for (int i = 0; i < 26; i++) {

@@ -25,7 +25,7 @@ typedef unsigned int UINT;
 class bufrd
 {
 private:
-	unsigned char buf[SIZ] = { 0 };
+	unsigned char buf[SIZ] = {};
 	int           bufptr;
 	int           fd;
 	unsigned int  rest;

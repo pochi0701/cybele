@@ -157,7 +157,7 @@ void server_http_process(SOCKET accept_socket, char* access_host, char* client_a
 			// jss実行
 			// ----------------------------------------
 			debug_log_output("%s start!\n", http_recv_info.action);
-			char skin_filename[256] = { 0 };
+			char skin_filename[256] = {};
 			//strncpy(http_recv_info_p->send_filename, global_param.document_root, sizeof(http_recv_info_p->send_filename));
 			strncat(skin_filename, global_param.skin_root, sizeof(skin_filename) - 1); // スキン名（ディレクトリ）
 			strncat(skin_filename, global_param.skin_name, sizeof(skin_filename) - 1); // スキン名（ディレクトリ）
@@ -569,7 +569,7 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 FILETYPES HTTP_RECV_INFO::http_file_check(void)
 {
 	char 	work_buf[1024];
-	char 	work_data[FILENAME_MAX] = { 0 };
+	char 	work_data[FILENAME_MAX] = {};
 	char	file_extension[16];
 	debug_log_output("http_file_check() start.");
 	// -------------------------

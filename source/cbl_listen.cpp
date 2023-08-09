@@ -47,7 +47,7 @@ SOCKET	listen_socket;	//待ち受けソケット
 void	server_listen(void)
 {
 	int    ret;
-	struct sockaddr_in    saddr;						// サーバソケットアドレス構造体
+	struct sockaddr_in    saddr = {};				// サーバソケットアドレス構造体
 	//struct sockaddr_in  caddr;						// クライアントソケットアドレス構造体
 
 	//socklen_t           caddr_len = sizeof(caddr);   // クライアントソケットアドレス構造体のサイズ
@@ -111,7 +111,7 @@ void	server_listen(void)
 #else
 
 	HANDLE thread_handle[MAXTHREAD] = {};
-	unsigned int  id[MAXTHREAD];
+	unsigned int  id[MAXTHREAD] = {};
 
 	//handle1 = CreateThread(0, 0, (LPTHREAD_START_ROUTINE) accessloop , (void*)&listen_socket, 0, &id1);
 	//handle2 = CreateThread(0, 0, (LPTHREAD_START_ROUTINE) accessloop , (void*)&listen_socket, 0, &id2);
@@ -140,10 +140,9 @@ unsigned int __stdcall accessloop(void* arg)
 #endif
 {
 	int                lis_soc = *static_cast<int*>(arg);
-	SOCKET             accept_socket;  // 接続Socket
-	struct sockaddr_in caddr;                // クライアントソケットアドレス構造体
+	struct sockaddr_in caddr = {};					// クライアントソケットアドレス構造体
 	socklen_t          caddr_len = sizeof(caddr);   // クライアントソケットアドレス構造体のサイズ
-	char               access_host[256] = { 0 };
+	char               access_host[256] = {};
 
 
 	// =====================
@@ -156,7 +155,8 @@ unsigned int __stdcall accessloop(void* arg)
 		// ====================
 
 		debug_log_output("Waiting for a new client...");
-		accept_socket = accept(lis_soc, (struct sockaddr*)&caddr, &caddr_len);
+		// 接続Socket
+		auto accept_socket = accept(lis_soc, (struct sockaddr*)&caddr, &caddr_len);
 		if (SERROR(accept_socket)) // accept失敗チェック
 		{
 			debug_log_output("accept() error. ret=%d\n", accept_socket);
@@ -168,7 +168,7 @@ unsigned int __stdcall accessloop(void* arg)
 			sClose(accept_socket);       // Socketクローズ
 			break;
 		}
-		ACCESS_INFO ac_in;
+		ACCESS_INFO ac_in = {};
 		ac_in.accept_socket = (unsigned int)accept_socket;
 		ac_in.access_host = access_host;
 		ac_in.caddr = caddr;
@@ -184,10 +184,10 @@ void thread_process(ACCESS_INFO& ac_in)
 {
 	int        access_check_ok;
 	int        i;
-	char       client_addr_str[32] = { 0 };
-	char       client_address[4];
-	char       masked_client_address[4];
-	char       access_host[256] = { 0 };
+	char       client_addr_str[32] = {};
+	char       client_address[4] = {};
+	char       masked_client_address[4] = {};
+	char       access_host[256] = {};
 	//ローカルに保存して縁を切る
 	SOCKET accept_socket = (unsigned int)ac_in.accept_socket;
 	struct sockaddr_in  caddr = ac_in.caddr;         // クライアントソケットアドレス構造体

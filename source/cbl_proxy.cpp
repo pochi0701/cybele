@@ -45,7 +45,7 @@ int copy_all(SOCKET in_fd,SOCKET out_fd);
 // URIからヘッダを生成して送信
 int getHeader(SOCKET sock,wString& lines, int& content_is_html,int &t_content_length);
 int cirtUserAgent(char* ip, char* agents);
-char agent[64] = { 0 };
+char agent[64] = {};
 
 #ifndef linux
 // **************************************************************************

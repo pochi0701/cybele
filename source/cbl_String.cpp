@@ -765,8 +765,8 @@ int isNumber(char* str)
 void wString::LoadFromCSV(const char* FileName)
 {
 	int  fd;
-	char s[1024] = { 0 };
-	char t[1024] = { 0 };
+	char s[1024] = {};
+	char t[1024] = {};
 	int first = 1;
 	fd = myopen(FileName, O_RDONLY | O_BINARY, S_IREAD);
 	if (fd < 0) {
@@ -995,7 +995,7 @@ wString wString::FileStats(const char* str, int mode)
 		{
 			//date
 			if (mode == 1) {
-				//char s[128] = {0};
+				//char s[128] = {};
 				//time_t timer;
 				//struct tm *timeptr;
 				//timer = time(NULL);
@@ -1527,7 +1527,7 @@ int wString::vtsprintf(const char* fmt, va_list arg) {
 int wString::tsprintf_decimal(signed long val, int zerof, int width)
 {
 	//末尾０を保証
-	char  tmp[22] = { 0 };
+	char  tmp[22] = {};
 	char* ptmp = tmp + 20;
 	int   vlen = 0;
 	int   minus = 0;
@@ -1593,7 +1593,7 @@ int wString::tsprintf_decimal(signed long val, int zerof, int width)
 /// <returns></returns>
 int wString::tsprintf_decimalu(unsigned long val, int zerof, int width)
 {
-	char tmp[22] = { 0 };
+	char tmp[22] = {};
 	char* ptmp = tmp + 20;
 	int vlen = 0;
 	// TODO:minusが設定されない
@@ -1650,7 +1650,7 @@ int wString::tsprintf_decimalu(unsigned long val, int zerof, int width)
 /// <returns></returns>
 int wString::tsprintf_octadecimal(unsigned long val, int zerof, int width)
 {
-	char tmp[22] = { 0 };
+	char tmp[22] = {};
 	char* ptmp = tmp + 20;
 	int vlen = 0;
 	// TODO:minusが設定されない
@@ -1708,7 +1708,7 @@ int wString::tsprintf_octadecimal(unsigned long val, int zerof, int width)
 /// <returns></returns>
 int wString::tsprintf_hexadecimal(unsigned long val, int capital, int zerof, int width)
 {
-	char tmp[22] = { 0 };
+	char tmp[22] = {};
 	char* ptmp = tmp + 20;
 	int vlen = 0;
 	char str_a;
@@ -2073,7 +2073,7 @@ void wString::headerInit(size_t content_length, int expire, const char* mime_typ
 	//utc = gmtime(&timer);
 	struct tm utc;
 	gmtime_r(&timer, &utc);
-	char work[80] = { 0 };
+	char work[80] = {};
 	char you[7][4] = { "Sun", "Mon","Tue", "Wed", "Thu", "Fri", "Sat" };
 	char mon[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 	::sprintf(work, "%s, %d %s %d %02d:%02d:%02d",
@@ -2121,8 +2121,8 @@ wString wString::headerPrintMem(void)
 /// <returns></returns>
 int wString::header(const char* str, int flag, int status)
 {
-	char head[80] = { 0 };
-	char body[80] = { 0 };
+	char head[80] = {};
+	char body[80] = {};
 	if (*str) {
 		if (!flag) {
 			Add(str);
@@ -2590,7 +2590,7 @@ SOCKET wString::sock_connect(const char* host, const int port)
 {
 	//  int sock;
 	SOCKET sock;
-	struct sockaddr_in sockadd = { 0 };     //ＳＯＣＫＥＴ構造体
+	struct sockaddr_in sockadd = {};     //ＳＯＣＫＥＴ構造体
 	struct hostent* hent;
 	debug_log_output("sock_connect: %s:%d", host, port);
 	//ＳＯＣＫＥＴ作成
@@ -2815,7 +2815,7 @@ wString wString::GetLocalAddress(void)
 	//linux番の自IP/ホスト名を設定する
 	struct ifaddrs* ifa_list;
 	struct ifaddrs* ifa;
-	char addrstr[256] = { 0 };
+	char addrstr[256] = {};
 
 	// 機器リスト取得
 	if (getifaddrs(&ifa_list) == 0) {
@@ -2969,7 +2969,7 @@ wString wString::unbase64(void)
 {
 	unsigned char* instr = reinterpret_cast<unsigned char*>(String);
 
-	char FromBase64tbl[256] = { 0 };
+	char FromBase64tbl[256] = {};
 	wString tmpout;
 	//逆テーブルの作成,=も０になる
 	for (unsigned int i = 0; i < sizeof(ToBase64tbl); i++) {
@@ -2991,6 +2991,31 @@ wString wString::unbase64(void)
 		tmpout += (char)(((s3 & 0x03) << 6) | s4);
 	}
 	return tmpout;
+}
+
+/// <summary>
+/// 文字列中の引用符、エスケープを二重エスケープ
+/// </summary>
+/// <param name="str">エスケープする文字列</param>
+/// <returns>エスケープ結果</returns>
+wString wString::escape(const wString& str)
+{
+
+	wString dst;
+	unsigned int len = str.Length();
+	// 引数チェック
+	for (auto is = 0U; is < len; is++) {
+		if (str[is] == '\"') {
+			dst += "\\\"";
+		}
+		else if (str[is] == '\\') {
+			dst += "\\\\";
+		}
+		else {
+			dst += str[is];
+		}
+	}
+	return dst;
 }
 /// <summary>
 /// accept_socketから、１行(CRLFか、LF単独が現れるまで)受信
@@ -3092,7 +3117,7 @@ wString wString::insert(int pos, const wString& fill)
 wString wString::png_size(const wString& png_filename)
 {
 	int         fd;
-	unsigned char       buf[255] = { 0 };
+	unsigned char       buf[255] = {};
 	ssize_t     read_len;
 	auto x = 0;
 	auto y = 0;
@@ -3126,7 +3151,7 @@ wString wString::png_size(const wString& png_filename)
 wString wString::gif_size(const wString& gif_filename)
 {
 	int         fd;
-	unsigned char       buf[255] = { 0 };
+	unsigned char       buf[255] = {};
 	ssize_t     read_len;
 	auto x = 0;
 	auto y = 0;

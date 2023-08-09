@@ -148,9 +148,6 @@ size_t HTTP_RECV_INFO::http_header_response(SOCKET accept_socket)
 /// <returns>0</returns>
 int HTTP_RECV_INFO::http_file_response(SOCKET accept_socket)
 {
-	// ---------------
-	// 作業用変数初期化
-	// ---------------
 	// --------------
 	// OK ヘッダ生成
 	// --------------

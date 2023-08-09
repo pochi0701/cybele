@@ -299,7 +299,7 @@ void scGetLocalAddress(CScriptVar* c, void* userdata) {
 }
 void scStringFromCharCode(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
-	char str[2] = { 0 };
+	char str[2] = {};
 	str[0] = (char)c->getParameter("char")->getInt();
 	c->getReturnVar()->setString(str);
 }
@@ -325,7 +325,7 @@ void scIntegerToDateString(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString times = c->getParameter("this")->getString();
 	wString format = c->getParameter("format")->getString();
-	char s[128] = { 0 };
+	char s[128] = {};
 	time_t time = atol(times.c_str());
 	struct tm* timeptr;
 	timeptr = localtime(&time);
@@ -686,7 +686,7 @@ void scSessionStart(CScriptVar* c, void* userdata) {
 	}
 	else {
 		srand((unsigned)time(NULL));
-		char work[27] = { 0 };
+		char work[27] = {};
 		while (1) {
 			for (int i = 0; i < 26; i++) {
 				work[i] = material[rand() % (sizeof(material) - 1)];

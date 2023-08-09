@@ -37,6 +37,7 @@
 // =============================================================
 // バッチ処理
 // =============================================================
+#define SCRIPT_SIZE 10000
 #ifdef linux
 void* batch(void* ptr)
 #else
@@ -49,12 +50,18 @@ unsigned int __stdcall batch(void* ptr)
     
     while(loop_flag){
         //イベントが合致したら指定jssを起動
-        char buffer[1000]={0};
+        char buffer[SCRIPT_SIZE]={};
         int fd = myopen( script_filename, O_RDONLY | O_BINARY);
         if( fd < 0 ){
             break;
         }
-        auto ret = read(fd,buffer,1000);
+        auto ret = read(fd,buffer, SCRIPT_SIZE);
+        // 読み込み失敗
+        if (ret == -1)
+        {
+            close(fd);
+            break;
+        }
         close( fd );
         CTinyJS  s(STDOUT_FILENO);
         registerFunctions (&s);

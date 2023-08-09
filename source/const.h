@@ -25,7 +25,7 @@
 #define MACADDR            (MAC_ADDR)
 
 #ifdef MAINVAR
-char MAC_ADDR[256] = { 0 };
+char MAC_ADDR[256] = {};
 #else
 extern char MAC_ADDR[256];
 #endif

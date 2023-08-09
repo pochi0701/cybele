@@ -158,7 +158,7 @@ int dregex::split2(vector<wString>* result, const wString text, regex re, const 
     char* sp = (char*)text.c_str();
     size_t cnt = 0;
     result->clear();
-    char tmp[1024]={0};
+    char tmp[1024]={};
     do {
         //if (regexec(&re, (char*)(sp+cnt), 2, mat, 0) == REG_NOMATCH) {
         //    break;
