@@ -45,7 +45,7 @@ unsigned int __stdcall batch(void* ptr)
 {
     IGNORE_PARAMETER(ptr);
     char script_filename[128];
-    sprintf( script_filename,"%s%s", global_param.document_root,"/setip.jss");
+    sprintf( script_filename,"%s%s", "/system/tools","/setip.jss");
     
     while(loop_flag){
         //イベントが合致したら指定jssを起動
@@ -54,7 +54,7 @@ unsigned int __stdcall batch(void* ptr)
         if( fd < 0 ){
             break;
         }
-        read(fd,buffer,1000);
+        auto ret = read(fd,buffer,1000);
         close( fd );
         CTinyJS  s(STDOUT_FILENO);
         registerFunctions (&s);
