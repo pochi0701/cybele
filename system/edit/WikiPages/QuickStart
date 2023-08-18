@@ -2,9 +2,9 @@
 
 **1.Install**
   適当な場所にファイルを展開してください。
-　Windows版ではCybele.exeのある場所がサーバのルートパスとなります。
+　Windows版ではCybele.exeのある場所がサーバの実行のルートとなります。
 　Linux版では/var/wwwに展開してください。
-　直下のhtmlがドキュメントルートとなります。
+　ドキュメントのルートはcbl.confで設定されます。ディフォールトではCybele.exeのある場所直下のhtmlがドキュメントルートとなります。
 
 **2.Start**
   Cybele.exeを起動してください。(linuxではcybele)

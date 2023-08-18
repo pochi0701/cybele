@@ -58,7 +58,7 @@ extern void     debug_log_output(const char* fmt, ...);
 //システム処理
 extern int      sClose(SOCKET socket);
 extern int      readLine(int fd, char* line_buf_p, int line_max);
-extern wString  GetAuthorization(wString& AuthorizedString);
+extern wString  GetAuthorization(const wString& AuthorizedString);
 
 #ifdef linux
 extern int      getTargetFile(const char* LinkFile, char* TargetFile);

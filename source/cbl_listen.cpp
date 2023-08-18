@@ -183,7 +183,6 @@ unsigned int __stdcall accessloop(void* arg)
 void thread_process(ACCESS_INFO& ac_in)
 {
 	int        access_check_ok;
-	int        i;
 	char       client_addr_str[32] = {};
 	char       client_address[4] = {};
 	char       masked_client_address[4] = {};
@@ -195,7 +194,7 @@ void thread_process(ACCESS_INFO& ac_in)
 	debug_log_output("\n\n=============================================================\n");
 	debug_log_output("Socket Accept!!(accept_socket=%d)\n", accept_socket);
 	//child_count ++;
-	i = rand();
+	rand();
 	// caddr 情報表示
 	debug_log_output("client addr = %s\n", inet_ntoa(caddr.sin_addr));
 	debug_log_output("client port = %d\n", ntohs(caddr.sin_port));
@@ -220,7 +219,7 @@ void thread_process(ACCESS_INFO& ac_in)
 		strncpy(client_addr_str, inet_ntoa(caddr.sin_addr), sizeof(client_addr_str) - 1);
 		// client_addr_strをchar[4]に変換
 		strncat(client_addr_str, ".", sizeof(client_addr_str) - 1);
-		for (i = 0; i < 4; i++) {
+		for (auto i = 0; i < 4; i++) {
 			char       work1[32];
 			char       work2[32];
 			sentence_split(client_addr_str, '.', work1, work2);
@@ -228,7 +227,7 @@ void thread_process(ACCESS_INFO& ac_in)
 			strncpy(client_addr_str, work2, sizeof(client_addr_str));
 		}
 		// リストの存在する数だけループ
-		for (i = 0; i < ACCESS_ALLOW_LIST_MAX; i++) {
+		for (auto i = 0; i < ACCESS_ALLOW_LIST_MAX; i++) {
 			if (access_allow_list[i].flag == FALSE) { // リスト終了
 				break;
 			}

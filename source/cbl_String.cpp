@@ -185,7 +185,7 @@ wString wString::operator+(const char* str) const
 /// <param name="str1">元文字列</param>
 /// <param name="str2">プラスするwString</param>
 /// <returns>プラス結果</returns>
-wString operator+(const char* str1, const wString str2)
+wString operator+(const char* str1, const wString& str2)
 {
 	wString temp(str1);
 	temp += str2;
@@ -1167,7 +1167,7 @@ wString wString::ExtractFileExt(const wString& str)
 }
 
 //---------------------------------------------------------------------------
-wString wString::ChangeFileExt(wString& str, const char* ext)
+wString wString::ChangeFileExt(const wString& str, const char* ext)
 {
 	int pos = str.LastDelimiter(".");
 	return str.substr(0, pos + 1) + ext;

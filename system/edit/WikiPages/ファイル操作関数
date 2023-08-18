@@ -62,5 +62,5 @@
 　pathで示されるファイルにdataを保存する
 
 
-**copy(pathf,patht)**
-　pathfからpathtへファイルをコピーする
+**copy(pathFrom,pathTo)**
+　pathFromからpathToへファイルをコピーする

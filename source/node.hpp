@@ -136,7 +136,7 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="mytype"></param>
-	Node(dataType mytype)
+	explicit Node(dataType mytype)
 	{
 		type = mytype;
 		changed = false;
@@ -147,7 +147,7 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="nd"></param>
-	Node(const Node* nd) {
+	explicit Node(const Node* nd) {
 		data.clear();
 		type = nd->type;
 		data.resize(nd->data.size());
@@ -281,8 +281,13 @@ public:
 			}
 		}
 	}
-	//文字が格納されているか？
-	int contains(char* letters)
+
+	/// <summary>
+	/// データ中に文字が格納されているか？
+	/// </summary>
+	/// <param name="letters"></param>
+	/// <returns></returns>
+	int contains(const char* letters)
 	{
 		for (unsigned int i = 0; i < data.size(); i++) {
 			if (data[i] == letters) {
@@ -291,13 +296,20 @@ public:
 		}
 		return -1;
 	}
-	//修飾なしで文字を登録
+	/// <summary>
+	/// 単純にデータに文字を登録
+	/// </summary>
+	/// <param name="letters"></param>
 	void putNative(const wString& letters)
 	{
 		data.push_back(letters);
-		return;
 	}
-	//文字を登録
+
+	/// <summary>
+	/// データに数値、または文字を登録
+	/// </summary>
+	/// <param name="letters">登録する文字列</param>
+	/// <param name="ptr">登録する位置</param>
 	void put(const wString& letters, int ptr = -1)
 	{
 		//string tmp = letters;

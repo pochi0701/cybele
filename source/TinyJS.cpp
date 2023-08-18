@@ -408,8 +408,11 @@ void CScriptLex::reset() {
 	getNextCh();//currch,nextch設定
 	getNextToken();//１ワード取り込んだ状態で開始
 }
-//期待する語をチェックして次の１トークンを先読み
-//期待はずれなら例外
+/// <summary>
+/// 期待する語をチェックして次の１トークンを先読み
+/// 期待はずれなら例外
+/// </summary>
+/// <param name="expected_tk">期待するトークン</param>
 void CScriptLex::chkread(LEX_TYPES expected_tk) {
 	if (tk != expected_tk) {
 		wString errorString;
@@ -1195,6 +1198,9 @@ void CScriptVar::setString(const wString& str) {
 	doubleData = 0;
 }
 
+/// <summary>
+/// undefinedの値を設定
+/// </summary>
 void CScriptVar::setUndefined() {
 	// name sure it's not still a number or integer
 	flags = (flags & ~(int)SCRIPTVAR_FLAGS::SCRIPTVAR_VARTYPEMASK) | (int)SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED;
@@ -1204,6 +1210,9 @@ void CScriptVar::setUndefined() {
 	removeAllChildren();
 }
 
+/// <summary>
+/// 配列を設定
+/// </summary>
 void CScriptVar::setArray() {
 	// name sure it's not still a number or integer
 	flags = (flags & ~(int)SCRIPTVAR_FLAGS::SCRIPTVAR_VARTYPEMASK) | (int)SCRIPTVAR_FLAGS::SCRIPTVAR_ARRAY;
@@ -1213,6 +1222,11 @@ void CScriptVar::setArray() {
 	removeAllChildren();
 }
 
+/// <summary>
+/// thisとvが同一ならtrue
+/// </summary>
+/// <param name="v">比較する変数</param>
+/// <returns>同一なら真、さもなくば偽</returns>
 bool CScriptVar::equals(CScriptVar* v) {
 	CScriptVar* resV = mathsOp(v, LEX_TYPES::LEX_EQUAL);
 	bool res = resV->getBool();
@@ -1220,23 +1234,32 @@ bool CScriptVar::equals(CScriptVar* v) {
 	return res;
 }
 
+/// <summary>
+/// this,op,bでの演算
+/// </summary>
+/// <param name="b">変数の値</param>
+/// <param name="op">演算子</param>
+/// <returns>this,op,bの演算結果true/false</returns>
 CScriptVar* CScriptVar::mathsOp(CScriptVar* b, LEX_TYPES op) {
 	CScriptVar* a = this;
 	// Type equality check
 	if (op == LEX_TYPES::LEX_TYPEEQUAL || op == LEX_TYPES::LEX_NTYPEEQUAL) {
 		// check type first, then call again to check data
 		bool eql = ((a->flags & (int)SCRIPTVAR_FLAGS::SCRIPTVAR_VARTYPEMASK) ==
-			(b->flags & (int)SCRIPTVAR_FLAGS::SCRIPTVAR_VARTYPEMASK));
+			        (b->flags & (int)SCRIPTVAR_FLAGS::SCRIPTVAR_VARTYPEMASK));
 		if (eql) {
 			CScriptVar* contents = a->mathsOp(b, LEX_TYPES::LEX_EQUAL);
 			if (!contents->getBool()) eql = false;
 			if (!contents->refs) delete contents;
 		}
 		;
-		if (op == LEX_TYPES::LEX_TYPEEQUAL)
+		if (op == LEX_TYPES::LEX_TYPEEQUAL) {
 			return new CScriptVar(eql);
-		else
+		}
+		else {
 			return new CScriptVar(!eql);
+
+		}
 	}
 	// do maths...
 	if (a->isUndefined() && b->isUndefined()) {
@@ -1344,10 +1367,12 @@ void CScriptVar::copyValue(CScriptVar* val) {
 		while (child) {
 			CScriptVar* copied;
 			// don't copy the 'parent' object...
-			if (child->name != TINYJS_PROTOTYPE_CLASS)
+			if (child->name != TINYJS_PROTOTYPE_CLASS) {
 				copied = child->var->deepCopy();
-			else
+			}
+			else {
 				copied = child->var;
+			}
 
 			addChild(child->name, copied);
 
@@ -1415,6 +1440,10 @@ wString CScriptVar::getFlagsAsString() {
 	return flagstr;
 }
 
+/// <summary>
+/// 解析可能な文字列の出力
+/// </summary>
+/// <returns></returns>
 wString CScriptVar::getParsableString() {
 	// Numbers can just be put in directly
 	if (isNumeric()) {
@@ -1445,6 +1474,11 @@ wString CScriptVar::getParsableString() {
 	return "undefined";
 }
 
+/// <summary>
+/// JSON出力
+/// </summary>
+/// <param name="destination">出力するJSON</param>
+/// <param name="linePrefix">行毎に付与する文字</param>
 void CScriptVar::getJSON(wString& destination, const wString& linePrefix) {
 	if (isObject()) {
 		wString indentedLinePrefix = linePrefix + "  ";
@@ -1578,7 +1612,7 @@ void CTinyJS::FlushBuf(void)
 }
 
 /// <summary>
-/// 
+/// コードの実行
 /// </summary>
 /// <param name="code">実行するステートメント</param>
 /// <param name="executeMode"></param>
@@ -1698,7 +1732,13 @@ void CTinyJS::parseFunctionArguments(CScriptVar* funcVar) {
 	}
 	l->chkread(LEX_TYPES::LEX_RPA);
 }
-//Cで実装されたコードの実行
+
+/// <summary>
+/// Cで実装されたコードの実行
+/// </summary>
+/// <param name="funcDesc"></param>
+/// <param name="ptr"></param>
+/// <param name="userdata"></param>
 void CTinyJS::addNative(const wString& funcDesc, JSCallback ptr, void* userdata) {
 	CScriptLex* oldLex = l;
 	l = new CScriptLex(socket, &printed, headerBuf, funcDesc, ExecuteModes::ON_SERVER, &prBuffer, &prPos);
@@ -2039,7 +2079,11 @@ CScriptVarLink* CTinyJS::factor(bool& execute) {
 	l->chkread(LEX_TYPES::LEX_EOF);
 	return 0;
 }
-//単項演算子!
+/// <summary>
+/// 単項演算子"!"
+/// </summary>
+/// <param name="execute">実行フラグ</param>
+/// <returns></returns>
 CScriptVarLink* CTinyJS::unary(bool& execute) {
 	CScriptVarLink* a;
 	if (l->tk == LEX_TYPES::LEX_EXC) {
@@ -2057,6 +2101,11 @@ CScriptVarLink* CTinyJS::unary(bool& execute) {
 	return a;
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="execute"></param>
+/// <returns></returns>
 CScriptVarLink* CTinyJS::term(bool& execute) {
 	CScriptVarLink* a = unary(execute);
 	while (l->tk == LEX_TYPES::LEX_MUL || l->tk == LEX_TYPES::LEX_DIV || l->tk == LEX_TYPES::LEX_MOD) {
@@ -2072,7 +2121,11 @@ CScriptVarLink* CTinyJS::term(bool& execute) {
 	return a;
 }
 ////////////////////////////////////////////////////////////////////////////////
-//表現(-a++とか)
+/// <summary>
+/// 表現：単項-,単項演算子、演算子等(-a++とか)
+/// </summary>
+/// <param name="execute"></param>
+/// <returns></returns>
 CScriptVarLink* CTinyJS::expression(bool& execute) {
 	bool negate = false;
 	if (l->tk == LEX_TYPES::LEX_MINUS) {
@@ -2086,8 +2139,8 @@ CScriptVarLink* CTinyJS::expression(bool& execute) {
 		CREATE_LINK(a, res);
 	}
 
-	while (l->tk == LEX_TYPES::LEX_PLUS || l->tk == LEX_TYPES::LEX_MINUS ||
-		l->tk == LEX_TYPES::LEX_PLUSPLUS || l->tk == LEX_TYPES::LEX_MINUSMINUS) {
+	while (l->tk == LEX_TYPES::LEX_PLUS     || l->tk == LEX_TYPES::LEX_MINUS ||
+		   l->tk == LEX_TYPES::LEX_PLUSPLUS || l->tk == LEX_TYPES::LEX_MINUSMINUS) {
 		LEX_TYPES op = l->tk;
 		l->chkread(l->tk);
 		if (op == LEX_TYPES::LEX_PLUSPLUS || op == LEX_TYPES::LEX_MINUSMINUS) {
@@ -2117,7 +2170,7 @@ CScriptVarLink* CTinyJS::expression(bool& execute) {
 /// <summary>
 /// Shift Operator.
 /// </summary>
-/// <param name="execute"></param>
+/// <param name="execute">実行の有無</param>
 /// <returns></returns>
 CScriptVarLink* CTinyJS::shift(bool& execute) {
 	CScriptVarLink* a = expression(execute);
@@ -2136,14 +2189,18 @@ CScriptVarLink* CTinyJS::shift(bool& execute) {
 	return a;
 }
 ////////////////////////////////////////////////////////////////////////////////
-//条件式
+/// <summary>
+/// 条件式
+/// </summary>
+/// <param name="execute">実行の有無</param>
+/// <returns></returns>
 CScriptVarLink* CTinyJS::condition(bool& execute) {
 	CScriptVarLink* a = shift(execute);
 	CScriptVarLink* b;
-	while (l->tk == LEX_TYPES::LEX_EQUAL || l->tk == LEX_TYPES::LEX_NEQUAL ||
-		l->tk == LEX_TYPES::LEX_TYPEEQUAL || l->tk == LEX_TYPES::LEX_NTYPEEQUAL ||
-		l->tk == LEX_TYPES::LEX_LEQUAL || l->tk == LEX_TYPES::LEX_GEQUAL ||
-		l->tk == LEX_TYPES::LEX_LTN || l->tk == LEX_TYPES::LEX_GTN) {
+	while (l->tk == LEX_TYPES::LEX_EQUAL     || l->tk == LEX_TYPES::LEX_NEQUAL ||
+		   l->tk == LEX_TYPES::LEX_TYPEEQUAL || l->tk == LEX_TYPES::LEX_NTYPEEQUAL ||
+	   	   l->tk == LEX_TYPES::LEX_LEQUAL    || l->tk == LEX_TYPES::LEX_GEQUAL ||
+		   l->tk == LEX_TYPES::LEX_LTN       || l->tk == LEX_TYPES::LEX_GTN) {
 		LEX_TYPES op = l->tk;
 		l->chkread(l->tk);
 		b = shift(execute);
@@ -2159,7 +2216,7 @@ CScriptVarLink* CTinyJS::condition(bool& execute) {
 /// <summary>
 /// 結合条件式
 /// </summary>
-/// <param name="execute"></param>
+/// <param name="execute">実行の有無</param>
 /// <returns></returns>
 CScriptVarLink* CTinyJS::logic(bool& execute) {
 	CScriptVarLink* a = condition(execute);
@@ -2203,11 +2260,15 @@ CScriptVarLink* CTinyJS::logic(bool& execute) {
 	return a;
 }
 ////////////////////////////////////////////////////////////////////////////////
-//三項演算子
+/// <summary>
+/// 三項演算子
+/// </summary>
+/// <param name="execute">実行の有無</param>
+/// <returns></returns>
 CScriptVarLink* CTinyJS::ternary(bool& execute) {
 	CScriptVarLink* lhs = logic(execute);
-	bool noexec = false;
 	if (l->tk == LEX_TYPES::LEX_QST) {
+		bool noexec = false;
 		l->chkread(LEX_TYPES::LEX_QST);
 		if (!execute) {
 			CLEAN(lhs);
@@ -2572,7 +2633,12 @@ CScriptVar* CTinyJS::getScriptVariable(const wString& path) {
 //    }
 //}
 
-/// set the value of the given variable, return trur if it exists and gets set
+/// <summary>
+/// set the value of the given variable, return true if it exists and gets set
+/// </summary>
+/// <param name="path">変数を示すパス</param>
+/// <param name="varData">変数の内容</param>
+/// <returns>変数の内容を取得できれば真</returns>
 bool CTinyJS::setVariable(const wString& path, const wString& varData) {
 	CScriptVar* var = getScriptVariable(path);
 	// return result

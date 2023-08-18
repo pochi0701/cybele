@@ -408,7 +408,7 @@ public:
 	}
 	/////////////////////////////////////////////////////////////////////////////
 	//リミット
-	void Limit(vector<int>& limit)
+	void Limit(const vector<int>& limit)
 	{
 		unsigned int st = 0;
 		unsigned int cnt;
@@ -739,14 +739,22 @@ public:
 		}
 		else {
 			alias = "count";
-			map<wString, wString>::iterator it;
-			for (it = cond.clmalias.begin(); it != cond.clmalias.end(); it++) {
-				wString select = it->second;
+			for (auto const& x : cond.clmalias)
+			{
+				wString select = x.second;
 				if (select == "count(*)") {
-					alias = it->first;
+					alias = x.first;
 					break;
 				}
 			}
+			//map<wString, wString>::iterator it;
+			//for (it = cond.clmalias.begin(); it != cond.clmalias.end(); it++) {
+			//	wString select = it->second;
+			//	if (select == "count(*)") {
+			//		alias = it->first;
+			//		break;
+			//	}
+			//}
 			temp.sprintf("{\"%s\":%d}", alias.c_str(), Node.size());
 		}
 		return temp;
@@ -1002,14 +1010,22 @@ int Column::Compare(wString select, map<wString, wString>& clmalias, map<wString
 int Column::GetAlias(map<wString, wString>& clmalias, map<wString, wString>& tblalias, wString& alias)
 {
 	//clmaliasからsecondでループ比較
-	map<wString, wString>::iterator it;
-	for (it = clmalias.begin(); it != clmalias.end(); it++) {
-		wString select = it->second;
+	for (auto const& x : clmalias)
+	{
+		wString select = x.second;
 		if (Compare(select, clmalias, tblalias)) {
-			alias = it->first;
+			alias = x.first;
 			return true;
 		}
 	}
+	//map<wString, wString>::iterator it;
+	//for (it = clmalias.begin(); it != clmalias.end(); it++) {
+	//	wString select = it->second;
+	//	if (Compare(select, clmalias, tblalias)) {
+	//		alias = it->first;
+	//		return true;
+	//	}
+	//}
 	return false;
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -1137,9 +1153,10 @@ Table::Table(const wString myname, const vector<wString>& mycolumn) {
 	InitializeCriticalSection(&cs);
 #endif
 	writeStart();
-	name = myname;
+	//name = myname;
 	for (unsigned int i = 0; i < mycolumn.size(); i++) {
-		Column* clm = new Column(name, mycolumn[i]);
+		//Column* clm = new Column(name, mycolumn[i]);
+		auto clm = new Column(myname, mycolumn[i]);
 		column.push_back(clm);
 		node.push_back(new Node(clm->type));
 	}
@@ -1533,10 +1550,11 @@ bool Table::isChanged(void)
 ////////////////////////////////////////////////////////////////////////////
 //データベースクラス
 ////////////////////////////////////////////////////////////////////////////
-Database::Database(wString myname) {
-	name = myname;
+Database::Database(const wString& myname) {
+	//name = myname;
 	wString path = current_dir + DELIMITER + "database" + DELIMITER;
-	LoadFromFile(path + name + ".db");
+	//LoadFromFile(path + name + ".db");
+	LoadFromFile(path + myname + ".db");
 	ref = 0;
 	changed = false;
 }
@@ -1559,10 +1577,10 @@ void Database::Save(void)
 	}
 
 	//変更があればテーブル保存
-	map<wString, Table*>::iterator it;
-	for (it = tblList.begin(); it != tblList.end(); it++) {
+	for (auto const& x : tblList)
+	{
 		// テーブルを消された場合、全ファイル更新
-		if (it->second->isChanged() || this->changed)
+		if (x.second->isChanged() || this->changed)
 		{
 			//bakファイル削除
 			if (wString::FileExists((path + name + ".db.bak")) == 0) {
@@ -1575,11 +1593,32 @@ void Database::Save(void)
 			break;
 		}
 	}
+
+	//map<wString, Table*>::iterator it;
+	//for (it = tblList.begin(); it != tblList.end(); it++) {
+	//	// テーブルを消された場合、全ファイル更新
+	//	if (it->second->isChanged() || this->changed)
+	//	{
+	//		//bakファイル削除
+	//		if (wString::FileExists((path + name + ".db.bak")) == 0) {
+	//			wString::DeleteFile(path + name + ".db.bak");
+	//		}
+	//		wString::RenameFile(path + name + ".db", path + name + ".db.bak");
+	//		//保存(テーブルも保存される）
+	//		if (SaveToFile(path + name + ".db") == 0) {
+	//		}
+	//		break;
+	//	}
+	//}
 	//テーブル保存
 	//map<wString,Table*>::iterator it;
-	for (it = tblList.begin(); it != tblList.end(); it++) {
-		delete it->second;
+	for (auto const& x : tblList)
+	{
+		delete x.second;
 	}
+	//for (it = tblList.begin(); it != tblList.end(); it++) {
+	//	delete it->second;
+	//}
 }
 ////////////////////////////////////////////////////////////////////////////
 //-1:エラー
@@ -1964,19 +2003,28 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 				}
 			}
 			else if (ret == CMDS::TXED || ret == CMDS::TXNONE) {
-				map<wString, Table*>::iterator it;
 				retStr.clear();
 #ifdef CMDLINE
-				for (it = tbllist.begin(); it != tbllist.end(); it++) {
-					retStr.cat_sprintf("%s\n", it->first.c_str());
+				for (auto const& x : tblList)
+				{
+					retStr.cat_sprintf("%s\n", x.first.c_str());
 				}
+				//map<wString, Table*>::iterator it;
+				//for (it = tbllist.begin(); it != tbllist.end(); it++) {
+				//	retStr.cat_sprintf("%s\n", it->first.c_str());
+				//}
 #else
 				retStr = "[";
 				int first = 1;
-				for (it = tblList.begin(); it != tblList.end(); it++) {
-					retStr.cat_sprintf("%s\"%s\"", ((first) ? "" : ","), it->first.c_str());
+				for (auto const& x : tblList)
+				{
+					retStr.cat_sprintf("%s\"%s\"", ((first) ? "" : ","), x.first.c_str());
 					first = 0;
 				}
+				//for (it = tblList.begin(); it != tblList.end(); it++) {
+				//	retStr.cat_sprintf("%s\"%s\"", ((first) ? "" : ","), it->first.c_str());
+				//	first = 0;
+				//}
 				retStr += "]";
 #endif
 			}
@@ -2302,10 +2350,14 @@ int Database::SaveToFile(wString file) {
 	auto max = (unsigned int)tblList.size();
 	br->Write(&max, sizeof(unsigned int));
 	//テーブル保存
-	map<wString, Table*>::iterator nit;
-	for (nit = tblList.begin(); nit != tblList.end(); nit++) {
-		nit->second->SaveToFile(br);
+	for (auto const& x : tblList)
+	{
+		x.second->SaveToFile(br);
 	}
+	//map<wString, Table*>::iterator nit;
+	//for (nit = tblList.begin(); nit != tblList.end(); nit++) {
+	//	nit->second->SaveToFile(br);
+	//}
 	br->wclose();
 	delete br;
 	return 0;
@@ -2360,20 +2412,34 @@ int DBCatalog::DBClose(Database* db) {
 	//	forceSave = false;
  //       db->Save();
 	//}
-	map<wString, Database*>::iterator it;
-	for (it = dblist.begin(); it != dblist.end(); it++) {
-		if ((*it).second == db) {
+	for (auto const& x : dblist)
+	{
+		if (x.second == db) {
 			//参照カウンタを減らす
 			if (db->ref > 0) {
 				db->ref--;
 				if (db->ref <= 0) {
 					delete db;
-					dblist[(*it).first] = NULL;
+					dblist[x.first] = NULL;
 				}
 			}
 			return 0;
 		}
 	}
+	//map<wString, Database*>::iterator it;
+	//for (it = dblist.begin(); it != dblist.end(); it++) {
+	//	if ((*it).second == db) {
+	//		//参照カウンタを減らす
+	//		if (db->ref > 0) {
+	//			db->ref--;
+	//			if (db->ref <= 0) {
+	//				delete db;
+	//				dblist[(*it).first] = NULL;
+	//			}
+	//		}
+	//		return 0;
+	//	}
+	//}
 	return -1;
 }
 ////////////////////////////////////////////////////////////////////////////
@@ -2389,18 +2455,26 @@ Database* DBCatalog::DBCreate(wString DBName) {
 ////////////////////////////////////////////////////////////////////////////
 unsigned int DBCatalog::ShowCatalog(wString& retStr)
 {
-	map<wString, Database*>::iterator it;
 	retStr.clear();
 #ifdef CMDLINE
-	for (it = dblist.begin(); it != dblist.end(); it++) {
-		retStr.cat_sprintf("%s\n", (*it).first.c_str());
+	for (auto const& x : dblist)
+	{
+		retStr.cat_sprintf("%s\n", x.first.c_str());
 	}
+	//map<wString, Database*>::iterator it;
+	//for (it = dblist.begin(); it != dblist.end(); it++) {
+	//	retStr.cat_sprintf("%s\n", (*it).first.c_str());
+	//}
 #else
 	retStr = "[";
 	int lines = 0;
-	for (it = dblist.begin(); it != dblist.end(); it++) {
-		retStr.cat_sprintf("%s\"%s\"", ((lines++) ? "," : ""), (*it).first.c_str());
+	for (auto const& x : dblist)
+	{
+		retStr.cat_sprintf("%s\"%s\"", ((lines++) ? "," : ""), x.first.c_str());
 	}
+	//for (it = dblist.begin(); it != dblist.end(); it++) {
+	//	retStr.cat_sprintf("%s\"%s\"", ((lines++) ? "," : ""), (*it).first.c_str());
+	//}
 	retStr += "]";
 #endif
 	return (unsigned int)dblist.size();
@@ -2441,21 +2515,33 @@ int DBCatalog::SaveToFile(void)
 		return -1;
 	}
 	//dbname保存
-	map<wString, Database*>::iterator it;
 	auto max = (unsigned int)dblist.size();
 	if (write(fd, &max, sizeof(unsigned int)) != sizeof(unsigned int)) { close(fd); return -1; }
-	for (it = dblist.begin(); it != dblist.end(); it++) {
-		auto len = it->first.length();
+	for (auto const& x : dblist)
+	{
+		auto len = x.first.length();
 		if (write(fd, &len, sizeof(unsigned int)) != sizeof(unsigned int)) { close(fd); return -1; }
-		if (write(fd, it->first.c_str(), len) != (int)len) { close(fd); return -1; }
+		if (write(fd, x.first.c_str(), len) != (int)len) { close(fd); return -1; }
 	}
+	//map<wString, Database*>::iterator it;
+	//for (it = dblist.begin(); it != dblist.end(); it++) {
+	//	auto len = it->first.length();
+	//	if (write(fd, &len, sizeof(unsigned int)) != sizeof(unsigned int)) { close(fd); return -1; }
+	//	if (write(fd, it->first.c_str(), len) != (int)len) { close(fd); return -1; }
+	//}
 	// ファイルクローズ
 	close(fd);
-	for (it = dblist.begin(); it != dblist.end(); it++) {
-		if (it->second != NULL) {
-			delete it->second;
+	for (auto const& x : dblist)
+	{
+		if (x.second != NULL) {
+			delete x.second;
 		}
 	}
+	//for (it = dblist.begin(); it != dblist.end(); it++) {
+	//	if (it->second != NULL) {
+	//		delete it->second;
+	//	}
+	//}
 	return 0;
 }
 ////////////////////////////////////////////////////////////////////////////
@@ -2540,11 +2626,16 @@ DBCatalog::~DBCatalog(void)
 {
 	refs--;
 	//connectはまあいいかな。
-	map<wString, Database*>::iterator it;
-	for (it = connects->begin(); it != connects->end(); it++) {
-		wString nam = it->first;
+	for (auto const& x : *connects)
+	{
+		wString nam = x.first;
 		_DBDisConnect(nam);
 	}
+	//map<wString, Database*>::iterator it;
+	//for (it = connects->begin(); it != connects->end(); it++) {
+	//	wString nam = it->first;
+	//	_DBDisConnect(nam);
+	//}
 	delete connects;
 	SaveToFile();
 }

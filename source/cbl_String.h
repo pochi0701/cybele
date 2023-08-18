@@ -32,7 +32,7 @@ private:
 public:
 	const static int npos;
 	wString(void);
-	wString(int mylen);
+	explicit wString(int mylen);
 	wString(const char* str);
 	wString(const wString& str);
 	~wString(void);
@@ -40,7 +40,7 @@ public:
 	//OPERATION OVERLOAD
 	wString  operator+(const wString& str) const;
 	wString  operator+(const char* str) const;
-	friend wString operator+(const char* str1, const wString str2);
+	friend wString operator+(const char* str1, const wString& str2);
 	void     operator=(const wString& str);
 	void     operator=(const char* str);
 	void     operator=(const int num);
@@ -140,7 +140,7 @@ public:
 	static wString  ExtractFileName(const wString& str, const char* delim = DELIMITER);
 	static wString  ExtractFileExt(const wString& str);
 	static int      CreateDir(const wString& str);
-	static wString  ChangeFileExt(wString& str, const char* ext);
+	static wString  ChangeFileExt(const wString& str, const char* ext);
 	static unsigned long FileSizeByName(char* str);
 	static unsigned long FileSizeByName(wString& str);
 	static wString  EnumFolder(const wString& Path);

@@ -165,7 +165,7 @@ wString getJSString(const wString& str);
 class CScriptException {
 public:
 	wString text;
-	CScriptException(const wString& exceptionText);
+	explicit CScriptException(const wString& exceptionText);
 };
 
 class CScriptLex
@@ -247,10 +247,10 @@ public:
 
 	CScriptVar(); ///< Create undefined
 	CScriptVar(const wString& varData, int varFlags); ///< User defined
-	CScriptVar(const wString& str); ///< Create a string
-	CScriptVar(double varData);
-	CScriptVar(int val);
-	CScriptVar(bool val);
+	explicit CScriptVar(const wString& str); ///< Create a string
+	explicit CScriptVar(double varData);
+	explicit CScriptVar(int val);
+	explicit CScriptVar(bool val);
 	~CScriptVar(void);
 
 	CScriptVar* getReturnVar(); ///< If this is a function, get the result value (for use by native functions)

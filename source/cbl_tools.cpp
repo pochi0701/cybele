@@ -1134,7 +1134,7 @@ int HTTPDownload(char* src, char* dst, off_t offset)
 	//ExitThread(TRUE);
 	return status;
 }
-wString GetAuthorization(wString& AuthorizedString)
+wString GetAuthorization(const wString& AuthorizedString)
 {
 	wString auth;
 	if (AuthorizedString.length()) {

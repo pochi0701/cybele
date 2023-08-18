@@ -31,9 +31,12 @@
 #include "cbl_tools.h"
 #include "cbl_String.h"
 #include "define.h"
-// **************************************************************************
-// * サーバ HTTP処理部
-// **************************************************************************
+/// <summary>
+/// サーバ HTTP処理部
+/// </summary>
+/// <param name="accept_socket">アクセプトソケット</param>
+/// <param name="access_host">ホストIPアドレス</param>
+/// <param name="client_addr_str">未使用</param>
 void server_http_process(SOCKET accept_socket, char* access_host, char* client_addr_str)
 {
 	IGNORE_PARAMETER(client_addr_str);
@@ -132,10 +135,7 @@ void server_http_process(SOCKET accept_socket, char* access_host, char* client_a
 		return;
 	}
 	debug_log_output("sanitized recv_uri: %s", http_recv_info.recv_uri);
-	// ----------------------------------------
-	// 受け取ったURIの拡張子がrename対象ならばrename
-	// ----------------------------------------
-	//extension_del_rename(http_recv_info.recv_uri);
+
 	// ============================
 	// ファイルチェック
 	//  種類に応じて分岐
@@ -358,17 +358,6 @@ FILETYPES HTTP_RECV_INFO::http_index(void)
 	}
 	return FILETYPES::_DIR;
 }
-// **************************************************************************
-// 
-//
-// 処理するのはGETのみ。GET以外のメソッドが来たらエラー
-// 今のところ、もやる。
-//
-//	return: 
-//	return: 
-// **************************************************************************
-
-
 /// <summary>
 /// HTTPヘッダを受信して解析する。
 /// GET,HEAD,POST
@@ -557,7 +546,7 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 }
 // **************************************************************************
 // リクエストされたURIのファイルをチェック
-// documet_rootと、skin置き場をセットで探す。
+// 
 //
 // ret		 0:実体
 //			 1:ディレクトリ
@@ -566,6 +555,19 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 //			 5:VOBファイル
 //			 6:CGIファイル
 // **************************************************************************
+
+
+/// <summary>
+/// リクエストされたURIのファイルをチェック
+/// aliasでの置き換え、documet_rootチェック、なければskin置き場チェックを行う。
+/// 		 0:実体
+/// 		 1:ディレクトリ
+/// 		 3:plw/uplファイル
+/// 		 4:tsvファイル
+/// 		 5:VOBファイル
+/// 		 6:CGIファイル
+/// </summary>
+/// <returns>チェックしたファイルタイプ</returns>
 FILETYPES HTTP_RECV_INFO::http_file_check(void)
 {
 	char 	work_buf[1024];
