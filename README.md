@@ -8,10 +8,10 @@ cybele is Apprication Server for JavaScript and in memory SQL. Work on Windows a
 ## ver. 2207
   bootstrap5 に対応
 
-##v er. 2208
+## ver. 2208
   db実行のバグフィックス
   フォルダ構成変更
 
-##V er. 2023
+## Ver. 2023
   マークダウン対応
   フォルダ構成等調整
