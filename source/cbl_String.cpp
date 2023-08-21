@@ -2838,7 +2838,8 @@ wString wString::GetLocalAddress(void)
 		return "";
 	}
 #else
-
+#pragma comment(lib, "iphlpapi.lib")
+#pragma comment(lib, "ws2_32.lib")
 	//ホスト名を取得する
 	char hostname[256];
 	if (gethostname(hostname, sizeof(hostname)) != 0) {
@@ -2846,13 +2847,41 @@ wString wString::GetLocalAddress(void)
 	}
 	//puts(hostname);
 
-	//ホスト名からIPアドレスを取得する
+	// 有効なルーティングを検索
+	// アクセス対象はDNS1.1.1.1
+	DWORD dwDestAddr = 0x1111;
+	PMIB_IPFORWARDROW pBestRoute = (PMIB_IPFORWARDROW)malloc(sizeof(MIB_IPFORWARDROW));
+	DWORD dwRetVal = GetBestRoute(dwDestAddr, 0, pBestRoute);
+	if (dwRetVal == NO_ERROR) {
+		dwDestAddr = pBestRoute->dwForwardNextHop;
+		//printf("Interface Index: %d\n", pBestRoute->dwForwardIfIndex);
+		//printf("Next Hop: %s\n", inet_ntoa(*(struct in_addr*)&pBestRoute->dwForwardNextHop));
+	}
+	else {
+		dwDestAddr = 0;
+	}
+	free(pBestRoute);
+
+		//ホスト名からIPアドレスを取得する
 	HOSTENT* hostend = gethostbyname(hostname);
 	if (hostend == NULL) {
 		return "";
 	}
 	IN_ADDR inaddr;
-	memcpy(&inaddr, hostend->h_addr_list[0], 4);
+	// GetBestRouteで外に出られるアドレスを正とする。
+	// もし全てのインターフェースが外に出られる場合はGetBestRouteが選択したルートとする。
+	for (auto i = 0; i < hostend->h_length; i++)
+	{
+		//DWORD aaa = (Dhostend->h_addr_list[i];
+		// TODO:３バイト比較。厳密にすべき。
+		if (memcmp((void*)hostend->h_addr_list[i], (void*)&dwDestAddr, 3) == 0) {
+			inaddr.S_un.S_un_b.s_b1 = hostend->h_addr_list[i][0];
+			inaddr.S_un.S_un_b.s_b2 = hostend->h_addr_list[i][1];
+			inaddr.S_un.S_un_b.s_b3 = hostend->h_addr_list[i][2];
+			inaddr.S_un.S_un_b.s_b4 = hostend->h_addr_list[i][3];
+			break;
+		}
+	}
 	//ip.resize(256);
 	//static char ip[256];
 	//strcpy(ip, inet_ntoa(inaddr));

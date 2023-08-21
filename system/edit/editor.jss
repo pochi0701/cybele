@@ -39,6 +39,7 @@ if        (ext == "js" ){
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script type="text/javascript">
     <!--
+    var idx2 = null;
     var hidden = false;
     var filename;
 //    function loadCode() {
@@ -61,7 +62,13 @@ if        (ext == "js" ){
         var path = document.forma.path.value;
         var root = "<? print(_SERVER.DOCUMENT_ROOT); ?>";
         var pos = path.indexOf(path,root);
-        path = "http://<?print(_SERVER.HTTP_HOST);?>"+path.substring(root.length,path.length);
+        debugger;
+        if( path.endsWith('md') ){
+            path2 = "http://<?print(_SERVER.HTTP_HOST);?>"+path.substring(root.length,path.length)+"?action=MarkDown.jss";
+        }else{
+            path2 = "http://<?print(_SERVER.HTTP_HOST);?>"+path.substring(root.length,path.length);
+        }
+        path = "http://<?print(_SERVER.HTTP_HOST);?>"+path2;
         //path = "http://127.0.0.1:8000"+path.substring(root.length,path.length);
         
         var txt=editor.getValue();
@@ -70,7 +77,7 @@ if        (ext == "js" ){
         frm.code.value = txt;
         frm.submit();
         
-        myWin = window.open(path,path);
+        myWin = window.open(path2,path2);
         parent.left.myreload();
         tabRewrite();
     }
@@ -80,7 +87,7 @@ if        (ext == "js" ){
             var pop = document.getElementById("e"+i);
             if( pop ){
                 pop.text = url2base(list[i].url)+(list[i].change?"*":"");
-                if( i == idx ){
+                if( i == idx2 ){
                     pop.setAttribute('style','background-color: #ffa0a0');
                 }else{
                     pop.setAttribute('style','background-color: #a0a0ff');
@@ -90,6 +97,7 @@ if        (ext == "js" ){
         return;   
     }
     function popCode(idx){
+        idx2 = idx;
         pushCode(0);
         var list = fileList();
         url = list[idx].url;
@@ -266,6 +274,7 @@ if        (ext == "js" ){
     }
     
     function fileData(idx) {
+        idx2 = idx;
         var data = localStorage.getItem('d'+idx);
         return data;
     }
