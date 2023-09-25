@@ -1,7 +1,6 @@
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+<meta charset="utf-8">
 <title>画像一覧</title>
 </head>
 <body>

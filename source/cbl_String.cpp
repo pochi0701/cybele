@@ -923,7 +923,6 @@ void wString::Rtrimch(char* sentence, unsigned char cut_char)
 //---------------------------------------------------------------------------
 // トリム
 //---------------------------------------------------------------------------
-#if 1
 wString wString::LTrim(void)
 {
 	wString temp(*this);
@@ -940,23 +939,7 @@ wString wString::LTrim(void)
 	}
 	return temp;
 }
-#else
-void wString::LTrim(void)
-{
-	if (len) {
-		//先頭の空白等を抜く
-		while (len && *String <= ' ') {
-			char* src = String;
-			char* dst = src + 1;
-			while (*src) {
-				*src++ = *dst++;
-			}
-			len--;
-		}
-	}
-}
-#endif
-#if 1
+
 //--------------------------------------------------------------------
 /// <summary>
 /// ファイル情報
@@ -1019,7 +1002,7 @@ wString wString::FileStats(const wString& str, int mode)
 {
 	return FileStats(str.String, mode);
 }
-#endif
+
 //---------------------------------------------------------------------------
 int wString::FileExists(const char* str)
 {
@@ -1164,6 +1147,42 @@ wString wString::ExtractFileExt(const wString& str)
 {
 	int pos = str.LastDelimiter(".");
 	return str.substr(pos + 1);
+}
+//---------------------------------------------------------------------------
+const char* MIME_TYPE_NAME[] = {
+	"TYPE_UNKNOWN",
+	"TYPE_DIRECTORY",
+	"TYPE_MOVIE",
+	"TYPE_MUSIC",
+	"TYPE_IMAGE",
+	"TYPE_DOCUMENT",
+	"TYPE_PLAYLIST",
+	"TYPE_MUSICLIST",
+	"TYPE_URL",
+	"TYPE_SCRIPT",
+};
+/// <summary>
+/// JSON {"mineType":"mimetype","fileType":"filetype"}が返還される。
+/// </summary>
+/// <param name="file_name">検査する</param>
+/// <returns></returns>
+wString wString::GetMimeType(const wString& file_name)
+{
+	int pos = file_name.LastDelimiter(".");
+	wString tmp = file_name.substr(pos + 1).ToLower();
+	if (tmp.length() > 0) {
+		int ptr = 0;
+		while (mime_list[ptr].mime_type != NULL)
+		{
+			if (tmp == mime_list[ptr].file_extension)
+			{
+				tmp.wString::sprintf("{\"mimeType\":\"%s\",\"fileType\":\"%s\"}", mime_list[ptr].mime_type, MIME_TYPE_NAME[static_cast<int>(mime_list[ptr].menu_file_type)]);
+				return tmp;
+			}
+			ptr++;
+		}
+	}
+	return "";
 }
 
 //---------------------------------------------------------------------------
@@ -2851,6 +2870,11 @@ wString wString::GetLocalAddress(void)
 	// アクセス対象はDNS1.1.1.1
 	DWORD dwDestAddr = 0x1111;
 	PMIB_IPFORWARDROW pBestRoute = (PMIB_IPFORWARDROW)malloc(sizeof(MIB_IPFORWARDROW));
+	if (pBestRoute == NULL)
+	{
+		// TODO:Throwする
+		exit(1);
+	}
 	DWORD dwRetVal = GetBestRoute(dwDestAddr, 0, pBestRoute);
 	if (dwRetVal == NO_ERROR) {
 		dwDestAddr = pBestRoute->dwForwardNextHop;
@@ -2867,7 +2891,7 @@ wString wString::GetLocalAddress(void)
 	if (hostend == NULL) {
 		return "";
 	}
-	IN_ADDR inaddr;
+	IN_ADDR inaddr = {};
 	// GetBestRouteで外に出られるアドレスを正とする。
 	// もし全てのインターフェースが外に出られる場合はGetBestRouteが選択したルートとする。
 	for (auto i = 0; i < hostend->h_length; i++)
@@ -3270,7 +3294,11 @@ wString wString::jpeg_size(const wString& jpeg_filename)
 		}
 		// length 読む
 		memset(buf, 0, sizeof(buf));
-		auto dummy = read(fd, buf, 2);
+		if (read(fd, buf, 2) != 2)
+		{
+			close(fd); 
+			return "";
+		}
 		vlength = (buf[0] << 8) + buf[1];
 		// length分とばす
 		lseek(fd, vlength - 2, SEEK_CUR);

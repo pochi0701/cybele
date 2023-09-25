@@ -110,30 +110,34 @@ me=_SERVER.SCRIPT_NAME;
                             if( ext != "bak"){
                                 fname = basename(file).nkfconv("Sw");
                                 option = "";
-
                                 //make link tag
                                 stat = eval(file_stat(filePath));
+                                mime = eval(mimeInfo(filePath));
                                 title = stat.date+" "+stat.permission;
-                                if( ext == "jpg" || ext == "png" || ext == "gif" ){
-                                    icon = "fas fa-image fa-lg";
-                                    url1 = fl+basename(filePath)+"?action=ImageView.jss";
-                                }else if( ext == "mp4" || ext == "3gp" || ext == "mov" ){
-                                    icon = "fa fa-film fa-lg";
-                                    url1 = fl+basename(filePath)+"?action=preview.jss";
-                                }else if( ext == "md"){
-                                    icon = "fa-brands fa-markdown fa-lg";
-                                    url1 = fl+basename(filePath)+"?action=MarkDown.jss";
-                                }else if( ext == "mp3" ){
-                                    var mp3=eval(JSON.mp3id3tag(filePath));
-                                    if( mp3.title.length > 0 ){
-                                        fname = mp3.title;
+                                if( mime.fileType == "TYPE_MUSIC"){
+                                    if( ext == "mp3" ){
+                                        var mp3=eval(JSON.mp3id3tag(filePath));
+                                        if( mp3.title.length > 0 ){
+                                            fname = mp3.title;
+                                        }
                                     }
                                     icon = "fa fa-music fa-lg";
-                                    url1 = fl+basename(filePath)+"?action=audio.jss";
-                                }else if( ext == "html" || ext == "htm" ){
-                                    icon = "fa fa-file fa-lg";
-                                    url1 = fl+basename(filePath);
-                                }else if( ext == "jss" ){
+                                    url1 = fl+basename(filePath)+"?action=audio.jss";                   
+                                }else if( mime.fileType == "TYPE_IMAGE" ){
+                                    icon = "fas fa-image fa-lg";
+                                    url1 = fl+basename(filePath)+"?action=ImageView.jss";
+                                }else if( mime.fileType == "TYPE_MOVIE" ){
+                                    icon = "fa fa-film fa-lg";
+                                    url1 = fl+basename(filePath)+"?action=preview.jss";
+                                }else if( mime.fileType == "TYPE_DOCUMENT" ){
+                                    if( ext == "md"){
+                                        icon = "fa-brands fa-markdown fa-lg";
+                                        url1 = fl+basename(filePath)+"?action=MarkDown.jss";
+                                    }else{
+                                        icon = "fa fa-file fa-lg";
+                                        url1 = fl+basename(filePath);
+                                    }
+                                }else if( mime.fileType == "TYPE_SCRIPT" ){
                                     icon = "fa fa-code fa-lg";
                                     url1 = fl+basename(filePath);
                                 }else{

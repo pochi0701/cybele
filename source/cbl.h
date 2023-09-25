@@ -24,23 +24,10 @@
 /// </summary>
 class  MIME_LIST_T {
 public:
-	MIME_LIST_T() {
-		*mime_name = 0;
-		*file_extension = 0;
-		stream_type = STREAM_TYPE::NOT_DEFINED;
-		menu_file_type = MIME_TYPE::NOT_MIME;
-	}
-	MIME_LIST_T(char* mime_name_p, char* file_extension_p, STREAM_TYPE stream_type_p, MIME_TYPE menu_file_type_p) {
-		this->mime_name = mime_name_p;
-		this->file_extension = file_extension_p;
-		this->stream_type = stream_type_p;
-		this->menu_file_type = menu_file_type_p;
-	}
-
-	/// <summary>MIME名</summary>
-	char* mime_name;
+	/// <summary>MIME型</summary>
+	const char* mime_type;
 	/// <summary>対応する拡張子</summary>
-	char* file_extension;
+	const char* file_extension;
 	/// <summary>ストリームタイプ</summary>
 	STREAM_TYPE	stream_type;
 	/// <summary>返却用ファイルタイプ</summary>
@@ -242,7 +229,7 @@ public:
 // 各種リスト
 // ------------------
 extern GLOBAL_PARAM_T           global_param;
-//extern MIME_LIST_T              mime_list[];
+extern MIME_LIST_T              mime_list[];
 extern ACCESS_CHECK_LIST_T      access_allow_list[ACCESS_ALLOW_LIST_MAX];     // アクセス許可リスト
 //extern ACCESS_USER_INFO_LIST    user_info_list;
 // ------------------

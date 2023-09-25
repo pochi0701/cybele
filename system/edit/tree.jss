@@ -204,14 +204,11 @@ function sea() {
       Menu<span class="caret">
     </button>
     <ul class="dropdown-menu">
-    <li><a class="dropdown-item" href="#" onClick="myreload(0);">再読込</a></li>
     <li><a class="dropdown-item" href="#" onClick="createDir();">フォルダ作成</a></li>
     <li><a class="dropdown-item" href="#" onClick="createFile();">ファイル作成</a></li>
+    <li><a class="dropdown-item" href="lib.html" target="_lib";">ライブラリ</a></li>
     <li><a class="dropdown-item" href="#" onClick="dl();">ダウンロード</a></li>
     <li><a class="dropdown-item" href="#" onClick="view();">グラフィック表示</a></li>
-    <li><a class="dropdown-item" href="wiki.jss" target="_wiki">Ｗｉｋｉ</a></li>
-    <li><a class="dropdown-item" href="env.jss" target="_env">環境変数</a></li>
-    <li><a class="dropdown-item" href="sql.jss" target="_sqlEditor">DB Browser</a></li>
     <li><a class="dropdown-item" href="#" onClick="expt();return false;">エクスポート</a></li>
     <li><a class="dropdown-item" href="/" target="_top">Home</a></li>
     </ul>

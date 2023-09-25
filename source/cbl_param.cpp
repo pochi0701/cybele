@@ -34,45 +34,52 @@ static void line_buffer_sanitize(char* line_buf);
 // MIME リスト
 // とりあえず知ってる限り書いておく。
 // ********************************************
-MIME_LIST_T     mime_list[38] = {
+MIME_LIST_T     mime_list[] = {
 	//  {mime_name           ,file_extension  ,stream_type     ,   menu_file_type  },
-	{(char*)"text/plain"      ,(char*)"txt"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },
-	{(char*)"text/html"       ,(char*)"htm"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },
-	{(char*)"text/html"       ,(char*)"html"   ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },
-	{(char*)"text/css"        ,(char*)"css"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },
-	{(char*)"text/html"       ,(char*)"exe"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },
-	{(char*)"text/html"       ,(char*)"jss"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },
-	{(char*)"text/html"       ,(char*)"php"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },
-	{(char*)"text/html"       ,(char*)"pl"     ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },
-	{(char*)"image/gif"       ,(char*)"gif"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_IMAGE      },
-	{(char*)"image/jpeg"      ,(char*)"jpeg"   ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_IMAGE      },
-	{(char*)"image/jpeg"      ,(char*)"jpg"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_IMAGE      },
-	{(char*)"image/png"       ,(char*)"png"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_IMAGE      },
-	{(char*)"image/x-icon"    ,(char*)"ico"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_IMAGE      },
-	{(char*)"video/mpeg"      ,(char*)"mpeg"   ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
-	{(char*)"video/mpeg"      ,(char*)"mpg"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
-	{(char*)"video/mpeg"      ,(char*)"m2p"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
-	{(char*)"video/mpeg"      ,(char*)"hnl"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
-	{(char*)"video/x-msvideo" ,(char*)"avi"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
-	{(char*)"video/mpeg"      ,(char*)"vob"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
-	{(char*)"video/mpeg"      ,(char*)"vro"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },  /* add for DVD-RAM */
-	{(char*)"video/quicktime" ,(char*)"mov"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
-	{(char*)"video/x-ms-wmv"  ,(char*)"wmv"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
-	{(char*)"video/x-ms-wmx"  ,(char*)"asf"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
-	{(char*)"audio/mpeg"      ,(char*)"mp3"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MUSIC      },
-	{(char*)"audio/x-ogg"     ,(char*)"ogg"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MUSIC      },
-	{(char*)"video/mp4"       ,(char*)"mp4"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
-	{(char*)"video/divx"      ,(char*)"divx"   ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
-	{(char*)"video/flv"       ,(char*)"flv"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
-	{(char*)"audio/x-ms-wma"  ,(char*)"wma"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MUSIC      },
-	{(char*)"audio/x-wav"     ,(char*)"wav"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MUSIC      },
-	{(char*)"audio/ac3"       ,(char*)"ac3"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MUSIC      },
-	{(char*)"audio/x-m4a"     ,(char*)"m4a"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MUSIC      },
-	{(char*)"text/plain"      ,(char*)"plw"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_PLAYLIST   }, // Play List for Cybele.
-	{(char*)"text/plain"      ,(char*)"upl"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_PLAYLIST   }, // Uzu Play List拡張子でもOK. ファイル自身の互換は無し。
-	{(char*)"text/plain"      ,(char*)"m3u"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MUSICLIST  }, // m3u でもOK?
-	{(char*)"text/javascript" ,(char*)"js"     ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   }, //JavaScript
-	{(char*)"application/wasm",(char*)"wasm"   ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   }, //JavaScript
+	{(char*)"text/plain"		,(char*)"txt"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },
+	{(char*)"text/csv"			,(char*)"csv"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },
+	{(char*)"text/markdown"		,(char*)"md"     ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },
+	{(char*)"text/html"			,(char*)"htm"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },
+	{(char*)"text/html"			,(char*)"html"   ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },
+	{(char*)"text/css"			,(char*)"css"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },
+	{(char*)"text/xml"			,(char*)"xml"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   },
+	{(char*)"image/gif"			,(char*)"gif"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_IMAGE      },
+	{(char*)"image/jpeg"		,(char*)"jpeg"   ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_IMAGE      },
+	{(char*)"image/jpeg"		,(char*)"jpg"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_IMAGE      },
+	{(char*)"image/png"			,(char*)"png"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_IMAGE      },
+	{(char*)"image/tiff"		,(char*)"tiff"   ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_IMAGE      },
+	{(char*)"video/mpeg"		,(char*)"mpeg"   ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
+	{(char*)"video/mpeg"		,(char*)"mpg"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
+	{(char*)"video/mpeg"		,(char*)"m2p"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
+	{(char*)"video/mpeg"		,(char*)"hnl"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
+	{(char*)"video/x-msvideo"	,(char*)"avi"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
+	{(char*)"video/mpeg"		,(char*)"vob"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
+	{(char*)"video/mpeg"		,(char*)"vro"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },  /* add for DVD-RAM */
+	{(char*)"video/quicktime"	,(char*)"mov"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
+	{(char*)"video/x-ms-wmv"	,(char*)"wmv"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
+	{(char*)"video/x-ms-wmx"	,(char*)"asf"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
+	{(char*)"video/mp4"			,(char*)"mp4"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
+	{(char*)"video/divx"		,(char*)"divx"   ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
+	{(char*)"video/flv"			,(char*)"flv"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
+	{(char*)"video/mp2t"		,(char*)"ts"     ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
+	{(char*)"audio/mpeg"		,(char*)"mp3"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MUSIC      },
+	{(char*)"audio/x-ogg"		,(char*)"ogg"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MUSIC      },
+	{(char*)"audio/x-ms-wma"	,(char*)"wma"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MUSIC      },
+	{(char*)"audio/x-wav"		,(char*)"wav"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MUSIC      },
+	{(char*)"audio/ac3"			,(char*)"ac3"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MUSIC      },
+	{(char*)"audio/x-m4a"		,(char*)"m4a"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MUSIC      },
+	{(char*)"audio/x-flac"		,(char*)"flac"   ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MUSIC      },
+	{(char*)"audio/opus"		,(char*)"opus"   ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MUSIC      },
+	{(char*)"text/plain"		,(char*)"plw"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_PLAYLIST   }, // Play List for Cybele.
+	{(char*)"text/plain"		,(char*)"upl"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_PLAYLIST   }, // Uzu Play List拡張子でもOK. ファイル自身の互換は無し。
+	{(char*)"text/plain"		,(char*)"m3u"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MUSICLIST  }, // m3u でもOK?
+	{(char*)"text/javascript"	,(char*)"js"     ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_SCRIPT     }, //JavaScript
+	{(char*)"text/html"			,(char*)"exe"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_SCRIPT     },
+	{(char*)"text/html"			,(char*)"jss"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_SCRIPT     },
+	{(char*)"text/html"			,(char*)"php"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_SCRIPT     },
+	{(char*)"text/html"			,(char*)"pl"     ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_SCRIPT     },
+	{(char*)"application/wasm"	,(char*)"wasm"   ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_SCRIPT     }, //JavaScript
+	{(char*)"application/pdf"	,(char*)"pdf"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   }, //JavaScript
 	{NULL, NULL, STREAM_TYPE::NOT_DEFINED, MIME_TYPE::NOT_MIME }
 };
 // ********************************************
@@ -108,7 +115,7 @@ void GLOBAL_PARAM_T::global_param_init(void)
 #ifndef linux
 	/// debuglogを完全パスに
 	char cwd[FILENAME_MAX];
-	_getcwd(cwd, sizeof(cwd));
+	std::ignore = _getcwd(cwd, sizeof(cwd));
 	sprintf(debug_log_filename, "%s%s%s", cwd, DELIMITER, DEFAULT_DEBUG_LOG_FILENAME);
 #else
 	strncpy(debug_log_filename, DEFAULT_DEBUG_LOG_FILENAME, sizeof(debug_log_filename)-1);
@@ -498,10 +505,10 @@ void MIME_LIST_T::check_file_extension_to_mime_type(const char* file_extension, 
 	// ファイルの拡張子比較。Content-type を決定
 	// -------------------------------------------
 	for (i = 0;; i++) {
-		if (mime_list[i].mime_name == NULL)
+		if (mime_list[i].mime_type == NULL)
 			break;
 		if (strcasecmp(mime_list[i].file_extension, file_extension) == 0) {
-			strncpy(mime_type, mime_list[i].mime_name, mime_type_size-1);
+			strncpy(mime_type, mime_list[i].mime_type, mime_type_size-1);
 			break;
 		}
 	}

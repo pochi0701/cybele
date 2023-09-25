@@ -273,6 +273,34 @@ void server_http_process(SOCKET accept_socket, char* access_host, char* client_a
 				debug_log_output("HTTP CGI response end!\n");
 				return;
 			}
+			//else if (result == FILETYPES::_DIR)
+			//{
+
+			//	wString tmp(http_recv_info.request_uri);
+			//	if (!tmp.endsWith("/")) {
+			//		tmp += "/?";
+			//	}
+			//	if (!tmp.endsWith("?")) {
+			//		tmp += "?";
+			//	}
+			//	int pos = tmp.Pos("?");
+			//	if (pos >= 0) {
+			//		strcpy(http_recv_info.recv_uri, "/menu.jss");
+			//		tmp = tmp.substr(pos + 1, tmp.Length() - pos - 1);
+			//		if (tmp.Length()) {
+			//			sprintf(http_recv_info.request_uri, "/menu.jss?%s", tmp.c_str());
+			//		}
+			//		else {
+			//			sprintf(http_recv_info.request_uri, "/menu.jss?root=%s", http_recv_info.send_filename);
+			//		}
+			//		//send file nameの設定
+			//		sprintf(http_recv_info.send_filename, "%s%smenu.jss", global_param.skin_root, global_param.skin_name);
+			//		http_recv_info.http_cgi_response(accept_socket);
+			//		debug_log_output("HTTP file menu end.\n");
+			//		return;
+			//		//通常の処理
+			//	}
+			//}
 			else {
 				debug_log_output("BAD REQUEST!");
 				http_recv_info.http_not_found_response(accept_socket);

@@ -525,6 +525,15 @@ void scScanDir(CScriptVar* c, void* userdata) {
 	uri = wString::EnumFolderjson(uri);
 	c->getReturnVar()->setString(uri);
 }
+
+//scMimeInfo
+void scMimeInfo(CScriptVar* c, void* userdata) {
+	IGNORE_PARAMETER(userdata);
+	auto uri = c->getParameter("uri")->getString();
+	auto ret = wString::GetMimeType(uri);
+	c->getReturnVar()->setString(ret);
+	return;
+}
 //ExtractFileExt
 void scExtractFileExt(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);

@@ -139,6 +139,7 @@ public:
 	static wString  ExtractFileName(const char* str, const char* delim = DELIMITER);
 	static wString  ExtractFileName(const wString& str, const char* delim = DELIMITER);
 	static wString  ExtractFileExt(const wString& str);
+	static wString  GetMimeType(const wString& file_name);
 	static int      CreateDir(const wString& str);
 	static wString  ChangeFileExt(const wString& str, const char* ext);
 	static unsigned long FileSizeByName(char* str);
