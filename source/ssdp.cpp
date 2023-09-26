@@ -151,7 +151,7 @@ int ssdp_client(wString& str, int loops)
 			}
 			rcvdbuff[Ret] = '\0';
 			if (str.find(rcvdbuff) == wString::npos) {
-				if (str.Length() == 0) {
+				if (str.length() == 0) {
 					str += "[\"";
 				}
 				else {
@@ -166,7 +166,7 @@ int ssdp_client(wString& str, int loops)
 		//Sleep(3*1000);
 	}
 	sClose(sock);
-	if (str.Length() != 0) {
+	if (str.length() != 0) {
 		str += "]";
 	}
 	return 0;

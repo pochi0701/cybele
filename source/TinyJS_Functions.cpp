@@ -92,9 +92,9 @@ void scKeys(CScriptVar* c, void* userdata) {
 	CScriptVar* result = c->getReturnVar();
 	result->setArray();
 	int length = 0;
-	int count = list.Counts();
+	int count = list.lines();
 	for (int i = 0; i < count; i++) {
-		result->setArrayIndex(length++, new CScriptVar(list.GetListString(i)));
+		result->setArrayIndex(length++, new CScriptVar(list.get_list_string(i)));
 	}
 }
 
@@ -122,17 +122,17 @@ void scMathRandInt(CScriptVar* c, void* userdata) {
 /////////////////////////////////////////////////////////////////////////
 void scTrim(CScriptVar* c, void*) {
 	wString val = c->getParameter("this")->getString();
-	c->getReturnVar()->setString(val.Trim());
+	c->getReturnVar()->setString(val.trim());
 }
 //
 void scRTrim(CScriptVar* c, void*) {
 	wString val = c->getParameter("this")->getString();
-	c->getReturnVar()->setString(val.RTrim());
+	c->getReturnVar()->setString(val.rtrim());
 }
 //
 void scLTrim(CScriptVar* c, void*) {
 	wString val = c->getParameter("this")->getString();
-	val = val.LTrim();
+	val = val.ltrim();
 	c->getReturnVar()->setString(val);
 }
 /////////////////////////////////////////////////////////////////////////
@@ -290,12 +290,12 @@ void scPregStringReplace(CScriptVar* c, void* userdata) {
 void scAddShashes(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString str = c->getParameter("this")->getString();
-	c->getReturnVar()->setString(str.addSlashes());
+	c->getReturnVar()->setString(str.add_slashes());
 }
 //getLocalAddress
 void scGetLocalAddress(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
-	c->getReturnVar()->setString(wString::GetLocalAddress());
+	c->getReturnVar()->setString(wString::get_local_address());
 }
 void scStringFromCharCode(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
@@ -357,7 +357,7 @@ void scDBConnect(CScriptVar* c, void* userdata) {
 	wString str = c->getParameter("dbn")->getString();
         //DB接続文字列取得
 	str = _DBConnect(str);
-	if (str.Length()>0) {
+	if (str.length()>0) {
 		//c->getParameter("this")->setString(str);
 		c->getReturnVar()->setString(str);
 	}
@@ -466,15 +466,15 @@ void scArrayJoin(CScriptVar* c, void* userdata) {
 void scFileExists(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString path = c->getParameter("path")->getString();
-	//int flag = wString::FileExists(path);
-	int flag = path.FileExists();
+	//int flag = wString::file_exists(path);
+	int flag = path.file_exists();
 	c->getReturnVar()->setInt(flag);
 }
 //ディレクトリ存在チェック
 void scDirExists(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString path = c->getParameter("path")->getString();
-	int flag = wString::DirectoryExists(path);
+	int flag = wString::directory_exists(path);
 	c->getReturnVar()->setInt(flag);
 }
 //htmlspecialchars
@@ -496,10 +496,10 @@ void scDirname(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString uri = c->getParameter("uri")->getString();
 	while (uri.length() > 0 && uri[uri.length() - 1] != '/') {
-		uri = uri.SubString(0, uri.length() - 1);
+		uri = uri.substr(0, uri.length() - 1);
 	}
 	if (uri.length() > 0) {
-		uri = uri.SubString(0, uri.length() - 1);
+		uri = uri.substr(0, uri.length() - 1);
 	}
 	else {
 		uri = "/";
@@ -514,7 +514,7 @@ void scBasename(CScriptVar* c, void* userdata) {
 	while (len >= 0 && uri[len] != '/') {
 		len--;
 	}
-	uri = uri.SubString(len + 1, uri.length() - len - 1);
+	uri = uri.substr(len + 1, uri.length() - len - 1);
 	c->getReturnVar()->setString(uri);
 }
 
@@ -522,7 +522,7 @@ void scBasename(CScriptVar* c, void* userdata) {
 void scScanDir(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString uri = c->getParameter("uri")->getString();
-	uri = wString::EnumFolderjson(uri);
+	uri = wString::enum_folder_json(uri);
 	c->getReturnVar()->setString(uri);
 }
 
@@ -530,15 +530,15 @@ void scScanDir(CScriptVar* c, void* userdata) {
 void scMimeInfo(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	auto uri = c->getParameter("uri")->getString();
-	auto ret = wString::GetMimeType(uri);
+	auto ret = wString::find_mime_type(uri);
 	c->getReturnVar()->setString(ret);
 	return;
 }
-//ExtractFileExt
+//extract_file_ext
 void scExtractFileExt(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString uri = c->getParameter("uri")->getString();
-	uri = wString::ExtractFileExt(uri);
+	uri = wString::extract_file_ext(uri);
 	c->getReturnVar()->setString(uri);
 }
 //toLowerCase
@@ -565,14 +565,14 @@ void scToUpperCase(CScriptVar* c, void* userdata) {
 void scFileStats(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString path = c->getParameter("path")->getString();
-	wString json = wString::FileStats(path);
+	wString json = wString::file_stats(path);
 	c->getReturnVar()->setString(json);
 }
 //ファイル属性など
 void scFileDate(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString path = c->getParameter("path")->getString();
-	wString json = wString::FileStats(path, 1);
+	wString json = wString::file_stats(path, 1);
 	c->getReturnVar()->setString(json);
 }
 //ファイル内容取得
@@ -580,9 +580,9 @@ void scLoadFromFile(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString path = c->getParameter("path")->getString();
 	wString data;
-	if (path.FileExists())
+	if (path.file_exists())
 	{
-		data.LoadFromFile(path);
+		data.load_from_file(path);
 		c->getReturnVar()->setString(data);
 	}
 	else {
@@ -593,7 +593,7 @@ void scLoadFromFile(CScriptVar* c, void* userdata) {
 		//		break;
 		//	}
 		//}
-		//data.LoadFromFile(path,)
+		//data.load_from_file(path,)
 	}
 
 	//c->getReturnVar()->setString(data);
@@ -603,7 +603,7 @@ void scLoadFromCSV(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString path = c->getParameter("path")->getString();
 	wString data;
-	data.LoadFromCSV(path);
+	data.load_from_csv(path);
 	c->getReturnVar()->setString(data);
 }
 //ファイル削除
@@ -633,14 +633,14 @@ void scRename(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString pathf = c->getParameter("pathf")->getString();
 	wString patht = c->getParameter("patht")->getString();
-	int ret = wString::RenameFile(pathf, patht);
+	int ret = wString::rename_file(pathf, patht);
 	c->getReturnVar()->setInt(ret);
 }
 //フォルダ作成
 void scMkdir(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString path = c->getParameter("path")->getString();
-	int ret = wString::CreateDir(path);
+	int ret = wString::create_dir(path);
 	c->getReturnVar()->setInt(ret);
 }
 //フォルダ削除
@@ -656,7 +656,7 @@ void scSaveToFile(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
 	wString path = c->getParameter("path")->getString();
 	wString data = c->getParameter("data")->getString();
-	int res = data.SaveToFile(path);
+	int res = data.save_to_file(path);
 	int ret = (res == 0) ? true : false;
 	c->getReturnVar()->setInt(ret);
 }
@@ -787,8 +787,8 @@ void scRestful(CScriptVar* c, void* userdata) {
 	wString url = c->getParameter("url")->getString();
 	wString send = c->getParameter("send")->getString();
 	wString data;
-	data = wString::HTTPGet(url, 0);
-	data = wString::HTTPRest(method, url, send);
+	data = wString::http_get(url, 0);
+	data = wString::http_rest(method, url, send);
 	c->getReturnVar()->setString(data);
 }
 
@@ -851,6 +851,7 @@ void registerFunctions(CTinyJS* tinyJS) {
 	tinyJS->addNative("function dir_exists(path)", scDirExists, 0);
 	tinyJS->addNative("function scandir(uri)", scScanDir, 0);
 	tinyJS->addNative("function extractFileExt(uri)", scExtractFileExt, 0);
+	tinyJS->addNative("function mimeInfo(uri)", scMimeInfo, 0);
 	tinyJS->addNative("function file_stat(path)", scFileStats, 0);
 	tinyJS->addNative("function filedate(path)", scFileDate, 0);
 	tinyJS->addNative("function loadFromFile(path)", scLoadFromFile, 0);

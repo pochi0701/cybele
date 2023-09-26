@@ -65,6 +65,7 @@ void	server_listen(void)
 	}
 	// ===============================
 	// SO_REUSEADDRをソケットにセット
+	// (ソケットが再利用されるため）
 	// ===============================
 	sock_opt_val = 1;
 	setsockopt(listen_socket, SOL_SOCKET, SO_REUSEADDR, (char*)&sock_opt_val, sizeof(sock_opt_val));

@@ -14,11 +14,11 @@ class wString
 {
 private:
 	unsigned int len;	//実際の長さ
-	unsigned int total;	//保存領域の長さ
-	char* String;
+	unsigned int capa;	//保存領域の長さ
+	char*		 String;
 
 	void replace_character_len(const char* sentence, int slen, const char* p, int klen, const char* rep);
-	void replace_str(const char* sentence, int slen, const char* p, int klen, const char* rep);
+	//void replace_str(const char* sentence, int slen, const char* p, int klen, const char* rep);
 #ifndef va_copy
 	int tsprintf_string(char* str);
 	//int tsprintf_string(wString& str);
@@ -62,11 +62,10 @@ public:
 	void     operator+=(const char* str);
 	char     operator[](unsigned int index) const;
 	//STRING FUNCTION
-	bool            startsWith(const char* str);
-	bool            endsWith(const char* str);
-	void            setBinary(const void* str, int addLen);
+	bool            starts_with(const char* str);
+	bool            ends_with(const char* str);
+	void            set_binary(const void* str, int addLen);
 	char            at(unsigned int index) const;
-	wString         SubString(int start, int mylen)   const;
 	wString         substr(int start, int mylen = -1) const;
 	int             compare(const wString& str) const;
 	int             compare(const char* str) const;
@@ -79,20 +78,19 @@ public:
 
 	unsigned int    size(void) const;
 	unsigned int    length(void) const;
-	unsigned int    Length(void) const;
-	unsigned int    Total(void) const;
-	char* c_str(void) const;
-	wString& SetLength(const unsigned int num);
+	unsigned int    capacity(void) const;
+	char*			c_str(void) const;
+	wString&		set_length(const unsigned int num);
 
 	wString         ToUpper(void);
 	wString         ToLower(void);
-	wString         Trim(void);
-	wString         RTrim(void);
-	wString         LTrim(void);
-	static void     Rtrimch(char* sentence, const unsigned char cut_char);
+	wString         trim(void);
+	wString         rtrim(void);
+	wString         ltrim(void);
+	static void     rtrim_chr(char* sentence, const unsigned char cut_char = ' ');
 	int             sprintf(const char* format, ...);
 	int             cat_sprintf(const char* format, ...);
-	int             LastDelimiter(const char* delim) const;
+	int             last_delimiter(const char* delim) const;
 ///	wString         strsplit(const wString& str, const char* delimstr);
 	wString         strsplit(const char* delimstr);
 	int             find(const wString& str, int index = 0) const;
@@ -102,72 +100,72 @@ public:
 	int             rfind(const char* str, int index = 0) const;
 	int             rfind(char ch, int index = 0) const;
 	//URL and encode
-	static char* LinuxFileName(char* FileName);
-	static char* WindowsFileName(char* FileName);
+	static char*	linux_file_name(char* FileName);
+	static char*	windows_file_name(char* FileName);
 	wString         uri_encode(void);
 	wString         uri_decode(void);
 	wString         htmlspecialchars(void);
-	wString         addSlashes(void);
+	wString         add_slashes(void);
 	wString         base64(void);
 	wString         unbase64(void);
 	static wString  escape(const wString& str);
 	//ANISSTRING
-	bool            SetListString(wString& src, int pos);
-	bool            SetListString(const char* src, int pos);
-	wString         GetListString(const int pos);
-	int             Counts(void);
-	void            ResetLength(unsigned int num);
+	bool            insert_list_string(wString& src, int pos);
+	bool            insert_list_string(const char* src, int pos);
+	wString         get_list_string(const int pos);
+	int             lines(void);
+	void            reset_length(unsigned int num = 0);
 	void            Add(const wString& str);
 	void            Add(const char* str);
 	//HEADER
-	void            headerInit(size_t content_length, int expire = 1, const char* mime_type = "text/html");
-	void            headerPrint(SOCKET socket, int endflag);
+	void            init_header(size_t content_length, int expire = 1, const char* mime_type = "text/html");
+	void            send_header(SOCKET socket, int endflag);
 	wString         headerPrintMem(void);
 	int             header(const char* str, int flag = true, int status = 0);
 	//FILE OPERATION
-	static bool     RenameFile(const wString& src, const wString& dst);
+	static bool     rename_file(const wString& src, const wString& dst);
 	static int      FileCopy(const char* fname_r, const char* fname_w);
-	static int      DeleteFile(const wString& str);
-	static int      DirectoryExists(const char* str);
-	static int      DirectoryExists(const wString& str);
-	static wString  FileStats(const char* str, int mode = 0);
-	static wString  FileStats(const wString& str, int mode = 0);
-	static int      FileExists(const char* str);
-	static int      FileExists(const wString& str);
-	int             FileExists(void);
-	static wString  ExtractFileDir(wString& str);
-	static wString  ExtractFileName(const char* str, const char* delim = DELIMITER);
-	static wString  ExtractFileName(const wString& str, const char* delim = DELIMITER);
-	static wString  ExtractFileExt(const wString& str);
-	static wString  GetMimeType(const wString& file_name);
-	static int      CreateDir(const wString& str);
-	static wString  ChangeFileExt(const wString& str, const char* ext);
-	static unsigned long FileSizeByName(char* str);
-	static unsigned long FileSizeByName(wString& str);
-	static wString  EnumFolder(const wString& Path);
-	static wString  EnumFolderjson(const wString& Path);
-	static bool     checkUrl(const wString& url);
+	static int      delete_file(const wString& str);
+	static int      directory_exists(const char* str);
+	static int      directory_exists(const wString& str);
+	static wString  file_stats(const char* str, int mode = 0);
+	static wString  file_stats(const wString& str, int mode = 0);
+	static int      file_exists(const char* str);
+	static int      file_exists(const wString& str);
+	int             file_exists(void);
+	static wString  extract_file_dir(wString& str);
+	static wString  extract_file_name(const char* str, const char* delim = DELIMITER);
+	static wString  extract_file_name(const wString& str, const char* delim = DELIMITER);
+	static wString  extract_file_ext(const wString& str);
+	static wString  find_mime_type(const wString& file_name);
+	static int      create_dir(const wString& str);
+	static wString  change_file_ext(const wString& str, const char* ext);
+	static unsigned long file_size_by_name(char* str);
+	static unsigned long file_size_by_name(wString& str);
+	static wString  enum_folder(const wString& Path);
+	static wString  enum_folder_json(const wString& Path);
+	static bool     check_url(const wString& url);
 	static wString  png_size(const wString& png_filename);
 	static wString  gif_size(const wString& gif_filename);
 	static wString  jpeg_size(const wString& jpeg_filename);
-	int             LoadFromFile(const char* FileName);
-	int             LoadFromFile(const wString& str);
-	void            LoadFromCSV(const char* FileName);
-	void            LoadFromCSV(const wString& str);
-	int             SaveToFile(const char* FileName);
-	int             SaveToFile(const wString& str);
+	int             load_from_file(const char* FileName);
+	int             load_from_file(const wString& str);
+	void            load_from_csv(const char* FileName);
+	void            load_from_csv(const wString& str);
+	int             save_to_file(const char* FileName);
+	int             save_to_file(const wString& str);
 	wString         nkfcnv(const wString& option);
-	int             LineRcv(SOCKET accept_socket);
+	int             line_receive(SOCKET accept_socket);
 	void            cut_before_character(const char cut_char);
 	void            cut_after_character(const char cut_char);
 	wString         insert(int pos, const wString& fill);
 	//HTTP接続用
-	static int      HTTPSize(const wString& url);
+	static int      http_size(const wString& url);
 	static SOCKET   sock_connect(const wString& host, const int port);
 	static SOCKET   sock_connect(const char* host, const int port);
-	static wString  HTTPGet(const wString& url, const off_t offset = 0);
-	static wString  HTTPRest(const wString& methods, const wString& url, const wString& data);
-	static wString  GetLocalAddress(void);
+	static wString  http_get(const wString& url, const off_t offset = 0);
+	static wString  http_rest(const wString& methods, const wString& url, const wString& data);
+	static wString  get_local_address(void);
 
 };
 extern wString current_dir;

@@ -860,23 +860,23 @@ static int myMkdir(wString FileName);
 int myMkdir(wString FileName)
 {
 	while (FileName.length() > 0 && FileName[FileName.length() - 1] != '/') {
-		FileName = FileName.SubString(0, FileName.length() - 1);
+		FileName = FileName.substr(0, FileName.length() - 1);
 	}
 	if (FileName.length() > 0) {
-		FileName = FileName.SubString(0, FileName.length() - 1);
+		FileName = FileName.substr(0, FileName.length() - 1);
 	}
 	else {
 		FileName = "/";
 	}
-	if (wString::DirectoryExists(FileName)) {
+	if (wString::directory_exists(FileName)) {
 		return true;
 	}
 	else {
 		//１つ上のフォルダを作って
 		if (FileName.Pos("/") != (int)wString::npos &&
-			myMkdir(FileName.SetLength(FileName.Length() - 1)) == (int)true) {
+			myMkdir(FileName.set_length(FileName.length() - 1)) == (int)true) {
 			//自分のフォルダ作成
-			wString::CreateDir(FileName);
+			wString::create_dir(FileName);
 		}
 		else {
 			return false;
@@ -1498,35 +1498,35 @@ int  mp3::mp3_id3v1_tag_read(const char* mp3_filename)
 		// 曲名
 		memset(static_cast<void*>(buf), '\0', sizeof(buf));
 		if (read(fd, buf, 30) > 0) {
-			wString::Rtrimch(reinterpret_cast<char*>(buf), 0xFF);
-			wString::Rtrimch(reinterpret_cast<char*>(buf), ' ');
+			wString::rtrim_chr(reinterpret_cast<char*>(buf), 0xFF);
+			wString::rtrim_chr(reinterpret_cast<char*>(buf), ' ');
 			convert_language_code(reinterpret_cast<const char*>(buf), reinterpret_cast<char*>(mp3_id3v1_title), sizeof(mp3_id3v1_title), CODE_AUTO, CODE_UTF8);
 
 			// アーティスト
 			memset(static_cast<void*>(buf), '\0', sizeof(buf));
 			if (read(fd, buf, 30) > 0) {
-				wString::Rtrimch(reinterpret_cast<char*>(buf), 0xFF);
-				wString::Rtrimch(reinterpret_cast<char*>(buf), ' ');
+				wString::rtrim_chr(reinterpret_cast<char*>(buf), 0xFF);
+				wString::rtrim_chr(reinterpret_cast<char*>(buf), ' ');
 				convert_language_code(reinterpret_cast<const char*>(buf), reinterpret_cast<char*>(mp3_id3v1_artist), sizeof(mp3_id3v1_artist), CODE_AUTO, CODE_UTF8);
 
 				// アルバム名
 				memset(static_cast<void*>(buf), '\0', sizeof(buf));
 				if (read(fd, buf, 30) > 0) {
-					wString::Rtrimch(reinterpret_cast<char*>(buf), 0xFF);
-					wString::Rtrimch(reinterpret_cast<char*>(buf), ' ');
+					wString::rtrim_chr(reinterpret_cast<char*>(buf), 0xFF);
+					wString::rtrim_chr(reinterpret_cast<char*>(buf), ' ');
 					convert_language_code(reinterpret_cast<const char*>(buf), reinterpret_cast<char*>(mp3_id3v1_album), sizeof(mp3_id3v1_album), CODE_AUTO, CODE_UTF8);
 
 					// 制作年度
 					memset(static_cast<void*>(buf), '\0', sizeof(buf));
 					if (read(fd, buf, 4) > 0) {
-						wString::Rtrimch(reinterpret_cast<char*>(buf), 0xFF);
-						wString::Rtrimch(reinterpret_cast<char*>(buf), ' ');
+						wString::rtrim_chr(reinterpret_cast<char*>(buf), 0xFF);
+						wString::rtrim_chr(reinterpret_cast<char*>(buf), ' ');
 						convert_language_code(reinterpret_cast<const char*>(buf), reinterpret_cast<char*>(mp3_id3v1_year), sizeof(mp3_id3v1_year), CODE_AUTO, CODE_UTF8);
 						// コメント
 						memset(static_cast<void*>(buf), '\0', sizeof(buf));
 						if (read(fd, buf, 28) > 0) {
-							wString::Rtrimch(reinterpret_cast<char*>(buf), 0xFF);
-							wString::Rtrimch(reinterpret_cast<char*>(buf), ' ');
+							wString::rtrim_chr(reinterpret_cast<char*>(buf), 0xFF);
+							wString::rtrim_chr(reinterpret_cast<char*>(buf), ' ');
 							convert_language_code(reinterpret_cast<const char*>(buf), reinterpret_cast<char*>(mp3_id3v1_comment), sizeof(mp3_id3v1_comment), CODE_AUTO, CODE_UTF8);
 							// ---------------------
 							// 存在フラグ
@@ -1669,7 +1669,7 @@ int  mp3::mp3_id3v2_tag_read(const char* mp3_filename)
 				return -1;
 			}
 			//debug_log_output("ID3v2 Tag[%s] found. '%s'", copy_list[i].id, frame + 1);
-			wString::Rtrimch(reinterpret_cast<char*>(frame + 1), ' ');
+			wString::rtrim_chr(reinterpret_cast<char*>(frame + 1), ' ');
 			//convert_language_code( frame+1,strlen(frame+1),CODE_AUTO, CODE_UTF8);
 			strncpy(reinterpret_cast<char*>(buf2), reinterpret_cast<char*>(frame + 1), copy_list[i].maxlen);
 			//strncpy( (char*)copy_list[i].container, (char*)(frame+1), copy_list[i].maxlen );

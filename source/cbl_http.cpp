@@ -242,8 +242,8 @@ void server_http_process(SOCKET accept_socket, char* access_host, char* client_a
 		int pos = tmp.Pos("?");
 		if (pos >= 0) {
 			strcpy(http_recv_info.recv_uri, "/menu.jss");
-			tmp = tmp.substr(pos + 1, tmp.Length() - pos - 1);
-			if (tmp.Length()) {
+			tmp = tmp.substr(pos + 1, tmp.length() - pos - 1);
+			if (tmp.length()) {
 				sprintf(http_recv_info.request_uri, "/menu.jss?%s", tmp.c_str());
 			}
 			else {
@@ -277,10 +277,10 @@ void server_http_process(SOCKET accept_socket, char* access_host, char* client_a
 			//{
 
 			//	wString tmp(http_recv_info.request_uri);
-			//	if (!tmp.endsWith("/")) {
+			//	if (!tmp.ends_with("/")) {
 			//		tmp += "/?";
 			//	}
-			//	if (!tmp.endsWith("?")) {
+			//	if (!tmp.ends_with("?")) {
 			//		tmp += "?";
 			//	}
 			//	int pos = tmp.Pos("?");
@@ -333,7 +333,7 @@ FILETYPES HTTP_RECV_INFO::http_index(void)
 	wString read_filename;
 	//Path Normalize.
 	wString document_path = send_filename;
-	if (!document_path.endsWith(DELIMITER))
+	if (!document_path.ends_with(DELIMITER))
 	{
 		document_path += DELIMITER;
 	}
@@ -408,7 +408,7 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 	// ================================
 	for (i = 0;; i++) {
 		// 1行受信 実行。
-		auto recv_len = line.LineRcv(accept_socket);
+		auto recv_len = line.line_receive(accept_socket);
 		//strcpy( line_buf,line.c_str());
 		// 受信した内容をチェック。
 		if (recv_len == 0) { // 空行検知。ヘッダ受信終了。
@@ -453,7 +453,7 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 				split2 = line;
 				// '?'より前をカット
 				split2.cut_before_character('?');
-				while (split2.Length()) {
+				while (split2.length()) {
 					// 最初に登場する'&'で分割
 					split("&", split1, split2);
 					// -------------------------------------
@@ -461,7 +461,7 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 					// 超安直。いいのかこんな比較で。
 					// -------------------------------------
 					// URIデコード
-					if (split1.Length()) {
+					if (split1.length()) {
 						wb2 = split1.uri_decode();
 						// "action="あるか調査。
 						if (strncasecmp(wb2.c_str(), "action=", strlen("action=")) == 0) {
@@ -495,7 +495,7 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 			debug_log_output("User-agent: Detect.\n");
 			// ':'より前を切る
 			line.cut_before_character(':');
-			line = line.LTrim();
+			line = line.ltrim();
 			// 構造体に保存
 			strncpy(user_agent, line.c_str(), sizeof(user_agent)-1);
 			continue;
@@ -505,7 +505,7 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 			debug_log_output("%s Detect.\n", HTTP_RANGE);
 			// ':' より前を切る。
 			line.cut_before_character(':');
-			line = line.LTrim();
+			line = line.ltrim();
 			// recv_range にRangeの中身保存
 			strncpy(recv_range, line.c_str(), sizeof(recv_range)-1);
 			// '=' より前を切る
@@ -515,7 +515,7 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 			split("-", wb1, wb2);
 			// 値を文字列→数値変換
 			range_start_pos = strtoull(wb1.c_str(), NULL, 10);
-			if (wb2.Length() > 0) {
+			if (wb2.length() > 0) {
 				range_end_pos = strtoull(wb2.c_str(), NULL, 10);
 			}
 			debug_log_output("range_start_pos=%d\n", range_start_pos);
@@ -526,7 +526,7 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 		if (strncasecmp(line.c_str(), HTTP_HOST, strlen(HTTP_HOST)) == 0) {
 			// ':' より前を切る。
 			line.cut_before_character(':');
-			line = line.LTrim();
+			line = line.ltrim();
 			strncpy(recv_host, line.c_str(), sizeof(recv_host)-1);
 			debug_log_output("%s Detect. %s '%s'", HTTP_HOST, HTTP_HOST, recv_host);
 			continue;
@@ -535,7 +535,7 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 		if (strncasecmp(line.c_str(), HTTP_COOKIE, strlen(HTTP_COOKIE)) == 0) {
 			// ':' より前を切る。
 			line.cut_before_character(':');
-			line.LTrim();
+			line.ltrim();
 			strncpy(cookie, line.c_str(), sizeof(cookie)-1);
 			debug_log_output("%s Detect. %s '%s'", HTTP_COOKIE, HTTP_COOKIE, cookie);
 			continue;
@@ -544,7 +544,7 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 		if (strncasecmp(line.c_str(), HTTP_CONTENT_LENGTH1, strlen(HTTP_CONTENT_LENGTH1)) == 0) {
 			// ':' より前を切る。
 			line.cut_before_character(':');
-			line = line.LTrim();
+			line = line.ltrim();
 			strncpy(content_length, line.c_str(), sizeof(content_length)-1);
 			debug_log_output("%s Detect. %s '%s'", HTTP_CONTENT_LENGTH1, HTTP_CONTENT_LENGTH1, content_length);
 			continue;
@@ -553,7 +553,7 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 		if (strncasecmp(line.c_str(), HTTP_CONTENT_TYPE1, strlen(HTTP_CONTENT_TYPE1)) == 0) {
 			// ':' より前を切る。
 			line.cut_before_character(':');
-			line = line.LTrim();
+			line = line.ltrim();
 			// multipart
 			if (strncasecmp(line.c_str(), "multipart/form-data", strlen("multipart/form-data")) == 0) {
 				wString bnd = line;
@@ -632,7 +632,7 @@ FILETYPES HTTP_RECV_INFO::http_file_check(void)
 	// ------------------------------------------------------------
 	// ファイルあるかチェック。
 	// ------------------------------------------------------------
-	if (wString::FileExists(send_filename)) {    // パスが示すファイルが存在する
+	if (wString::file_exists(send_filename)) {    // パスが示すファイルが存在する
 		// ファイル実体と検知
 		debug_log_output("'%s' is File!!", send_filename);
 
@@ -661,7 +661,7 @@ FILETYPES HTTP_RECV_INFO::http_file_check(void)
 			return (FILETYPES::_FILE);	// File実体
 		}
 	}
-	else if (wString::DirectoryExists(send_filename)) {    // パスが示すディレクトリが存在する
+	else if (wString::directory_exists(send_filename)) {    // パスが示すディレクトリが存在する
 	   //		int len;
 	   //		len = strlen(recv_uri);
 	   //		if (len > 0 && recv_uri[len - 1] != '/') {
@@ -711,7 +711,7 @@ FILETYPES HTTP_RECV_INFO::http_file_check(void)
 		// 2004/07/0? Delete end
 		// ファイル実体と検知。
 		//		if ( ( result == 0 ) && (S_ISREG(send_filestat.st_mode) == 1 ) )
-		if (wString::FileExists(send_filename)) {       // パスが示すファイルが存在する
+		if (wString::file_exists(send_filename)) {       // パスが示すファイルが存在する
 			// ファイル実体と検知
 			debug_log_output("'%s' is File!!", send_filename);
 			// -------------------------------------------
@@ -803,7 +803,7 @@ int HTTP_RECV_INFO::http_redirect_response(SOCKET accept_socket, char* location)
 {
 	wString buffer;
 	buffer.sprintf("HTTP/1.1 301 Found\r\n" "Location: %s\r\n" "\r\n", location);
-	send(accept_socket, buffer.c_str(), buffer.Length(), 0);
+	send(accept_socket, buffer.c_str(), buffer.length(), 0);
 	debug_log_output("Redirect to %s", location);
 	sClose(accept_socket);
 	return 0;
@@ -821,7 +821,7 @@ int HTTP_RECV_INFO::http_not_found_response(SOCKET accept_socket)
 		, "text/html"
 		, (size_t)9
 		, "Not Found");
-	send(accept_socket, buffer.c_str(), buffer.Length(), 0);
+	send(accept_socket, buffer.c_str(), buffer.length(), 0);
 	debug_log_output("Not Found %s", request_uri);
 	sClose(accept_socket);
 	return 0;

@@ -241,7 +241,7 @@ int Initialize(void)
 	wString     curdir;
 #ifdef linux
 	wString tmp(Application);
-	curdir = tmp.Trim();
+	curdir = tmp.trim();
 #else
 	WSADATA wsa;
 	WORD version = MAKEWORD(2, 0);
@@ -255,10 +255,10 @@ int Initialize(void)
 	}
 
 	//char Application[256];
-	wString apName = wString::LinuxFileName(Application);
-	curdir = wString::ExtractFileDir(apName).Trim();
+	wString apName = wString::linux_file_name(Application);
+	curdir = wString::extract_file_dir(apName).trim();
 #endif
-	//curdir.Trim();
+	//curdir.trim();
 	current_dir = curdir;
 	//ショートカットから呼ばれたときのパッチ。だましですよー
 #ifdef linux
@@ -267,16 +267,16 @@ int Initialize(void)
 	SetCurrentDirectory(current_dir.c_str());
 #endif
 	/* TODO : work_rootに従って削除すること */
-	if (!wString::DirectoryExists(curdir + DELIMITER"work")) {
-		wString::CreateDir(current_dir + DELIMITER"work");
+	if (!wString::directory_exists(curdir + DELIMITER"work")) {
+		wString::create_dir(current_dir + DELIMITER"work");
 	}
 	else {
 		//workの中のファイルを消す
 		wString list;
-		list = wString::EnumFolder(current_dir + DELIMITER"work");
-		int count = list.Counts();
+		list = wString::enum_folder(current_dir + DELIMITER"work");
+		int count = list.lines();
 		for (auto i = 0; i < count; i++) {
-			wString::DeleteFile(list.GetListString(i));
+			wString::delete_file(list.get_list_string(i));
 		}
 	}
 	//セッション用MAP作成

@@ -380,13 +380,13 @@ void GLOBAL_PARAM_T::config_file_read(void)
 		}
 	}
 	close(fd);
-	wString tmp = wString::HTTPGet("http://neon.cx/cybele/ip.php");
+	wString tmp = wString::http_get("http://neon.cx/cybele/ip.php");
 	// アクセスできた時
-	if (tmp.Length() > 0)
+	if (tmp.length() > 0)
 	{
 		if (tmp[tmp.length() - 1] == '\n')
 		{
-			tmp = tmp.SubString(0, tmp.length() - 1);
+			tmp = tmp.substr(0, tmp.length() - 1);
 		}
 		strcpy(global_ip, tmp.c_str());
 	}

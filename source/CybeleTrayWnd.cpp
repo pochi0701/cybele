@@ -144,8 +144,8 @@ CCybeleTrayWnd::CCybeleTrayWnd() :
 					str = work->Strings[i];
 					if (str.Pos("http=") > 0) {
 						len = str.Pos(":");
-						strcpy(Proxy, str.SubString(6, len - 6).c_str());
-						ProxyPort = atoi(str.SubString(len + 1, str.Length() - len).c_str());
+						strcpy(Proxy, str.substr(6, len - 6).c_str());
+						ProxyPort = atoi(str.substr(len + 1, str.Length() - len).c_str());
 						IsProxy = 1;
 						break;
 					}
@@ -155,8 +155,8 @@ CCybeleTrayWnd::CCybeleTrayWnd() :
 			else {
 				//
 				len = str.Pos(":");
-				strcpy(Proxy, str.SubString(1, len - 1).c_str());
-				ProxyPort = atoi(str.SubString(len + 1, str.Length() - len).c_str());
+				strcpy(Proxy, str.substr(1, len - 1).c_str());
+				ProxyPort = atoi(str.substr(len + 1, str.Length() - len).c_str());
 				IsProxy = 1;
 			}
 			//
@@ -190,8 +190,8 @@ CCybeleTrayWnd::CCybeleTrayWnd() :
 			if (str.Pos(":") > 0) {
 				//
 				len = str.Pos(":");
-				strcpy(Proxy, str.SubString(1, len - 1).c_str());
-				ProxyPort = atoi(str.SubString(len + 1, str.Length() - len).c_str());
+				strcpy(Proxy, str.substr(1, len - 1).c_str());
+				ProxyPort = atoi(str.substr(len + 1, str.Length() - len).c_str());
 				IsProxy = 1;
 			}
 			else {

@@ -110,19 +110,19 @@ int HTTP_RECV_INFO::http_proxy_response(SOCKET accept_socket)
         //ヘッダ送信
         for (int i=0; i<line; i++) {
             //Content-Length:送らない
-            wString ln = lines.GetListString(i)+"\r\n";
+            wString ln = lines.get_list_string(i)+"\r\n";
             //if (!strncasecmp(line_buf[i], HTTP_RECV_CONTENT_LENGTH, strlen(HTTP_RECV_CONTENT_LENGTH))){
             if (!strncasecmp(ln.c_str(), HTTP_RECV_CONTENT_LENGTH, strlen(HTTP_RECV_CONTENT_LENGTH))){
                 continue;
             }
-            send(accept_socket, ln.c_str(), ln.Length() , 0);
+            send(accept_socket, ln.c_str(), ln.length() , 0);
         }
         debug_log_output("sent header");
         //write(accept_socket, "debug:--\n", strlen("debug:--\n"));
         while (1) {
             //１行読み込み
             //memset(work_buf, 0, LINE_BUF_SIZE);
-            int len = wb.LineRcv(sock);
+            int len = wb.line_receive(sock);
             //strcpy(work_buf,wb.c_str());
             //int len = line_receive(sock, work_buf, LINE_BUF_SIZE);
             //EOFの場合は-1,空行の場合は0
@@ -222,7 +222,7 @@ int HTTP_RECV_INFO::http_proxy_response(SOCKET accept_socket)
             }
             //send( accept_socket , work_buf , strlen( work_buf ) , 0 );
             //debug_log_output("sent html: %s", work_buf);
-            send( accept_socket , wb.c_str() , wb.Length() , 0 );
+            send( accept_socket , wb.c_str() , wb.length() , 0 );
             debug_log_output("sent html: %s", wb.c_str());
         }
     //画像等
@@ -230,7 +230,7 @@ int HTTP_RECV_INFO::http_proxy_response(SOCKET accept_socket)
         //for (int i=0; i<line; i++) {
         //    send( accept_socket , line_buf[i] , strlen( line_buf[i] ) , 0 );
         //}
-        send( accept_socket, lines.c_str(), lines.Length(), 0);
+        send( accept_socket, lines.c_str(), lines.length(), 0);
         copy_all(sock, accept_socket);
     }
     sClose(sock);
@@ -286,7 +286,7 @@ SOCKET HTTP_RECV_INFO::send_header()
     debug_log_output("header:target_host_name: %s", static_cast<char*>(p_target_host_name.c_str()));
     debug_log_output("header:base_url: %s", base_url.c_str());
     debug_log_output("header:port: %d", port);
-    debug_log_output("header:authenticate: %s", p_auth.Length() ? p_auth.c_str() : "NULL");
+    debug_log_output("header:authenticate: %s", p_auth.length() ? p_auth.c_str() : "NULL");
 
     //出力バッファ作成
     //出力バッファ 1:GET 2:HEAD
@@ -327,7 +327,7 @@ SOCKET HTTP_RECV_INFO::send_header()
         send_http_header_buf.cat_sprintf("\r\n");
     }
     //認証
-    if (p_auth.Length() != 0) {
+    if (p_auth.length() != 0) {
         send_http_header_buf.cat_sprintf("Authorization: Basic %s\r\n", static_cast<char*>(p_auth.base64().c_str()));
     }
     send_http_header_buf.cat_sprintf("\r\n");
@@ -359,7 +359,7 @@ int getHeader(SOCKET sock,wString& lines, int& content_is_html,int &t_content_le
     //TODO ここが４０４や４００の可能性あり
 //    for (line = 0; line < MAX_LINE; line ++) {
     for (line = 0;; line ++) {
-        int len = wb.LineRcv(sock);
+        int len = wb.line_receive(sock);
         if( len < 0 ){
             return -1;
         }else if( len > 0 && line == 0 ){
@@ -374,7 +374,7 @@ int getHeader(SOCKET sock,wString& lines, int& content_is_html,int &t_content_le
                 break;
             case 301:
                 //TODO::ヘッダ読んでなんかするように
-                wb.LineRcv(sock);
+                wb.line_receive(sock);
                 break;
             case 302:
                 break;

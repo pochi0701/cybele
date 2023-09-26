@@ -73,7 +73,7 @@ CMDS   cmds[] = { CMDS::TXSELECT,CMDS::TXCREATE,  CMDS::TXINSERT,  CMDS::TXUPDAT
 /// <summary>
 /// コマンド数
 /// </summary>
-unsigned int cmdNum = sizeof(cmds) / sizeof(cmds[0]);
+const unsigned int cmdNum = sizeof(cmds) / sizeof(cmds[0]);
 /////////////////////////////////////////////////////////////////////////////
 //比較
 map<wString, Database*>* connects;
@@ -144,6 +144,9 @@ int compare(const wString arg1, const wString op, const wString arg2, const data
 	return 0;
 }
 
+/// <summary>
+/// SQL実行部。個別のSQLコマンド実行
+/// </summary>
 class view {
 private:
 	vector<Table*>         Tables;
@@ -1553,7 +1556,7 @@ bool Table::isChanged(void)
 Database::Database(const wString& myname) {
 	//name = myname;
 	wString path = current_dir + DELIMITER + "database" + DELIMITER;
-	//LoadFromFile(path + name + ".db");
+	//load_from_file(path + name + ".db");
 	LoadFromFile(path + myname + ".db");
 	ref = 0;
 	changed = false;
@@ -1572,8 +1575,8 @@ void Database::Save(void)
 {
 	wString path = current_dir + DELIMITER + "database" + DELIMITER;
 	//フォルダ作成
-	if (!wString::DirectoryExists(path)) {
-		wString::CreateDir(path);
+	if (!wString::directory_exists(path)) {
+		wString::create_dir(path);
 	}
 
 	//変更があればテーブル保存
@@ -1583,10 +1586,10 @@ void Database::Save(void)
 		if (x.second->isChanged() || this->changed)
 		{
 			//bakファイル削除
-			if (wString::FileExists((path + name + ".db.bak")) == 0) {
-				wString::DeleteFile(path + name + ".db.bak");
+			if (wString::file_exists((path + name + ".db.bak")) == 0) {
+				wString::delete_file(path + name + ".db.bak");
 			}
-			wString::RenameFile(path + name + ".db", path + name + ".db.bak");
+			wString::rename_file(path + name + ".db", path + name + ".db.bak");
 			//保存(テーブルも保存される）
 			if (SaveToFile(path + name + ".db") == 0) {
 			}
@@ -1600,12 +1603,12 @@ void Database::Save(void)
 	//	if (it->second->isChanged() || this->changed)
 	//	{
 	//		//bakファイル削除
-	//		if (wString::FileExists((path + name + ".db.bak")) == 0) {
-	//			wString::DeleteFile(path + name + ".db.bak");
+	//		if (wString::file_exists((path + name + ".db.bak")) == 0) {
+	//			wString::delete_file(path + name + ".db.bak");
 	//		}
-	//		wString::RenameFile(path + name + ".db", path + name + ".db.bak");
+	//		wString::rename_file(path + name + ".db", path + name + ".db.bak");
 	//		//保存(テーブルも保存される）
-	//		if (SaveToFile(path + name + ".db") == 0) {
+	//		if (save_to_file(path + name + ".db") == 0) {
 	//		}
 	//		break;
 	//	}
@@ -2306,7 +2309,7 @@ int Database::LoadFromFile(wString file) {
 	unsigned int max;
 	bufrd* br = new bufrd();
 	tblList.clear();
-	if (wString::FileExists(file)) {
+	if (wString::file_exists(file)) {
 		if (br->ropen(file)) {
 			return -1;
 		}
@@ -2356,7 +2359,7 @@ int Database::SaveToFile(wString file) {
 	}
 	//map<wString, Table*>::iterator nit;
 	//for (nit = tblList.begin(); nit != tblList.end(); nit++) {
-	//	nit->second->SaveToFile(br);
+	//	nit->second->save_to_file(br);
 	//}
 	br->wclose();
 	delete br;
@@ -2488,7 +2491,7 @@ int DBCatalog::LoadFromFile(void)
 	char   name[1024] = {};
 	dblist.clear();
 	//オープン
-	if (!wString::FileExists(CATFILE)) return 0;
+	if (!wString::file_exists(CATFILE)) return 0;
 	fd = open(CATFILE, O_RDONLY | O_BINARY);
 	//dbname read
 	if (read(fd, &max, sizeof(unsigned int)) != sizeof(unsigned int)) { err("can't read"); close(fd); return -1; }

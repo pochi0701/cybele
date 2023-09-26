@@ -426,11 +426,11 @@ void CScriptLex::chkread(LEX_TYPES expected_tk) {
 void headerCheckPrint(SOCKET socket, int* printed, wString* headerBuf, int flag)
 {
 	if (headerBuf->length() == 0) {
-		headerBuf->headerInit(0, 0);
+		headerBuf->init_header(0, 0);
 	}
 	if (flag && *printed == 0) {
 		*printed = 1;
-		headerBuf->headerPrint(socket, 1);
+		headerBuf->send_header(socket, 1);
 	}
 }
 #endif

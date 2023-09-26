@@ -213,7 +213,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 			split("=", script2, script1);
 			script4 += "var _GET." + script2 + const_cast<char*>("=\"") + wString::escape(script1.uri_decode()) + const_cast<char*>("\";");
 		}
-		if (script4.Length()) {
+		if (script4.length()) {
 			javaScriptThread.execute(script4);
 		}
 
@@ -223,7 +223,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 		script4.clear();
 		while (script3.length()) {
 			split(";", script1, script3);
-			script1 = script1.LTrim();
+			script1 = script1.ltrim();
 			split("=", script2, script1);
 			script4 += "var _COOKIE." + script2 + const_cast<char*>("=\"") + wString::escape(script1.uri_decode()) + const_cast<char*>("\";");
 			//SESSIONIDの設定
@@ -231,7 +231,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 				script4 += const_cast<char*>("var JSSESSID=\"") + wString::escape(script1.uri_decode()) + const_cast<char*>("\";");
 			}
 		}
-		if (script4.Length()) {
+		if (script4.length()) {
 			javaScriptThread.execute(script4);
 		}
 
@@ -259,7 +259,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 					contentsize -= num;
 				}
 				buf[num] = 0;
-				script3.setBinary(buf, num);
+				script3.set_binary(buf, num);
 			}
 
 			// multipart
@@ -305,25 +305,25 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 					wString st2 = text.strsplit("\"");
 					mp[i]->content = ptr;
 					mp[i]->length = static_cast<int>(ed - ptr) - static_cast<int>(strlen(boundary)) - 4;
-					tmp.setBinary(mp[i]->content, mp[i]->length);
+					tmp.set_binary(mp[i]->content, mp[i]->length);
 					//wString ttmp = tmp.dump();
-					if (st2.GetListString(0).startsWith(CONTENT_DISPOSITION))
+					if (st2.get_list_string(0).starts_with(CONTENT_DISPOSITION))
 					{
-						strcpy(mp[i]->name, st2.GetListString(1).c_str());
-						if (st2.GetListString(2).Pos("filename=") >= 0)
+						strcpy(mp[i]->name, st2.get_list_string(1).c_str());
+						if (st2.get_list_string(2).Pos("filename=") >= 0)
 						{
-							strcpy(mp[i]->fileName, st2.GetListString(3).c_str());
+							strcpy(mp[i]->fileName, st2.get_list_string(3).c_str());
 						}
 					}
 					// ファイル名がない場合にはname=valueに変換
 					if (strlen(mp[i]->fileName) == 0)
 					{
 						wString content;
-						content.setBinary(mp[i]->content,mp[i]->length);
-						script4 += const_cast<char*>("var _post.") + wString(mp[i]->name) + const_cast<char*>("=\"") + wString::escape(content.Trim().uri_decode()) + const_cast<char*>("\";");
+						content.set_binary(mp[i]->content,mp[i]->length);
+						script4 += const_cast<char*>("var _post.") + wString(mp[i]->name) + const_cast<char*>("=\"") + wString::escape(content.trim().uri_decode()) + const_cast<char*>("\";");
 					}
 				}
-				if (script4.Length()) {
+				if (script4.length()) {
 					javaScriptThread.execute(script4);
 				}
 			}
@@ -335,7 +335,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 					split("=", script2, script1);
 					script4 += const_cast<char*>("var _POST.") + script2 + const_cast<char*>("=\"") + wString::escape(script1.uri_decode()) + const_cast<char*>("\";");
 				}
-				if (script4.Length()) {
+				if (script4.length()) {
 					javaScriptThread.execute(script4);
 				}
 			}
@@ -347,7 +347,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 		debug_log_output("SCRIPT ERROR: %s\n", e->text.c_str());
 		wString tmp;
 		tmp.sprintf("SCRIPT ERROR: %s\n", e->text.c_str());
-		send(accept_socket, tmp.c_str(), tmp.Length(), 0);
+		send(accept_socket, tmp.c_str(), tmp.length(), 0);
 		delete[] buffer;
 		for (auto p : mp)
 		{
