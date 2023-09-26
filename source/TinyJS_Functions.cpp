@@ -266,10 +266,9 @@ void scPregStringReplace(CScriptVar* c, void* userdata) {
 	vector<wString> patterns;
 	vector<wString> replaces;
 	int pn = arrp->getArrayLength();
-	int rn;
 	if (pn) {
 		CScriptVar* arrr = c->getParameter("replace");
-		rn = arrr->getArrayLength();
+		auto rn = arrr->getArrayLength();
 		if (pn == rn) {
 			for (int i = 0; i < pn; i++) {
 				patterns.push_back(arrp->getArrayIndex(i)->getString());
@@ -529,7 +528,7 @@ void scScanDir(CScriptVar* c, void* userdata) {
 //scMimeInfo
 void scMimeInfo(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
-	auto uri = c->getParameter("uri")->getString();
+	wString uri = c->getParameter("uri")->getString();
 	auto ret = wString::find_mime_type(uri);
 	c->getReturnVar()->setString(ret);
 	return;

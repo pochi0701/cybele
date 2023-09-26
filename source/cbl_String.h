@@ -133,7 +133,7 @@ public:
 	static int      file_exists(const char* str);
 	static int      file_exists(const wString& str);
 	int             file_exists(void);
-	static wString  extract_file_dir(wString& str);
+	static wString  extract_file_dir(const wString& str);
 	static wString  extract_file_name(const char* str, const char* delim = DELIMITER);
 	static wString  extract_file_name(const wString& str, const char* delim = DELIMITER);
 	static wString  extract_file_ext(const wString& str);

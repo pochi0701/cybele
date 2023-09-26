@@ -25,19 +25,19 @@ int dregex::match(const wString text, const wString pattern)
 	if (tmp[0] == '/') {
 		while (tmp[tmp.length() - 1] != '/') {
 			if (tmp[tmp.length() - 1] == 'i') {
-			//	cflags |= REG_ICASE;
+				//	cflags |= REG_ICASE;
 				tmp = tmp.substr(0, tmp.length() - 1);
 			}
 			else if (tmp[tmp.length() - 1] == 'x') {
-			//	cflags |= REG_EXTENDED;
+				//	cflags |= REG_EXTENDED;
 				tmp = tmp.substr(0, tmp.length() - 1);
 			}
 			else if (tmp[tmp.length() - 1] == 'm') {
-			//	cflags &= ~REG_NEWLINE;
+				//	cflags &= ~REG_NEWLINE;
 				tmp = tmp.substr(0, tmp.length() - 1);
 			}
 			else if (tmp[tmp.length() - 1] == 's') {
-			//	cflags |= REG_NEWLINE;
+				//	cflags |= REG_NEWLINE;
 				tmp = tmp.substr(0, tmp.length() - 1);
 			}
 			else {
@@ -62,7 +62,7 @@ int dregex::match(const wString text, const wString pattern)
 
 
 
-    //wString tmp = pattern;
+	//wString tmp = pattern;
 	try {
 		std::regex re(tmp.c_str());
 		//マッチしたか？
@@ -86,48 +86,53 @@ int dregex::match(const wString text, const wString pattern)
 ///
 int dregex::replace(wString* result, const wString text, const vector<wString> pattern, const vector<wString> replacement)
 {
-    //regex_t re;
-    int repeatable = 1;
-	std::regex_constants::match_flag_type cflags =  std::regex_constants::format_default;
+	//regex_t re;
+	int repeatable = 1;
+	std::regex_constants::match_flag_type cflags = std::regex_constants::format_default;
 	//一回だけマッチ
 	if (repeatable == 0) {
 		cflags = std::regex_constants::format_first_only;
 	}
 	//
-    wString pat;
-    wString temptext;
-    if( pattern.size() != replacement.size() ){
-        return 1;
-    }
-    temptext = text;
-    //int num;
-    for( size_t i = 0 ; i < pattern.size() ; i++ ){
-        //パターンから修飾子を取得
-        wString tmp = pattern[i];
-        if( tmp[0] == '/' ){
-            while( tmp[tmp.length()-1] != '/' ){
-                if ( tmp[tmp.length()-1] == 'i' ){
-                    //cflags |= REG_ICASE;
-                    tmp = tmp.substr(0,tmp.length()-1);
-                }else if ( tmp[tmp.length()-1] == 'x' ){
-                    //cflags |= REG_EXTENDED;
-                    tmp = tmp.substr(0,tmp.length()-1);
-                }else if ( tmp[tmp.length()-1] == 'm' ){
-                    //cflags &= ~REG_NEWLINE;
-                    tmp = tmp.substr(0,tmp.length()-1);
-                }else if ( tmp[tmp.length()-1] == 's' ){
-                    //cflags |= REG_NEWLINE;
-                    tmp = tmp.substr(0,tmp.length()-1);
-                }else{
-                    //not pattern
-                    return 1;
-                }
-            }
-			tmp =  tmp.substr(1, tmp.length() - 2);
-        }else{
-            // not pattern
-            return 0;
-        }
+	wString pat;
+	wString temptext;
+	if (pattern.size() != replacement.size()) {
+		return 1;
+	}
+	temptext = text;
+	//int num;
+	for (size_t i = 0; i < pattern.size(); i++) {
+		//パターンから修飾子を取得
+		wString tmp = pattern[i];
+		if (tmp[0] == '/') {
+			while (tmp[tmp.length() - 1] != '/') {
+				if (tmp[tmp.length() - 1] == 'i') {
+					//cflags |= REG_ICASE;
+					tmp = tmp.substr(0, tmp.length() - 1);
+				}
+				else if (tmp[tmp.length() - 1] == 'x') {
+					//cflags |= REG_EXTENDED;
+					tmp = tmp.substr(0, tmp.length() - 1);
+				}
+				else if (tmp[tmp.length() - 1] == 'm') {
+					//cflags &= ~REG_NEWLINE;
+					tmp = tmp.substr(0, tmp.length() - 1);
+				}
+				else if (tmp[tmp.length() - 1] == 's') {
+					//cflags |= REG_NEWLINE;
+					tmp = tmp.substr(0, tmp.length() - 1);
+				}
+				else {
+					//not pattern
+					return 1;
+				}
+			}
+			tmp = tmp.substr(1, tmp.length() - 2);
+		}
+		else {
+			// not pattern
+			return 0;
+		}
 		try {
 			regex re(tmp.c_str());
 			//if (regcomp(&re, (char*)tmp.c_str(), cflags&~REG_NOSUB)){
@@ -145,48 +150,48 @@ int dregex::replace(wString* result, const wString text, const vector<wString> p
 			debug_log_output("dregex::replace replace error");
 			return 0;
 		}
-    }
+	}
 	*result = temptext;
-    return 1;
+	return 1;
 }
 #if 0
 // ------------------------------------------------------------
 // split 本体
 int dregex::split2(vector<wString>* result, const wString text, regex re, const bool global)
 {
-    //regmatch mat[2];          //BCCでは２以上でないと正常に動作しない
-    char* sp = (char*)text.c_str();
-    size_t cnt = 0;
-    result->clear();
-    char tmp[1024]={};
-    do {
-        //if (regexec(&re, (char*)(sp+cnt), 2, mat, 0) == REG_NOMATCH) {
-        //    break;
-        //}
-        text.copy(tmp, mat[0].rm_so, cnt);
-        *(tmp+mat[0].rm_so) = '\0';
-        result->push_back(tmp);
-        cnt += mat[0].rm_eo;
-    } while (global);
-    // 最終要素
-    if (cnt < text.size()) {
-        text.copy(tmp, text.size()-cnt, cnt);
-        *(tmp+text.size()-cnt) = '\0';
-        result->push_back(tmp);
-    }
-    if (cnt==0) return 1; // split する事がなかった
-    return 0;
+	//regmatch mat[2];          //BCCでは２以上でないと正常に動作しない
+	char* sp = (char*)text.c_str();
+	size_t cnt = 0;
+	result->clear();
+	char tmp[1024] = {};
+	do {
+		//if (regexec(&re, (char*)(sp+cnt), 2, mat, 0) == REG_NOMATCH) {
+		//    break;
+		//}
+		text.copy(tmp, mat[0].rm_so, cnt);
+		*(tmp + mat[0].rm_so) = '\0';
+		result->push_back(tmp);
+		cnt += mat[0].rm_eo;
+	} while (global);
+	// 最終要素
+	if (cnt < text.size()) {
+		text.copy(tmp, text.size() - cnt, cnt);
+		*(tmp + text.size() - cnt) = '\0';
+		result->push_back(tmp);
+	}
+	if (cnt == 0) return 1; // split する事がなかった
+	return 0;
 }
 
 // split 事前コンパイル・インスタンス不要版(REG_NOSUBは無効)
 int dregex::split(vector<wString>* result, const wString text, const wString pattern, const bool global)
 {
-    regex re(pattern.c_str());
-    //if (regcomp(&re, (char*)pattern.c_str(), cflags&~REG_NOSUB)){
-    //    return 1; // syntax error.
-    //}
-    int res = dregex::split2(result, text, re, global);
-    //regfree(&re);
-    return res;
+	regex re(pattern.c_str());
+	//if (regcomp(&re, (char*)pattern.c_str(), cflags&~REG_NOSUB)){
+	//    return 1; // syntax error.
+	//}
+	int res = dregex::split2(result, text, re, global);
+	//regfree(&re);
+	return res;
 }
 #endif

@@ -1,7 +1,7 @@
 ==DataBase==
 **[[JavaScript|目次]]**
 
-**DBConnect(DBName)**
+**DBConnect(string DBName)**
 　概要：
 　　DBNameで示されるデータベースに接続する。
 
@@ -20,7 +20,7 @@
 　例:
        database.DBDisConnect();
 
-**String.SQL(sqltext)**
+**String.SQL(string sqltext)**
    概要:
        SQLを実行する。
 　戻り値:

@@ -6,33 +6,33 @@ Cybele内部では文字コードとしてutf-8を想定しています。
 内部SJISとして利用することも可能ですが
 SJISに起因する問題には対応していません。
 
-**charToInt(ch)**
+**charToInt(string ch)**
 　文字を整数に変換する
 
-**String.indexOf(search)**
+**String.indexOf(string search)**
 　文字列の出現位置を返す
 　見つからなければ-1が返る
 
-**String.substring(lo,len)**
+**String.substring(int lo,int len)**
 　stringのloからlen文字分の部分文字列を返す
 
-**String.charAt(pos)**
+**String.charAt(int pos)**
 　文字列のpos位置の1文字を返す。全角文字非対応
 
-**String.charCodeAt(pos)**
+**String.charCodeAt(int pos)**
 　文字列のpos位置の文字コードを返す。全角文字非対応
 
-**String.fromCharCode(char)**
+**String.fromCharCode(string char)**
 　指定された文字コードに対応する文字を返す。全角文字非対応
 
-**String.split(separator)**
+**String.split(string separator)**
 　separatorで指定された文字で文字列を分解し配列として返す
 　結合にはArray.joinを使う
 
-**String.replace(before,after)**
+**String.replace(string before,string after)**
 　指定文字列中のbeforeの文字をafterに置換する
 
-**String.preg_replace(pattern,replace)**
+**String.preg_replace(string pattern,string replace)**
 　patternで指定された正規表現文字列をreplaceに変換する。
 　patternは配列指定可
 
@@ -45,7 +45,7 @@ SJISに起因する問題には対応していません。
 **String.toUpperCase()**
 　文字列中のアスキー文字を大文字に変換する
 
-**String.nkfConv(Format)**
+**String.nkfConv(string Format)**
 　StringをFormatで示される文字コードに変換します。
 　入力文字列
 　　省略：自動

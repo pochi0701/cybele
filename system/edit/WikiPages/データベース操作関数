@@ -21,7 +21,7 @@
   database.Connect();
   database.DisConnect();
 
-**String.SQL(sqltext)**
+**String.SQL(string sqltext)**
 　接続されたデータベースにSQLを発行する。
    結果はJSON形式で取得する。セキュリティ的に保護するものは現在用意されてないので
 　SQLインジェクション等には留意すること

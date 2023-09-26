@@ -527,9 +527,11 @@ wString wString::substr(int start, int cut_len) const
 	if (start < 0 || start >= static_cast<int>(len)) {
 		// TODO:throw error
 	}
-	if (cut_len <= 0 || start + cut_len > (int)len) {
+	if (cut_len < 0) cut_len = len;
+	if (start + cut_len > (int)len) {
 		cut_len = (int)len - start;
 	}
+
 	wString temp(cut_len);
 	if (cut_len > 0) {
 		memcpy(temp.String, String + start, cut_len);
@@ -1057,7 +1059,7 @@ int wString::file_exists(void)
 }
 //---------------------------------------------------------------------------
 //パス部分を抽出
-wString wString::extract_file_dir(wString& str)
+wString wString::extract_file_dir(const wString& str)
 {
 	//todo SJIS/EUC対応するように
 	wString temp(str);
@@ -2906,7 +2908,7 @@ wString wString::get_local_address(void)
 	}
 	free(pBestRoute);
 
-		//ホスト名からIPアドレスを取得する
+	//ホスト名からIPアドレスを取得する
 	HOSTENT* hostend = gethostbyname(hostname);
 	if (hostend == NULL) {
 		return "";
@@ -2918,7 +2920,7 @@ wString wString::get_local_address(void)
 	{
 		//DWORD aaa = (Dhostend->h_addr_list[i];
 		// TODO:３バイト比較。厳密にすべき。
-		if (memcmp((void*)hostend->h_addr_list[i], (void*)&dwDestAddr, 3) == 0) {
+		if (memcmp(static_cast<void*>(hostend->h_addr_list[i]), static_cast<void*>(&dwDestAddr), 3) == 0) {
 			inaddr.S_un.S_un_b.s_b1 = hostend->h_addr_list[i][0];
 			inaddr.S_un.S_un_b.s_b2 = hostend->h_addr_list[i][1];
 			inaddr.S_un.S_un_b.s_b3 = hostend->h_addr_list[i][2];
@@ -3316,7 +3318,7 @@ wString wString::jpeg_size(const wString& jpeg_filename)
 		memset(buf, 0, sizeof(buf));
 		if (read(fd, buf, 2) != 2)
 		{
-			close(fd); 
+			close(fd);
 			return "";
 		}
 		vlength = (buf[0] << 8) + buf[1];
