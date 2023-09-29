@@ -159,10 +159,10 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 	wString script2;
 	wString script3;
 	wString script4;
-	javaScriptThread.root->addChild("_SERVER", new CScriptVar(TINYJS_BLANK_DATA, (int)SCRIPTVAR_FLAGS::SCRIPTVAR_OBJECT));
-	javaScriptThread.root->addChild("_GET", new CScriptVar(TINYJS_BLANK_DATA, (int)SCRIPTVAR_FLAGS::SCRIPTVAR_OBJECT));
-	javaScriptThread.root->addChild("_COOKIE", new CScriptVar(TINYJS_BLANK_DATA, (int)SCRIPTVAR_FLAGS::SCRIPTVAR_OBJECT));
-	javaScriptThread.root->addChild("_POST", new CScriptVar(TINYJS_BLANK_DATA, (int)SCRIPTVAR_FLAGS::SCRIPTVAR_OBJECT));
+	javaScriptThread.root->addChild("_SERVER", new CScriptVar(TINYJS_BLANK_DATA, SCRIPTVAR_FLAGS::SCRIPTVAR_OBJECT));
+	javaScriptThread.root->addChild("_GET", new CScriptVar(TINYJS_BLANK_DATA, SCRIPTVAR_FLAGS::SCRIPTVAR_OBJECT));
+	javaScriptThread.root->addChild("_COOKIE", new CScriptVar(TINYJS_BLANK_DATA, SCRIPTVAR_FLAGS::SCRIPTVAR_OBJECT));
+	javaScriptThread.root->addChild("_POST", new CScriptVar(TINYJS_BLANK_DATA, SCRIPTVAR_FLAGS::SCRIPTVAR_OBJECT));
 
 	try
 	{

@@ -697,7 +697,7 @@ unsigned int wString::size(void) const
 /// </summary>
 /// <param name=""></param>
 /// <returns>文字列の長さ</returns>
-inline unsigned int wString::length(void) const
+unsigned int wString::length(void) const
 {
 	return len;
 }
@@ -3140,32 +3140,41 @@ int wString::line_receive(SOCKET accept_socket)
 /// もし、cut_charがsentence文字列に入っていなかった場合、文字列全部削除
 /// </summary>
 /// <param name="cut_char"></param>
-void    wString::cut_before_character(const char cut_char)
+
+
+/// <summary>
+/// sentence文字列の、cut_charが最初に出てきた所から前を削除
+/// もし、cut_charがsentence文字列に入っていなかった場合、文字列全部削除
+/// </summary>
+/// <param name="cut_char">分離文字</param>
+/// <returns></returns>
+bool wString::cut_before_character(const char cut_char)
 {
 	// 削除対象キャラクターが最初に出てくる所を探す。
 	int ptr = find(cut_char);
 	if (ptr == wString::npos) {
 		// 発見できなかった場合、文字列全部削除。
 		clear();
-		return;
+		return false;
 	}
 	memmove(String, String + ptr + 1, len - ptr);
-	return;
+	return true;
 }
 /// <summary>
 /// sentence文字列より、cut_charから後ろを削除
 ///      見つからなければ何もしない。
 /// </summary>
-/// <param name="cut_char">切り取る文字</param>
-void   wString::cut_after_character(const char cut_char)
+/// <param name="cut_char">分離文字</param>
+/// <returns>成功:true 失敗:false</returns>
+bool wString::cut_after_character(const char cut_char)
 {
 	int ptr = find(cut_char);
 	if (ptr == wString::npos) {
-		return;
+		return false;
 	}
 	String[ptr] = 0;
 	len = ptr;
-	return;
+	return true;
 }
 //////////////////////////////////////////////////////////////////////////
 /// <summary>

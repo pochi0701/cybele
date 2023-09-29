@@ -147,6 +147,12 @@ enum class SCRIPTVAR_FLAGS {
 	SCRIPTVAR_ARRAY |
 	SCRIPTVAR_NULL,
 };
+// 論理オペレータOR
+enum class SCRIPTVAR_FLAGS operator|(SCRIPTVAR_FLAGS L, SCRIPTVAR_FLAGS R);
+// 論理オペレータ&
+enum class SCRIPTVAR_FLAGS operator&(SCRIPTVAR_FLAGS L, SCRIPTVAR_FLAGS R);
+// 論理オペレータ~
+enum class SCRIPTVAR_FLAGS operator~(SCRIPTVAR_FLAGS L);
 
 enum class ExecuteModes
 {
@@ -246,7 +252,7 @@ public:
 	CScriptVarLink* lastChild;
 
 	CScriptVar(); ///< Create undefined
-	CScriptVar(const wString& varData, int varFlags); ///< User defined
+	CScriptVar(const wString& varData, SCRIPTVAR_FLAGS varFlags); ///< User defined
 	explicit CScriptVar(const wString& str); ///< Create a string
 	explicit CScriptVar(double varData);
 	explicit CScriptVar(int val);
@@ -258,7 +264,7 @@ public:
 	CScriptVar* getParameter(const wString& name); ///< If this is a function, get the parameter with the given name (for use by native functions)
 
 	CScriptVarLink* findChild(const wString& childName); ///< Tries to find a child with the given name, may return 0
-	CScriptVarLink* findChildOrCreate(const wString& childName, int varFlags = (int)SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED); ///< Tries to find a child with the given name, or will create it with the given flags
+	CScriptVarLink* findChildOrCreate(const wString& childName, SCRIPTVAR_FLAGS varFlags = SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED); ///< Tries to find a child with the given name, or will create it with the given flags
 	CScriptVarLink* findChildOrCreateByPath(const wString& path); ///< Tries to find a child with the given path (separated by dots)
 	CScriptVarLink* addChild(const wString& childName, CScriptVar* child = NULL);
 	CScriptVarLink* addChildNoDup(const wString& childName, CScriptVar* child = NULL); ///< add a child overwriting any with the same name
@@ -282,16 +288,16 @@ public:
 	void    setArray();
 	bool    equals(CScriptVar* v);
 
-	bool isInt() { return (flags & (int)SCRIPTVAR_FLAGS::SCRIPTVAR_INTEGER) != 0; }
-	bool isDouble() { return (flags & (int)SCRIPTVAR_FLAGS::SCRIPTVAR_DOUBLE) != 0; }
-	bool isString() { return (flags & (int)SCRIPTVAR_FLAGS::SCRIPTVAR_STRING) != 0; }
-	bool isNumeric() { return (flags & (int)SCRIPTVAR_FLAGS::SCRIPTVAR_NUMERICMASK) != 0; }
-	bool isFunction() { return (flags & (int)SCRIPTVAR_FLAGS::SCRIPTVAR_FUNCTION) != 0; }
-	bool isObject() { return (flags & (int)SCRIPTVAR_FLAGS::SCRIPTVAR_OBJECT) != 0; }
-	bool isArray() { return (flags & (int)SCRIPTVAR_FLAGS::SCRIPTVAR_ARRAY) != 0; }
-	bool isNative() { return (flags & (int)SCRIPTVAR_FLAGS::SCRIPTVAR_NATIVE) != 0; }
-	bool isUndefined() { return (flags & (int)SCRIPTVAR_FLAGS::SCRIPTVAR_VARTYPEMASK) == (int)SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
-	bool isNull() { return (flags & (int)SCRIPTVAR_FLAGS::SCRIPTVAR_NULL) != 0; }
+	bool isInt() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_INTEGER) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isDouble() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_DOUBLE) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isString() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_STRING) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isNumeric() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_NUMERICMASK) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isFunction() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_FUNCTION) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isObject() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_OBJECT) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isArray() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_ARRAY) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isNative() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_NATIVE) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isUndefined() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_VARTYPEMASK) == SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isNull() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_NULL) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
 	bool isBasic() { return firstChild == 0; } ///< Is this *not* an array/object/etc
 
 	CScriptVar* mathsOp(CScriptVar* b, LEX_TYPES op); ///< do a maths op with another script variable
@@ -315,7 +321,7 @@ protected:
 	wString data; ///< The contents of this variable if it is a string
 	long intData; ///< The contents of this variable if it is an int
 	double doubleData; ///< The contents of this variable if it is a double
-	int flags; ///< the flags determine the type of the variable - int/double/string/etc
+	SCRIPTVAR_FLAGS flags; ///< the flags determine the type of the variable - int/double/string/etc
 	JSCallback jsCallback; ///< Callback for native functions
 	void* jsCallbackUserData; ///< user data passed as second argument to native functions
 

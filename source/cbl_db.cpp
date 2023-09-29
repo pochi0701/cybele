@@ -572,7 +572,7 @@ public:
 				temp.resize(Column.size() * Node.size() * 8);
 				//復数DBの場合はtblも表示
 				if (Tables.size() > 1) {
-					for (auto i = 0; i < Column.size(); i++) {
+					for (auto i = 0LU; i < Column.size(); i++) {
 						Table* tbl = Tables[Column[i].second];
 						auto j = Column[i].first;
 						if (tbl->column[j]->GetAlias(cond.clmalias, cond.tblalias, alias)) {
@@ -585,7 +585,7 @@ public:
 					//単一DBの場合はカラム名のみ
 				}
 				else {
-					for (auto i = 0; i < Column.size(); i++) {
+					for (auto i = 0LU; i < Column.size(); i++) {
 						Table* tbl = Tables[Column[i].second];
 						auto j = Column[i].first;
 						if (tbl->column[j]->GetAlias(cond.clmalias, cond.tblalias, alias)) {
@@ -600,7 +600,7 @@ public:
 				//ノード表示
 				if (Node.size()) {
 					//各行
-					for (auto i = 0; i < Node.size(); i++) {
+					for (auto i = 0LU; i < Node.size(); i++) {
 						int ii = Node[i];
 						//各カラム
 						int cnt = 0;
@@ -690,7 +690,7 @@ public:
 		if (flag == 0) {
 			//復数DBの場合はtblも表示
 			if (Tables.size() > 1) {
-				for (auto i = 0; i < Column.size(); i++) {
+				for (auto i = 0LU; i < Column.size(); i++) {
 					Table* tbl = Tables[Column[i].second];
 					auto j = Column[i].first;
 					//エイリアスあれば、エイリアス表示
@@ -704,7 +704,7 @@ public:
 				//単一DBの場合はカラム名のみ
 			}
 			else {
-				for (auto i = 0; i < Column.size(); i++) {
+				for (auto i = 0LU; i < Column.size(); i++) {
 					Table* tbl = Tables[Column[i].second];
 					auto j = Column[i].first;
 					//エイリアスあれば、エイリアス表示
@@ -722,7 +722,7 @@ public:
 			temp = "[";
 			if (Node.size()) {
 				//各行
-				for (auto i = 0; i < Node.size(); i++) {
+				for (auto i = 0LU; i < Node.size(); i++) {
 					temp.cat_sprintf("%s{", (i ? "," : ""));
 					int ii = Node[i];
 					//各カラム

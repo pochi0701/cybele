@@ -156,8 +156,8 @@ public:
 	int             save_to_file(const wString& str);
 	wString         nkfcnv(const wString& option);
 	int             line_receive(SOCKET accept_socket);
-	void            cut_before_character(const char cut_char);
-	void            cut_after_character(const char cut_char);
+	bool            cut_before_character(const char cut_char);
+	bool            cut_after_character(const char cut_char);
 	wString         insert(int pos, const wString& fill);
 	//HTTP接続用
 	static int      http_size(const wString& url);

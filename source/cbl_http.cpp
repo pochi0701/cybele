@@ -439,9 +439,17 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 				return (-1);
 			}
 			// 最初のスペースまでを削除。
-			line.cut_before_character(' ');
+			if (!line.cut_before_character(' '))
+			{
+				// データ異常
+				return -1;
+			}
 			// 次にスペースが出てきたところの後ろまでを削除。
-			line.cut_after_character(' ');
+			if (!line.cut_after_character(' '))
+			{
+				// データ異常
+				return -1;
+			}
 			//strcpy( line_buf,line.c_str());
 			// ===========================
 			// GETオプション部解析
@@ -572,19 +580,6 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 	}
 	return result;
 }
-// **************************************************************************
-// リクエストされたURIのファイルをチェック
-// 
-//
-// ret		 0:実体
-//			 1:ディレクトリ
-//			 3:plw/uplファイル(`・ω・´)
-//			 4:tsvファイル(´・ω・`)
-//			 5:VOBファイル
-//			 6:CGIファイル
-// **************************************************************************
-
-
 /// <summary>
 /// リクエストされたURIのファイルをチェック
 /// aliasでの置き換え、documet_rootチェック、なければskin置き場チェックを行う。
