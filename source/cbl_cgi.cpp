@@ -105,8 +105,6 @@ int HTTP_RECV_INFO::http_cgi_response(SOCKET accept_socket)
 void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* query_string)
 {
 	//実行
-	char server_port[100] = {};
-	char remote_port[100] = {};
 	struct sockaddr_in saddr = {};
 	socklen_t socklen;
 	char next_cwd[FILENAME_MAX] = {};
@@ -166,6 +164,8 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 
 	try
 	{
+		char server_port[100] = {};
+		char remote_port[100] = {};
 		script1.clear();
 		//環境変数をJSに展開
 		//TODO:まとめて一回で評価する方がよさげ
@@ -319,7 +319,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 					if (strlen(mp[i]->fileName) == 0)
 					{
 						wString content;
-						content.set_binary(mp[i]->content,mp[i]->length);
+						content.set_binary(mp[i]->content, mp[i]->length);
 						script4 += const_cast<char*>("var _post.") + wString(mp[i]->name) + const_cast<char*>("=\"") + wString::escape(content.trim().uri_decode()) + const_cast<char*>("\";");
 					}
 				}

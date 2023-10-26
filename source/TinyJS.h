@@ -43,36 +43,36 @@ using namespace std;
 const int TINYJS_LOOP_MAX_ITERATIONS = 8192;
 extern map<wString, wString>* session;
 enum class  LEX_TYPES {
-	LEX_EOF   = 0,
-    LEX_LF    = '\r',
-    LEX_CR    = '\n',
-    LEX_EXC   = '!',  /// exclamation
-    LEX_DQT   = '"',  /// double quote
-    LEX_MOD   = '%',
-    LEX_AND   = '&',
-    LEX_SQT   = '\'', /// single quote
-    LEX_LPA   = '(',
-    LEX_RPA   = ')',
-    LEX_MUL   = '*',
-    LEX_PLUS  = '+',
-    LEX_CMA   = ',',
-    LEX_MINUS = '-',
-    LEX_DOT   = '.',
-    LEX_DIV   = '/',
-    LEX_COL   = ':',
-    LEX_SMC   = ';',
-    LEX_LTN   = '<',
-    LEX_EQ    = '=',
-    LEX_GTN   = '>',
-    LEX_QST   = '?',
-    LEX_LBKT  = '[',
-    LEX_ESC   = '\\',
-    LEX_RBKT  = ']',
-    LEX_HAT   = '^',
-    LEX_LBRA  = '{',
-    LEX_OR    = '|',
-    LEX_RBRA  = '}',
-    LEX_TLD   = '~',
+	LEX_EOF = 0,
+	LEX_LF = '\r',
+	LEX_CR = '\n',
+	LEX_EXCLAMATION = '!',  /// exclamation
+	LEX_D_QUOTE = '"',  /// double quote
+	LEX_MOD = '%',
+	LEX_AND = '&',
+	LEX_S_QUOTE = '\'', /// single quote
+	LEX_L_PARENTHESIS = '(',
+	LEX_R_PARENTHESIS = ')',
+	LEX_MUL = '*',
+	LEX_PLUS = '+',
+	LEX_COMMA = ',',
+	LEX_MINUS = '-',
+	LEX_DOT = '.',
+	LEX_DIV = '/',
+	LEX_COL = ':',
+	LEX_SEMICOLON = ';',
+	LEX_L_THAN = '<',
+	LEX_EQ = '=',
+	LEX_G_THAN = '>',
+	LEX_QUESTION = '?',
+	LEX_L_BRAKET = '[',
+	LEX_ESC = '\\',
+	LEX_R_BRAKET = ']',
+	LEX_XOR = '^',
+	LEX_L_BRACE = '{',
+	LEX_OR = '|',
+	LEX_R_BRACE = '}',
+	LEX_TILDA = '~',
 	LEX_a = 'a',
 	LEX_n = 'n',
 	LEX_r = 'r',
@@ -148,11 +148,11 @@ enum class SCRIPTVAR_FLAGS {
 	SCRIPTVAR_NULL,
 };
 // 論理オペレータOR
-enum class SCRIPTVAR_FLAGS operator|(SCRIPTVAR_FLAGS L, SCRIPTVAR_FLAGS R);
+SCRIPTVAR_FLAGS operator|(SCRIPTVAR_FLAGS L, SCRIPTVAR_FLAGS R);
 // 論理オペレータ&
-enum class SCRIPTVAR_FLAGS operator&(SCRIPTVAR_FLAGS L, SCRIPTVAR_FLAGS R);
+SCRIPTVAR_FLAGS operator&(SCRIPTVAR_FLAGS L, SCRIPTVAR_FLAGS R);
 // 論理オペレータ~
-enum class SCRIPTVAR_FLAGS operator~(SCRIPTVAR_FLAGS L);
+SCRIPTVAR_FLAGS operator~(SCRIPTVAR_FLAGS L);
 
 enum class ExecuteModes
 {
@@ -182,14 +182,14 @@ public:
 	~CScriptLex(void);
 	wString* prBuffer;
 	int* prPos;
-    LEX_TYPES currCh;
-    LEX_TYPES nextCh;
+	LEX_TYPES currCh;
+	LEX_TYPES nextCh;
 	LEX_TYPES tk;                            ///< The type of the token that we have
 	int tokenStart;                          ///< Position in the data at the beginning of the token we have here
 	int tokenEnd;                            ///< Position in the data at the last character of the token we have here
 	int tokenLastEnd;                        ///< Position in the data at the last character of the last token
 	wString tkStr;                           ///< Data contained in the token we have here
-	void chkread(LEX_TYPES expected_tk);           ///< Lexical match wotsit
+	void match(LEX_TYPES expected_tk);           ///< Lexical match wotsit
 	static wString getTokenStr(LEX_TYPES token);   ///< Get the string representation of the given token
 	void reset();                            ///< Reset this lex so we can start again
 
@@ -204,12 +204,12 @@ protected:
 	   relevant string. This doesn't re-allocate and copy the string, but instead copies
 	   the data pointer and sets dataOwned to false, and dataStart/dataEnd to the relevant things. */
 	char* data;                              ///< Data wString to get tokens from
-    int  dataStart;         ///< Start and end position in data string
-    int  dataEnd;           ///< Start and end position in data string
+	int  dataStart;         ///< Start and end position in data string
+	int  dataEnd;           ///< Start and end position in data string
 	bool dataOwned;                          ///< Do we own this data string?
 
 
-    LEX_TYPES getNextCh();
+	LEX_TYPES getNextCh();
 	void getNextToken();                     ///< Get the text token from our text string
 	wString* headerBuf;                      ///buffer for header
 	int* printed;                            ///buffer already printed
@@ -385,7 +385,7 @@ public:
 	wString* headerBuf;
 
 private:
-	CScriptLex* l;             /// current lexer
+	CScriptLex* lex;             /// current lexer
 	std::vector<CScriptVar*> scopes; /// stack of scopes when parsing
 #ifdef TINYJS_CALL_STACK
 	std::vector<wString> call_stack; /// Names of places called so we can show when erroring

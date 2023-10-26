@@ -53,10 +53,10 @@ void js_print(CScriptVar* v, void* userdata) {
 	wString str = v->getParameter("text")->getString();
 	//printする前にヘッダを出力
 	//headerCheckPrint(js->socket, &(js->printed), js->headerBuf,1);
-    //出力すべきデータがない時にHeader出さないと再送されてループする
+	//出力すべきデータがない時にHeader出さないと再送されてループする
 	// ここでこのコードは必要。<?print();?>セミコロンがないとうまくいかない
 	js->FlushBuf();
-    int num = send(js->socket, str.c_str(), str.length(), 0);
+	int num = send(js->socket, str.c_str(), str.length(), 0);
 	if (num < 0) {
 		debug_log_output("Script Write Error at js_print");
 	}
@@ -161,9 +161,9 @@ void scStringSubstring(CScriptVar* c, void* userdata) {
 	int lo = c->getParameter("lo")->getInt();
 	int hi = c->getParameter("hi")->getInt();
 
-	int l = hi - lo;
-	if (l > 0 && lo >= 0 && lo + l <= (int)str.length())
-		c->getReturnVar()->setString(str.substr(lo, l));
+	int lex = hi - lo;
+	if (lex > 0 && lo >= 0 && lo + lex <= (int)str.length())
+		c->getReturnVar()->setString(str.substr(lo, lex));
 	else
 		c->getReturnVar()->setString("");
 }
@@ -333,10 +333,10 @@ void scIntegerToDateString(CScriptVar* c, void* userdata) {
 }
 void scStringDate(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
-	time_t t = time(NULL);
+	auto t = time(NULL);
 	char s[128];
 #ifdef linux
-    sprintf(s, "%ld", t);
+	sprintf(s, "%ld", t);
 #else
 	sprintf(s, "%lld", t);
 #endif
@@ -352,11 +352,11 @@ void scNKFConv(CScriptVar* c, void* userdata) {
 
 void scDBConnect(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
-        //接続DB名
+	//接続DB名
 	wString str = c->getParameter("dbn")->getString();
-        //DB接続文字列取得
+	//DB接続文字列取得
 	str = _DBConnect(str);
-	if (str.length()>0) {
+	if (str.length() > 0) {
 		//c->getParameter("this")->setString(str);
 		c->getReturnVar()->setString(str);
 	}

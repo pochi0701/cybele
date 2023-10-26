@@ -55,33 +55,6 @@ using namespace std;
 #define scReturnInt(a)      ( c->getReturnVar()->setInt(a) )
 #define scReturnDouble(a)   ( c->getReturnVar()->setDouble(a) )
 
-#ifndef linux
-#if 0
-double asinh(const double value)
-{
-	double returned;
-
-	if (value > 0)
-		returned = log(value + sqrt(value * value + 1));
-	else
-		returned = -log(-value + sqrt(value * value + 1));
-
-	return(returned);
-}
-
-double acosh(const double value)
-{
-	double returned;
-
-	if (value > 0)
-		returned = log(value + sqrt(value * value - 1));
-	else
-		returned = -log(-value + sqrt(value * value - 1));
-
-	return(returned);
-}
-#endif
-#endif
 
 //Math.abs(x) - returns absolute of given value
 void scMathAbs(CScriptVar* c, void* userdata) {
@@ -229,7 +202,7 @@ void scMathSinh(CScriptVar* c, void* userdata) {
 void scMathASinh(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(c);
 	IGNORE_PARAMETER(userdata);
-	scReturnDouble(asinh(scGetDouble("a")));
+	scReturnDouble(std::asinh(scGetDouble("a")));
 }
 
 //Math.cosh(a) - returns trig. hyperbolic cosine of given angle in radians
@@ -243,7 +216,7 @@ void scMathCosh(CScriptVar* c, void* userdata) {
 void scMathACosh(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(c);
 	IGNORE_PARAMETER(userdata);
-	scReturnDouble(acosh(scGetDouble("a")));
+	scReturnDouble(std::acosh(scGetDouble("a")));
 }
 
 //Math.tanh(a) - returns trig. hyperbolic tangent of given angle in radians
