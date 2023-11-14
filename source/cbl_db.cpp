@@ -82,7 +82,7 @@ map<wString, Database*>* connects;
 DBCatalog* catalog;
 /////////////////////////////////////////////////////////////////////////////
 //比較
-int compare(const wString arg1, const wString op, const wString arg2, const dataType type1, const dataType type2) {
+int compare(const wString& arg1, const wString& op, const wString& arg2, const dataType& type1, const dataType& type2) {
 	if (type1 == dataType::STRING && type2 == dataType::STRING) {
 		if (op == "=") return arg1 == arg2;
 		else if (op == ">") return arg1 > arg2;
@@ -205,13 +205,13 @@ public:
 	//条件配列生成
 	int conditionMatTables(Table* tbl, vector<char>& mat)
 	{
-		wString arg1;
-		wString arg2;
-		CMDS   typ1 = CMDS::TXAND;
-		CMDS   typ2 = CMDS::TXAND;
-		wString op;
-		wString rarg1;
-		wString rarg2;
+		//wString arg1;
+		//wString arg2;
+		//CMDS   typ1 = CMDS::TXAND;
+		//CMDS   typ2 = CMDS::TXAND;
+		//wString op;
+		//wString rarg1;
+		//wString rarg2;
 		int  Tblno1 = -1;
 		int  Tblno2 = -1;
 		Table* colTbl1 = NULL;
@@ -248,11 +248,11 @@ public:
 				return -1;
 			}
 			//条件のコピー
-			arg1 = cond.cond[ptr + 1];
-			typ1 = cond.type[ptr + 1];
-			op = cond.cond[ptr + 2];
-			arg2 = cond.cond[ptr + 3];
-			typ2 = cond.type[ptr + 3];
+			auto arg1 = cond.cond[ptr + 1];
+			auto typ1 = cond.type[ptr + 1];
+			auto op = cond.cond[ptr + 2];
+			auto arg2 = cond.cond[ptr + 3];
+			auto typ2 = cond.type[ptr + 3];
 			//自テーブルカラムチェック
 			for (unsigned int i = 0; i < Column.size(); i++) {
 				int    idx = Column[i].first;
@@ -296,8 +296,8 @@ public:
 				continue;
 			}
 			//値は取れた
-			rarg1 = arg1;
-			rarg2 = arg2;
+			auto rarg1 = arg1;
+			auto rarg2 = arg2;
 			//自テーブル全行について
 			int ncnt = 0;
 			wString work;
@@ -437,7 +437,7 @@ public:
 	}
 	/////////////////////////////////////////////////////////////////////////////
 	//並べ替え
-	void OrderBy(wString targetColumn, orderType type) {
+	void OrderBy(const wString& targetColumn, orderType type) {
 		//Nodeから順列を抽出し、indexを作り反映する
 		for (unsigned int i = 0; i < Column.size(); i++) {
 			int tblno = Column[i].second;
@@ -1143,7 +1143,7 @@ Table::Table(const char* myname, const char* mycolumn) {
 }
 /////////////////////////////////////////////////////////////////////////////
 //String配列からテーブル作成
-Table::Table(const wString myname, const vector<wString>& mycolumn) {
+Table::Table(const wString& myname, const vector<wString>& mycolumn) {
 	//クリティカルセクション初期化
 	ref = 0;
 	changed = false;
@@ -1167,7 +1167,7 @@ Table::Table(const wString myname, const vector<wString>& mycolumn) {
 }
 /////////////////////////////////////////////////////////////////////////////
 //カラム情報からテーブル作成
-Table::Table(const wString myname, const vector<Column*> mycolumn) {
+Table::Table(const wString& myname, const vector<Column*>& mycolumn) {
 	//クリティカルセクション初期化
 	ref = 0;
 	changed = false;
@@ -2447,7 +2447,7 @@ int DBCatalog::DBClose(Database* db) {
 }
 ////////////////////////////////////////////////////////////////////////////
 //新規にDB作成
-Database* DBCatalog::DBCreate(wString DBName) {
+Database* DBCatalog::DBCreate(const wString& DBName) {
 	if (dblist.count(DBName)) {
 		err("database already exists");
 		return NULL;

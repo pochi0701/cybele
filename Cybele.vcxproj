@@ -205,7 +205,6 @@
   <ItemGroup>
     <ClCompile Include="source\AboutDlg.cpp" />
     <ClCompile Include="source\alt_time.cpp" />
-    <ClCompile Include="source\cbl_base64.cpp" />
     <ClCompile Include="source\cbl_cgi.cpp" />
     <ClCompile Include="source\cbl_db.cpp" />
     <ClCompile Include="source\cbl_http.cpp" />

@@ -50,7 +50,7 @@ extern vector<multipart*> mp;
 void js_print(CScriptVar* v, void* userdata) {
 	CTinyJS* js = static_cast<CTinyJS*>(userdata);
 	//残りのバッファ出力(ヘッダもチェック)
-	wString str = v->getParameter("text")->getString();
+	wString str(v->getParameter("text")->getString());
 	//printする前にヘッダを出力
 	//headerCheckPrint(js->socket, &(js->printed), js->headerBuf,1);
 	//出力すべきデータがない時にHeader出さないと再送されてループする
@@ -490,6 +490,20 @@ void scEncodeURI(CScriptVar* c, void* userdata) {
 	uri = uri.uri_encode();
 	c->getReturnVar()->setString(uri);
 }
+//btoa
+void scBtoa(CScriptVar* c, void* userdata) {
+	IGNORE_PARAMETER(userdata);
+	wString str = c->getParameter("str")->getString();
+	str = str.unbase64();
+	c->getReturnVar()->setString(str);
+}
+//atob
+void scAtob(CScriptVar* c, void* userdata) {
+	IGNORE_PARAMETER(userdata);
+	wString str = c->getParameter("str")->getString();
+	str = str.base64();
+	c->getReturnVar()->setString(str);
+}
 //dirname
 void scDirname(CScriptVar* c, void* userdata) {
 	IGNORE_PARAMETER(userdata);
@@ -809,6 +823,8 @@ void registerFunctions(CTinyJS* tinyJS) {
 	tinyJS->addNative("function Integer.parseInt(str)", scIntegerParseInt, 0); // wString to int
 	tinyJS->addNative("function Integer.valueOf(str)", scIntegerValueOf, 0); // value of a single character
 	tinyJS->addNative("function encodeURI(uri)", scEncodeURI, 0);
+	tinyJS->addNative("function btoa(str)", scBtoa, 0);
+	tinyJS->addNative("function atob(str)", scAtob, 0);
 	tinyJS->addNative("function dirname(uri)", scDirname, 0);
 	tinyJS->addNative("function basename(uri)", scBasename, 0);
 	tinyJS->addNative("function String.indexOf(search)", scStringIndexOf, 0); // find the position of a wString in a string, -1 if not

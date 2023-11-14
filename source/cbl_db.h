@@ -149,9 +149,9 @@ public:
 	//CSVからテーブル作成
 	Table(const char* myname, const char* mycolumn);
 	//String配列からテーブル作成
-	Table(const wString myname, const vector<wString>& mycolumn);
+	Table(const wString& myname, const vector<wString>& mycolumn);
 	//カラム情報からテーブル作成
-	Table(const wString myname, const vector<Column*> mycolumn);
+	Table(const wString& myname, const vector<Column*>& mycolumn);
 	void copy(Table* tbl);
 	//デストラクタ
 	~Table();
@@ -227,7 +227,7 @@ public:
 	int DBClose(Database* db);
 	////////////////////////////////////////////////////////////////////////////
 	//新規にDB作成
-	Database* DBCreate(const wString DBName);
+	Database* DBCreate(const wString& DBName);
 	////////////////////////////////////////////////////////////////////////////
 	//DBクローズ
 	void DBClose(const wString& DBName);

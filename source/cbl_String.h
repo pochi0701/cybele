@@ -60,7 +60,7 @@ public:
 	void     operator+=(const char ch);
 	void     operator+=(const wString& str);
 	void     operator+=(const char* str);
-	char     operator[](unsigned int index) const;
+	char     operator[](int index) const;
 	//STRING FUNCTION
 	bool            starts_with(const char* str);
 	bool            ends_with(const char* str);

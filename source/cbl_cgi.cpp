@@ -157,6 +157,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 	wString script2;
 	wString script3;
 	wString script4;
+
 	javaScriptThread.root->addChild("_SERVER", new CScriptVar(TINYJS_BLANK_DATA, SCRIPTVAR_FLAGS::SCRIPTVAR_OBJECT));
 	javaScriptThread.root->addChild("_GET", new CScriptVar(TINYJS_BLANK_DATA, SCRIPTVAR_FLAGS::SCRIPTVAR_OBJECT));
 	javaScriptThread.root->addChild("_COOKIE", new CScriptVar(TINYJS_BLANK_DATA, SCRIPTVAR_FLAGS::SCRIPTVAR_OBJECT));
@@ -304,7 +305,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 					wString text(st);
 					wString st2 = text.strsplit("\"");
 					mp[i]->content = ptr;
-					mp[i]->length = static_cast<int>(ed - ptr) - static_cast<int>(strlen(boundary)) - 4;
+					mp[i]->length = static_cast<int>(ed - ptr) - static_cast<int>(strlen(boundary)) - 6;
 					tmp.set_binary(mp[i]->content, mp[i]->length);
 					//wString ttmp = tmp.dump();
 					if (st2.get_list_string(0).starts_with(CONTENT_DISPOSITION))
@@ -316,11 +317,18 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 						}
 					}
 					// ファイル名がない場合にはname=valueに変換
+					wString content;
+					content.set_binary(mp[i]->content, mp[i]->length);
 					if (strlen(mp[i]->fileName) == 0)
 					{
-						wString content;
-						content.set_binary(mp[i]->content, mp[i]->length);
-						script4 += const_cast<char*>("var _post.") + wString(mp[i]->name) + const_cast<char*>("=\"") + wString::escape(content.trim().uri_decode()) + const_cast<char*>("\";");
+						script4 += const_cast<char*>("var _POST.") + wString(mp[i]->name) + const_cast<char*>("=\"") + wString::escape(content.trim().uri_decode()) + const_cast<char*>("\";");
+					}
+					else {
+						char tmp_buffer[8];
+						script4 += const_cast<char*>("var _POST.") + wString(mp[i]->name) + const_cast<char*>(".filebody=\"") + wString(content.base64()) + const_cast<char*>("\";");
+						script4 += const_cast<char*>("var _POST.") + wString(mp[i]->name) + const_cast<char*>(".filename=\"") + wString::escape(mp[i]->fileName) + const_cast<char*>("\";");
+						sprintf(tmp_buffer, "%d", mp[i]->length);
+						script4 += const_cast<char*>("var _POST.") + wString(mp[i]->name) + const_cast<char*>(".length=") + wString(tmp_buffer) + const_cast<char*>(";");
 					}
 				}
 				if (script4.length()) {

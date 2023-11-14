@@ -57,7 +57,7 @@
 /// <param name="string">検索対象となる文字列</param>
 /// <param name="pattern">文字列から検索する文字列</param>
 /// <returns></returns>
-char* // 文字列へのポインタ
+char*
 strrstr(const char* string, const char* pattern)
 {
 	// 文字列終端に達するまで検索を繰り返す。
@@ -419,14 +419,14 @@ void wString::operator=(const double num)
 /// </summary>
 /// <param name="index">参照する添え字</param>
 /// <returns>参照した1バイトの値</returns>
-char wString::operator[](unsigned int index) const
+char wString::operator[](int index) const
 {
-	if (index < len) {
+	if (index >= 0 && index < static_cast<int>(len)) {
 		return String[index];
 	}
 	else {
-		perror("out bound");
-		return -1;
+		//perror("out bound");
+		return 0;
 	}
 }
 ///---------------------------------------------------------------------------
@@ -3000,7 +3000,13 @@ wString& wString::replace(int index, unsigned int slen, const wString& repstr)
 wString wString::base64(void)
 {
 	wString tmpout;
-	unsigned char* instr = reinterpret_cast<unsigned char*>(String);
+	wString work(len + 3);
+	memcpy((void*)work.String, String, len);
+	work.String[len] = 0;
+	work.String[len + 1] = 0;
+	work.String[len + 2] = 0;
+
+	unsigned char* instr = reinterpret_cast<unsigned char*>(work.String);
 	unsigned char ch = 0;
 	int count = 0;
 	/*
@@ -3008,7 +3014,9 @@ wString wString::base64(void)
 		-> 010000 010100 001001 000011
 		   10 14 09 03
 	*/
-	while (*instr) {
+	/// 文字数*8ビットから1回あたり６ビットとる。残りビットがある間処理を行う
+	for (int i = len * 8; i > 0; i -= 6) {
+		ch = 0;
 		switch (count) {
 		case 0:
 			ch = (unsigned char)((*instr >> 2) & 0x3f);
@@ -3033,6 +3041,7 @@ wString wString::base64(void)
 	while (count-- > 0) {
 		tmpout += '=';
 	}
+	//tmpout += '\0';
 	return tmpout;
 }
 /// <summary>
@@ -3046,6 +3055,7 @@ wString wString::unbase64(void)
 
 	char FromBase64tbl[256] = {};
 	wString tmpout;
+	tmpout.clear();
 	//逆テーブルの作成,=も０になる
 	for (unsigned int i = 0; i < sizeof(ToBase64tbl); i++) {
 		FromBase64tbl[(int)ToBase64tbl[i]] = (unsigned char)i;
@@ -3056,15 +3066,28 @@ wString wString::unbase64(void)
 	->   010000 010100 001001 000011
 	10 14 09 03
 	*/
-	while (*instr) {
+	int ll = len;
+	char ch;
+	while (ll > 0) {
 		int s1 = FromBase64tbl[*instr++];
 		int s2 = FromBase64tbl[*instr++];
 		int s3 = FromBase64tbl[*instr++];
 		int s4 = FromBase64tbl[*instr++];
-		tmpout += (char)((s1 << 2) | (s2 >> 4));
-		tmpout += (char)(((s2 & 0x0f) << 4) | (s3 >> 2));
-		tmpout += (char)(((s3 & 0x03) << 6) | s4);
+		ch = (char)((s1 << 2) | (s2 >> 4));
+		if (ch) {
+			tmpout += ch;
+			ch = (char)(((s2 & 0x0f) << 4) | (s3 >> 2));
+			if (ch) {
+				tmpout += ch;
+				ch = (char)(((s3 & 0x03) << 6) | s4);
+				if (ch) {
+					tmpout += ch;
+				}
+			}
+		}
+		ll -= 4;
 	}
+	//tmpout += '\0';
 	return tmpout;
 }
 
@@ -3339,9 +3362,3 @@ wString wString::jpeg_size(const wString& jpeg_filename)
 	tmp.sprintf("{\"x\":%d,\"y\":%d}", x, y);
 	return tmp;
 }
-
-
-
-
-
-

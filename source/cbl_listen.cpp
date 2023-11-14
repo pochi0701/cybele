@@ -195,7 +195,7 @@ void thread_process(ACCESS_INFO& ac_in)
 	debug_log_output("\n\n=============================================================\n");
 	debug_log_output("Socket Accept!!(accept_socket=%d)\n", accept_socket);
 	//child_count ++;
-	rand();
+	std::ignore = rand();
 	// caddr 情報表示
 	debug_log_output("client addr = %s\n", inet_ntoa(caddr.sin_addr));
 	debug_log_output("client port = %d\n", ntohs(caddr.sin_port));

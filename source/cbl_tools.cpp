@@ -89,7 +89,8 @@ void* memmem(const void* haystack, size_t haystacklen, const void* needle, size_
 		return (void*)begin;
 	}
 
-	for (; begin <= last; begin++) {
+	for (; begin < last; begin++) {
+		/// １文字検査して合致するならメモリブロック一致検査
 		if (*begin == *static_cast<const char*>(needle) && memcmp(begin, needle, needlelen) == 0) {
 			return (void*)begin;
 		}
