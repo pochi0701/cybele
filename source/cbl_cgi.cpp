@@ -273,7 +273,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 				// 一覧の先頭と個数を取得
 				while (true)
 				{
-					start = static_cast<char*>(memmem(start, start - script3.c_str() + script3.length(), boundary, strlen(boundary)));
+					start = static_cast<char*>(memmem(start, (script3.c_str() - start)+ script3.length(), boundary, strlen(boundary)));
 					if (start == NULL)
 					{
 						break;

@@ -57,8 +57,7 @@
 /// <param name="string">検索対象となる文字列</param>
 /// <param name="pattern">文字列から検索する文字列</param>
 /// <returns></returns>
-char*
-strrstr(const char* string, const char* pattern)
+char* strrstr(const char* string, const char* pattern)
 {
 	// 文字列終端に達するまで検索を繰り返す。
 	const char* last = NULL;
@@ -392,7 +391,7 @@ void wString::operator=(const char* str)
 	len = newLen;
 	return;
 }
-//---------------------------------------------------------------------------
+///---------------------------------------------------------------------------
 /// <summary>
 /// 整数の文字列化
 /// </summary>
@@ -402,7 +401,7 @@ void wString::operator=(const int num)
 	this->sprintf("%d", num);
 	return;
 }
-//---------------------------------------------------------------------------
+///---------------------------------------------------------------------------
 /// <summary>
 /// 実数の文字列化
 /// </summary>
@@ -581,12 +580,12 @@ int wString::find(const char* str, int index) const
 /// <returns>見つかった場合先頭からの文字位置（0スタート)、見つからなかった場合wString:npos</returns>
 int wString::find(char ch, int index) const
 {
-	char* ptr = strchr(String + index, ch);
+	auto ptr = strchr(String + index, ch);
 	if (ptr == NULL) {
 		return npos;
 	}
 	else {
-		return (int)(ptr - String);
+		return static_cast<int>((ptr - String));
 	}
 }
 /// <summary>
@@ -597,12 +596,12 @@ int wString::find(char ch, int index) const
 /// <returns>見つかった場合先頭からの文字位置（0スタート)、見つからなかった場合wString:npos</returns>
 int wString::rfind(const wString& str, int index) const
 {
-	char* ptr = strrstr(String + index, str.String);
+	auto ptr = strrstr(String + index, str.String);
 	if (ptr == NULL) {
 		return npos;
 	}
 	else {
-		return (int)(ptr - String);
+		return static_cast<int>((ptr - String));
 	}
 }
 ///---------------------------------------------------------------------------
@@ -614,12 +613,12 @@ int wString::rfind(const wString& str, int index) const
 /// <returns>成功：文字位置 失敗:wString::npos</returns>
 int wString::rfind(const char* str, int index) const
 {
-	char* ptr = strrstr(String + index, str);
+	auto ptr = strrstr(String + index, str);
 	if (ptr == NULL) {
 		return npos;
 	}
 	else {
-		return (int)(ptr - String);
+		return static_cast<int>((ptr - String));
 	}
 }
 ///---------------------------------------------------------------------------
@@ -631,12 +630,12 @@ int wString::rfind(const char* str, int index) const
 /// <returns>成功：文字位置 失敗:wString::npos</returns>
 int wString::rfind(char ch, int index) const
 {
-	char* ptr = strrchr(String + index, ch);
+	auto ptr = strrchr(String + index, ch);
 	if (ptr == NULL) {
 		return npos;
 	}
 	else {
-		return (int)(ptr - String);
+		return static_cast<int>((ptr - String));
 	}
 }
 //---------------------------------------------------------------------------
