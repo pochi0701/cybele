@@ -1,17 +1,25 @@
-# cybele
-cybele is Apprication Server for JavaScript and in memory SQL. Work on Windows and Linux.
+# Lightweight Web Servers
+- Built-in JavaScript in the server-side language
+- SQL already implemented
+- Just download and start, no installation required, ready to go in 10 seconds.
+
+List of Functions
+1. Web Editor
+1. SQL (values returned in JSON)
+1. Markdown file support
+1. Video streaming available
 
 ## ver. 202104
-  neon.cxとリンクしてグローバルIPの取得
-  neon.cx/ua/server.php等UA認証対応サイトが見られるようになる。
+Obtaining a Global IP
+Original server authentication implementation
   
 ## ver. 202207
-  bootstrap5 に対応
+Changed UI to bootstrap5
 
 ## ver. 202208
-  db実行のバグフィックス
-  フォルダ構成変更
+Bug fixes in db
+
 
 ## Ver. 202308
-  マークダウン対応
-  フォルダ構成等調整
+Markdown file display available
+Modified scripts, folders, etc.
