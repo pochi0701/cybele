@@ -46,7 +46,9 @@ unsigned int __stdcall batch(void* ptr)
 {
     IGNORE_PARAMETER(ptr);
     char script_filename[128];
-    sprintf( script_filename,"%s%s", "/system/tools","/setip.jss");
+    char tbuffer[256];
+    GetCurrentDirectory (256, tbuffer);
+    sprintf( script_filename,"%s%s%s", tbuffer, "/system/tools","/setip.jss");
     
     while(loop_flag){
         //イベントが合致したら指定jssを起動

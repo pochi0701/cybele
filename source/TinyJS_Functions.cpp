@@ -590,24 +590,32 @@ void scFileDate(CScriptVar* c, void* userdata) {
 }
 //ファイル内容取得
 void scLoadFromFile(CScriptVar* c, void* userdata) {
-	IGNORE_PARAMETER(userdata);
-	wString path = c->getParameter("path")->getString();
+
+	IGNORE_PARAMETER (userdata);
+	wString path = c->getParameter ("path")->getString ();
 	wString data;
-	if (path.file_exists())
-	{
-		data.load_from_file(path);
-		c->getReturnVar()->setString(data);
-	}
-	else {
-		//for (auto i = 0; i < mp.size() - 1; i++)
-		//{
-		//	if (path == mp[i]->name)
-		//	{
-		//		break;
-		//	}
-		//}
-		//data.load_from_file(path,)
-	}
+	data.load_from_file (path);
+	c->getReturnVar ()->setString (data);
+
+	// DO NOT USE path.file_exists()
+	//IGNORE_PARAMETER(userdata);
+	//wString path = c->getParameter("path")->getString();
+	//wString data;
+	//if (path.file_exists())
+	//{
+	//	data.load_from_file(path);
+	//	c->getReturnVar()->setString(data);
+	//}
+	//else {
+	//	//for (auto i = 0; i < mp.size() - 1; i++)
+	//	//{
+	//	//	if (path == mp[i]->name)
+	//	//	{
+	//	//		break;
+	//	//	}
+	//	//}
+	//	//data.load_from_file(path,)
+	//}
 
 	//c->getReturnVar()->setString(data);
 }
