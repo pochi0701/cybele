@@ -1182,16 +1182,10 @@ const wString& CScriptVar::getString() {
 	/* Because we can't return a wString that is generated on demand.
 	 * I should really just use char* :) */
 	if (isInt()) {
-		//char buffer[32];
-		//snprintf(buffer, sizeof(buffer), "%ld", intData);
-		//data = buffer;
 		data.sprintf("%ld", intData);
 		return data;
 	}
 	if (isDouble()) {
-		//char buffer[32];
-		//snprintf(buffer, sizeof(buffer), "%f", doubleData);
-		//data = buffer;
 		data.sprintf("%f", doubleData);
 		return data;
 	}
@@ -1225,9 +1219,7 @@ void CScriptVar::setString(const wString& str) {
 	doubleData = 0;
 }
 
-/// <summary>
-/// undefinedの値を設定
-/// </summary>
+/// <summary>undefinedの値を設定</summary>
 void CScriptVar::setUndefined() {
 	// name sure it's not still a number or integer
 	flags = flags & ~SCRIPTVAR_FLAGS::SCRIPTVAR_VARTYPEMASK | SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED;
@@ -1237,9 +1229,7 @@ void CScriptVar::setUndefined() {
 	removeAllChildren();
 }
 
-/// <summary>
-/// 配列を設定
-/// </summary>
+/// <summary>配列を設定</summary>
 void CScriptVar::setArray() {
 	// name sure it's not still a number or integer
 	flags = (flags & ~SCRIPTVAR_FLAGS::SCRIPTVAR_VARTYPEMASK) | SCRIPTVAR_FLAGS::SCRIPTVAR_ARRAY;
@@ -1395,7 +1385,8 @@ void CScriptVar::copyValue(CScriptVar* val) {
 			// don't copy the 'parent' object...
 			if (child->name != TINYJS_PROTOTYPE_CLASS) {
 				copied = child->var->deepCopy();
-			}else {
+			}
+			else {
 				copied = child->var;
 			}
 
@@ -1897,10 +1888,12 @@ CScriptVarLink* CTinyJS::functionCall(bool& execute, CScriptVarLink* function, C
 		delete functionRoot;
 		if (returnVar) {
 			return returnVar;
-		}else {
+		}
+		else {
 			return new CScriptVarLink(new CScriptVar());
 		}
-	}else {
+	}
+	else {
 		// function, but not executing - just parse args and be done
 		lex->match(LEX_TYPES::LEX_L_PARENTHESIS);
 		while (lex->tk != LEX_TYPES::LEX_R_PARENTHESIS) {
@@ -2421,7 +2414,8 @@ LEX_TYPES  CTinyJS::statement(bool& execute) {
 		lex->match(LEX_TYPES::LEX_SEMICOLON);
 		if (execute) {
 		return LEX_TYPES::LEX_R_BREAK;
-		}		else {
+		}
+		else {
 			return LEX_TYPES::LEX_EOF;
 		}
 	}
@@ -2431,7 +2425,8 @@ LEX_TYPES  CTinyJS::statement(bool& execute) {
 		if (execute)
 		{
 		return LEX_TYPES::LEX_R_CONTINUE;
-		}		else {
+		}
+		else {
 			return LEX_TYPES::LEX_EOF;
 		}
 	}

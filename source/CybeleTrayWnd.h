@@ -8,6 +8,13 @@ class CCybeleTrayWnd : public CTrayWnd
 {
 private:
 	HICON m_hIcon_main;
+	void    CblStart (void);
+	void    CblStop (void);
+	// exe起動時Cybeleスタートさせるかフラグ
+	//bool    start_flag;
+	//bool    cbl_run_flag;
+	HANDLE  threadHandle;
+	DWORD   id;
 protected:
 	void DoLButtonClick();
 	void DoRButtonClick();
@@ -16,6 +23,7 @@ protected:
 	DECLARE_DYNAMIC(CCybeleTrayWnd)
 
 public:
+	int serverPort;
 	CCybeleTrayWnd();
 	virtual ~CCybeleTrayWnd();
 
@@ -26,13 +34,7 @@ public:
 	afx_msg void OnAppAbout();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
-	void    CblStart(void);
-	void    CblStop(void);
-	// exe起動時Cybeleスタートさせるかフラグ
-	bool    start_flag;
-	bool    cbl_run_flag;
-	HANDLE  threadHandle;
-	DWORD   id;
+
 };
 
 

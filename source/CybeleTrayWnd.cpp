@@ -51,10 +51,14 @@ bool CCybeleTrayWnd::GetMacAddr(char* MAC_ADDR)
 }
 #endif
 //---------------------------------------------------------------------------
-void CCybeleTrayWnd::CblStart(void)
+void CCybeleTrayWnd::CblStart()
 {
 	threadHandle = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)Cybelemain, NULL, 0, &id);
-	cbl_run_flag = true;   // Cybele起動フラグON
+	//cbl_run_flag = true;   // Cybele起動フラグON
+	char work[256];
+	sprintf_s (work, 256, "start http://127.0.0.1:%d/", serverPort);
+	system (work);
+	//ShellExecute(NULL, "open", "http://127.0.0.1:8000/", NULL, NULL, SW_SHOW);
 }
 //---------------------------------------------------------------------------
 void CCybeleTrayWnd::CblStop(void)
@@ -78,11 +82,11 @@ void CCybeleTrayWnd::CblStop(void)
 	}
 	CloseHandle(threadHandle);
 	threadHandle = (HANDLE)NULL;
-	cbl_run_flag = false;   //Cybele起動フラグOFF
+	//cbl_run_flag = false;   //Cybele起動フラグOFF
 }
-CCybeleTrayWnd::CCybeleTrayWnd() :
-	m_hIcon_main(NULL)
+CCybeleTrayWnd::CCybeleTrayWnd() :	m_hIcon_main(NULL)
 {
+	serverPort = 8000;
 	//threadHandle = NULL;
 	OleInitialize(NULL);
 	//MacAddrの設定
@@ -91,8 +95,6 @@ CCybeleTrayWnd::CCybeleTrayWnd() :
 	//サーバ起動
 	CblStart();
 	//ブラウザ起動
-	system("start http://127.0.0.1:8000/");
-	//ShellExecute(NULL, "open", "http://127.0.0.1:8000/", NULL, NULL, SW_SHOW);
 #if 0
 	//最初がいいからここでＰＲＯＸＹ設定すっかな。
 	//ついでにFireWall登録しちゃうわｗ
