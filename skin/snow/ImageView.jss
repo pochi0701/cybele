@@ -13,12 +13,10 @@ url = _GET.url;
 </head>
 <body>
     <div class="container">
+        <button type="button" class="btn btn-primary" onClick="history.back();">戻る</button>
         <div align="center">
             <img src="<?print(url);?>" alt="zoom" />
         </div>
-        <form>
-            <input type="button" class="btn btn-primary" value="戻る" onClick="history.back();">
-        </form>
     </div>
 </body>
 </html>

@@ -231,6 +231,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Cybele.ico" />
+    <Image Include="res\favicon.ico" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Cybele.rc" />
@@ -239,6 +240,7 @@
     <None Include="res\Cybele.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="source\AboutDlg.h" />
     <ClInclude Include="source\alt_time.h" />
     <ClInclude Include="source\cbl.h" />

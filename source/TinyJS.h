@@ -42,7 +42,8 @@
 using namespace std;
 const int TINYJS_LOOP_MAX_ITERATIONS = 8192;
 extern map<wString, wString>* session;
-enum class  LEX_TYPES {
+enum class  LEX_TYPES
+{
 	LEX_EOF = 0,
 	LEX_LF = '\r',
 	LEX_CR = '\n',
@@ -125,7 +126,8 @@ enum class  LEX_TYPES {
 	LEX_R_LIST_END /* always the last entry */
 };
 
-enum class SCRIPTVAR_FLAGS {
+enum class SCRIPTVAR_FLAGS
+{
 	SCRIPTVAR_UNDEFINED = 0,
 	SCRIPTVAR_FUNCTION = 1,
 	SCRIPTVAR_OBJECT = 2,
@@ -166,20 +168,21 @@ enum class ExecuteModes
 #define TINYJS_BLANK_DATA ""
 
 /// convert the given wString into a quoted string suitable for javascript
-wString getJSString(const wString& str);
+wString getJSString (const wString& str);
 
-class CScriptException {
+class CScriptException
+{
 public:
 	wString text;
-	explicit CScriptException(const wString& exceptionText);
+	explicit CScriptException (const wString& exceptionText);
 };
 
 class CScriptLex
 {
 public:
-	CScriptLex(SOCKET mysocket, int* myprinted, wString* myheaderBuf, const wString& input, ExecuteModes executeMode, wString* myPrBuffer, int* myPrPos);
-	CScriptLex(SOCKET mysocket, int* myprinted, wString* myheaderBuf, CScriptLex* owner, int startChar, int endChar, wString* myPrBuffer, int* myPrPos);
-	~CScriptLex(void);
+	CScriptLex (SOCKET mysocket, int* myprinted, wString* myheaderBuf, const wString& input, ExecuteModes executeMode, wString* myPrBuffer, int* myPrPos);
+	CScriptLex (SOCKET mysocket, int* myprinted, wString* myheaderBuf, CScriptLex* owner, int startChar, int endChar, wString* myPrBuffer, int* myPrPos);
+	~CScriptLex (void);
 	wString* prBuffer;
 	int* prPos;
 	LEX_TYPES currCh;
@@ -189,14 +192,14 @@ public:
 	int tokenEnd;                            ///< Position in the data at the last character of the token we have here
 	int tokenLastEnd;                        ///< Position in the data at the last character of the last token
 	wString tkStr;                           ///< Data contained in the token we have here
-	void match(LEX_TYPES expected_tk);           ///< Lexical match wotsit
-	static wString getTokenStr(LEX_TYPES token);   ///< Get the string representation of the given token
-	void reset();                            ///< Reset this lex so we can start again
+	void match (LEX_TYPES expected_tk);           ///< Lexical match wotsit
+	static wString getTokenStr (LEX_TYPES token);   ///< Get the string representation of the given token
+	void reset ();                            ///< Reset this lex so we can start again
 
-	wString getSubString(int pos);           ///< Return a sub-string from the given position up until right now
-	CScriptLex* getSubLex(int lastPosition); ///< Return a sub-lexer from the given position up until right now
+	wString getSubString (int pos);           ///< Return a sub-string from the given position up until right now
+	CScriptLex* getSubLex (int lastPosition); ///< Return a sub-lexer from the given position up until right now
 
-	wString getPosition(int pos = -1);         ///< Return a string representing the position in lines and columns of the character pos given
+	wString getPosition (int pos = -1);         ///< Return a string representing the position in lines and columns of the character pos given
 	int  dataPos;                            ///< Position in data (we CAN go past the end of the wString here)
 
 protected:
@@ -209,8 +212,8 @@ protected:
 	bool dataOwned;                          ///< Do we own this data string?
 
 
-	LEX_TYPES getNextCh();
-	void getNextToken();                     ///< Get the text token from our text string
+	LEX_TYPES getNextCh ();
+	void getNextToken ();                     ///< Get the text token from our text string
 	wString* headerBuf;                      ///buffer for header
 	int* printed;                            ///buffer already printed
 	SOCKET  socket;                          ///socket to output
@@ -233,13 +236,13 @@ public:
 	CScriptVar* var;            //変数の実体
 	bool           owned;       //作成者?
 
-	CScriptVarLink(CScriptVar* var, const wString& name = TINYJS_TEMP_NAME);
-	CScriptVarLink(const CScriptVarLink& link); ///< Copy constructor
-	~CScriptVarLink();
-	void replaceWith(CScriptVar* newVar); ///< Replace the Variable pointed to
-	void replaceWith(CScriptVarLink* newVar); ///< Replace the Variable pointed to (just dereferences)
-	int getIntName(); ///< Get the name as an integer (for arrays)
-	void setIntName(int n); ///< Set the name as an integer (for arrays)
+	CScriptVarLink (CScriptVar* var, const wString& name = TINYJS_TEMP_NAME);
+	CScriptVarLink (const CScriptVarLink& link); ///< Copy constructor
+	~CScriptVarLink ();
+	void replaceWith (CScriptVar* newVar); ///< Replace the Variable pointed to
+	void replaceWith (CScriptVarLink* newVar); ///< Replace the Variable pointed to (just dereferences)
+	int getIntName (); ///< Get the name as an integer (for arrays)
+	void setIntName (int n); ///< Set the name as an integer (for arrays)
 };
 
 /// <summary>
@@ -251,70 +254,70 @@ public:
 	CScriptVarLink* firstChild;
 	CScriptVarLink* lastChild;
 
-	CScriptVar(); ///< Create undefined
-	CScriptVar(const wString& varData, SCRIPTVAR_FLAGS varFlags); ///< User defined
-	explicit CScriptVar(const wString& str); ///< Create a string
-	explicit CScriptVar(double varData);
-	explicit CScriptVar(int val);
-	explicit CScriptVar(bool val);
-	~CScriptVar(void);
+	CScriptVar (); ///< Create undefined
+	CScriptVar (const wString& varData, SCRIPTVAR_FLAGS varFlags); ///< User defined
+	explicit CScriptVar (const wString& str); ///< Create a string
+	explicit CScriptVar (double varData);
+	explicit CScriptVar (int val);
+	explicit CScriptVar (bool val);
+	~CScriptVar (void);
 
-	CScriptVar* getReturnVar(); ///< If this is a function, get the result value (for use by native functions)
-	void setReturnVar(CScriptVar* var); ///< Set the result value. Use this when setting complex return data as it avoids a deepCopy()
-	CScriptVar* getParameter(const wString& name); ///< If this is a function, get the parameter with the given name (for use by native functions)
+	CScriptVar* getReturnVar (); ///< If this is a function, get the result value (for use by native functions)
+	void setReturnVar (CScriptVar* var); ///< Set the result value. Use this when setting complex return data as it avoids a deepCopy()
+	CScriptVar* getParameter (const wString& name); ///< If this is a function, get the parameter with the given name (for use by native functions)
 
-	CScriptVarLink* findChild(const wString& childName); ///< Tries to find a child with the given name, may return 0
-	CScriptVarLink* findChildOrCreate(const wString& childName, SCRIPTVAR_FLAGS varFlags = SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED); ///< Tries to find a child with the given name, or will create it with the given flags
-	CScriptVarLink* findChildOrCreateByPath(const wString& path); ///< Tries to find a child with the given path (separated by dots)
-	CScriptVarLink* addChild(const wString& childName, CScriptVar* child = NULL);
-	CScriptVarLink* addChildNoDup(const wString& childName, CScriptVar* child = NULL); ///< add a child overwriting any with the same name
-	void removeChild(const CScriptVar* child);
-	void removeLink(CScriptVarLink* link); ///< Remove a specific link (this is faster than finding via a child)
-	void removeAllChildren();
-	CScriptVar* getArrayIndex(int idx); ///< The the value at an array index
-	void setArrayIndex(int idx, CScriptVar* value); ///< Set the value at an array index
-	int getArrayLength(); ///< If this is an array, return the number of items in it (else 0)
-	int getChildren(); ///< Get the number of children
+	CScriptVarLink* findChild (const wString& childName); ///< Tries to find a child with the given name, may return 0
+	CScriptVarLink* findChildOrCreate (const wString& childName, SCRIPTVAR_FLAGS varFlags = SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED); ///< Tries to find a child with the given name, or will create it with the given flags
+	CScriptVarLink* findChildOrCreateByPath (const wString& path); ///< Tries to find a child with the given path (separated by dots)
+	CScriptVarLink* addChild (const wString& childName, CScriptVar* child = NULL);
+	CScriptVarLink* addChildNoDup (const wString& childName, CScriptVar* child = NULL); ///< add a child overwriting any with the same name
+	void removeChild (const CScriptVar* child);
+	void removeLink (CScriptVarLink* link); ///< Remove a specific link (this is faster than finding via a child)
+	void removeAllChildren ();
+	CScriptVar* getArrayIndex (int idx); ///< The the value at an array index
+	void setArrayIndex (int idx, CScriptVar* value); ///< Set the value at an array index
+	int getArrayLength (); ///< If this is an array, return the number of items in it (else 0)
+	int getChildren (); ///< Get the number of children
 
-	int     getInt();
-	bool    getBool() { return getInt() != 0; }
-	double  getDouble();
-	const   wString& getString();
-	wString getParsableString(); ///< get Data as a parsable javascript string
-	void    setInt(int num);
-	void    setDouble(double val);
-	void    setString(const wString& str);
-	void    setUndefined();
-	void    setArray();
-	bool    equals(CScriptVar* v);
+	int     getInt ();
+	bool    getBool () { return getInt () != 0; }
+	double  getDouble ();
+	const   wString& getString ();
+	wString getParsableString (); ///< get Data as a parsable javascript string
+	void    setInt (int num);
+	void    setDouble (double val);
+	void    setString (const wString& str);
+	void    setUndefined ();
+	void    setArray ();
+	bool    equals (CScriptVar* v);
 
-	bool isInt() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_INTEGER) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
-	bool isDouble() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_DOUBLE) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
-	bool isString() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_STRING) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
-	bool isNumeric() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_NUMERICMASK) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
-	bool isFunction() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_FUNCTION) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
-	bool isObject() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_OBJECT) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
-	bool isArray() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_ARRAY) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
-	bool isNative() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_NATIVE) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
-	bool isUndefined() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_VARTYPEMASK) == SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
-	bool isNull() { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_NULL) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
-	bool isBasic() { return firstChild == 0; } ///< Is this *not* an array/object/etc
+	bool isInt () { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_INTEGER) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isDouble () { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_DOUBLE) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isString () { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_STRING) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isNumeric () { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_NUMERICMASK) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isFunction () { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_FUNCTION) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isObject () { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_OBJECT) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isArray () { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_ARRAY) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isNative () { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_NATIVE) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isUndefined () { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_VARTYPEMASK) == SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isNull () { return (flags & SCRIPTVAR_FLAGS::SCRIPTVAR_NULL) != SCRIPTVAR_FLAGS::SCRIPTVAR_UNDEFINED; }
+	bool isBasic () { return firstChild == 0; } ///< Is this *not* an array/object/etc
 
-	CScriptVar* mathsOp(CScriptVar* b, LEX_TYPES op); ///< do a maths op with another script variable
-	void copyValue(CScriptVar* val); ///< copy the value from the value given
-	CScriptVar* deepCopy(); ///< deep copy this node and return the result
+	CScriptVar* mathsOp (CScriptVar* b, LEX_TYPES op); ///< do a maths op with another script variable
+	void copyValue (CScriptVar* val); ///< copy the value from the value given
+	CScriptVar* deepCopy (); ///< deep copy this node and return the result
 
-	void trace(SOCKET socket, const wString& indentStr = "", const wString& name = ""); ///< Dump out the contents of this using trace
-	wString trace2(void); ///< Dump out the contents of this using trace
-	wString getFlagsAsString(); ///< For debugging - just dump a string version of the flags
-	void getJSON(wString& destination, const wString& linePrefix = ""); ///< Write out all the JS code needed to recreate this script variable to the stream (as JSON)
-	void setCallback(JSCallback callback, void* userdata); ///< Set the callback for native functions
+	void trace (SOCKET socket, const wString& indentStr = "", const wString& name = ""); ///< Dump out the contents of this using trace
+	wString trace2 (void); ///< Dump out the contents of this using trace
+	wString getFlagsAsString (); ///< For debugging - just dump a string version of the flags
+	void getJSON (wString& destination, const wString& linePrefix = ""); ///< Write out all the JS code needed to recreate this script variable to the stream (as JSON)
+	void setCallback (JSCallback callback, void* userdata); ///< Set the callback for native functions
 
 
 	/// For memory management/garbage collection
-	CScriptVar* setRef(); ///< Add reference to this variable
-	void unref(); ///< Remove a reference, and delete this variable if required
-	int getRefs(); ///< Get the number of references to this script variable
+	CScriptVar* setRef (); ///< Add reference to this variable
+	void unref (); ///< Remove a reference, and delete this variable if required
+	int getRefs (); ///< Get the number of references to this script variable
 protected:
 	int refs; ///< The number of references held to this - used for garbage collection
 
@@ -325,33 +328,39 @@ protected:
 	JSCallback jsCallback; ///< Callback for native functions
 	void* jsCallbackUserData; ///< user data passed as second argument to native functions
 
-	void init(); ///< initialisation of data members
+	void init (); ///< initialisation of data members
 
 	/** Copy the basic data and flags from the variable given, with no
 	  * children. Should be used internally only - by copyValue and deepCopy */
-	void copySimpleData(CScriptVar* val);
+	void copySimpleData (CScriptVar* val);
 
 	friend class CTinyJS;
 };
 
-class CTinyJS {
+class CTinyJS
+{
 public:
-	CTinyJS(SOCKET mysocket);
-	~CTinyJS();
+	CTinyJS (SOCKET mysocket);
+	~CTinyJS ();
+	wString        outBuffer;
 	wString        prBuffer;
 	int            prPos;
-	void FlushBuf(void);
-	//int fs;
-	void execute(const wString& code, ExecuteModes myExecuteMode = ExecuteModes::ON_SERVER);//0:start with command 1:start with contents.
-	/** Evaluate the given code and return a link to a javascript object,
-	 * useful for (dangerous) JSON parsing. If nothing to return, will return
-	 * 'undefined' variable type. CScriptVarLink is returned as this will
-	 * automatically unref the result as it goes out of scope. If you want to
-	 * keep it, you must use setRef() and unref() */
-	CScriptVarLink evaluateComplex(const wString& code);
+	void FlushBuf (void);
+	const wString& execute (const wString& code, ExecuteModes myExecuteMode = ExecuteModes::ON_SERVER);//0:start with command 1:start with contents.
+
+	/// <summary>
+	/// Evaluate the given code and return a link to a javascript object,
+	/// useful for (dangerous) JSON parsing. If nothing to return, will return
+	/// 'undefined' variable type. CScriptVarLink is returned as this will
+	/// automatically unref the result as it goes out of scope. If you want to
+	/// keep it, you must use setRef() and unref()
+	/// </summary>
+	/// <param name="code"></param>
+	/// <returns></returns>
+	CScriptVarLink evaluateComplex (const wString& code);
 	/** Evaluate the given code and return a string. If nothing to return, will return
 	 * 'undefined' */
-	wString evaluate(const wString& code);
+	wString evaluate (const wString& code);
 
 	/// add a native function to be called from TinyJS
 	/** example:
@@ -367,17 +376,17 @@ public:
 		   tinyJS->addNative("function String.substring(lo, hi)", scSubstring, 0);
 	   \endcode
 	*/
-	void addNative(const wString& funcDesc, JSCallback ptr, void* userdata);
+	void addNative (const wString& funcDesc, JSCallback ptr, void* userdata);
 
 	/// Get the given variable specified by a path (var1.var2.etc), or return 0
-	CScriptVar* getScriptVariable(const wString& path);
+	CScriptVar* getScriptVariable (const wString& path);
 	/// Get the value of the given variable, or return 0
 //    const wString *getVariable(const wString &path);
 	/// set the value of the given variable, return trur if it exists and gets set
-	bool setVariable(const wString& path, const wString& varData);
+	bool setVariable (const wString& path, const wString& varData);
 
 	/// Send all variables to stdout
-	void trace(SOCKET socket);
+	void trace (SOCKET socket);
 
 	CScriptVar* root;   /// root of symbol table
 	SOCKET socket;
@@ -396,24 +405,24 @@ private:
 	CScriptVar* arrayClass;  /// Built in array class
 
 	// parsing - in order of precedence
-	CScriptVarLink* functionCall(bool& execute, CScriptVarLink* function, CScriptVar* parent);
-	CScriptVarLink* factor(bool& execute);
-	CScriptVarLink* unary(bool& execute);
-	CScriptVarLink* term(bool& execute);
-	CScriptVarLink* expression(bool& execute);
-	CScriptVarLink* shift(bool& execute);
-	CScriptVarLink* condition(bool& execute);
-	CScriptVarLink* logic(bool& execute);
-	CScriptVarLink* ternary(bool& execute);
-	CScriptVarLink* base(bool& execute);
-	LEX_TYPES  block(bool& execute);
-	LEX_TYPES  statement(bool& execute);
+	CScriptVarLink* functionCall (bool& execute, CScriptVarLink* function, CScriptVar* parent);
+	CScriptVarLink* factor (bool& execute);
+	CScriptVarLink* unary (bool& execute);
+	CScriptVarLink* term (bool& execute);
+	CScriptVarLink* expression (bool& execute);
+	CScriptVarLink* shift (bool& execute);
+	CScriptVarLink* condition (bool& execute);
+	CScriptVarLink* logic (bool& execute);
+	CScriptVarLink* ternary (bool& execute);
+	CScriptVarLink* base (bool& execute);
+	LEX_TYPES  block (bool& execute);
+	LEX_TYPES  statement (bool& execute);
 	// parsing utility functions
-	CScriptVarLink* parseFunctionDefinition();
-	void parseFunctionArguments(CScriptVar* funcVar);
+	CScriptVarLink* parseFunctionDefinition ();
+	void parseFunctionArguments (CScriptVar* funcVar);
 
-	CScriptVarLink* findInScopes(const wString& childName); ///< Finds a child, looking recursively up the scopes
+	CScriptVarLink* findInScopes (const wString& childName); ///< Finds a child, looking recursively up the scopes
 	/// Look up in any parent classes of the given object
-	CScriptVarLink* findInParentClasses(CScriptVar* object, const wString& name);
+	CScriptVarLink* findInParentClasses (CScriptVar* object, const wString& name);
 };
 #endif

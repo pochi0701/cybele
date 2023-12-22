@@ -46,29 +46,37 @@ unsigned int __stdcall batch(void* ptr)
 {
     IGNORE_PARAMETER(ptr);
     char script_filename[128];
-    char tbuffer[256];
-    GetCurrentDirectory (256, tbuffer);
-    sprintf( script_filename,"%s%s%s", tbuffer, "/system/tools","/setip.jss");
+    char cur_dir[256];
+#ifdef linux
+    getcwd (current_dir, sizeof (current_dir));
+#else
+    GetCurrentDirectory (256, cur_dir);
+#endif
+    sprintf( script_filename,"%s%s%s", cur_dir, "/system/tools","/setip.jss");
     
     while(loop_flag){
         //イベントが合致したら指定jssを起動
-        char buffer[SCRIPT_SIZE]={};
-        int fd = myopen( script_filename, O_RDONLY | O_BINARY);
-        if( fd < 0 ){
-            break;
-        }
-        auto ret = read(fd,buffer, SCRIPT_SIZE);
-        // 読み込み失敗
-        if (ret == -1)
-        {
-            close(fd);
-            break;
-        }
-        close( fd );
-        CTinyJS  s(STDOUT_FILENO);
+        wString buffer;
+        buffer.load_from_file (script_filename);
+        //char buffer[SCRIPT_SIZE]={};
+        //int fd = myopen( script_filename, O_RDONLY | O_BINARY);
+        //if( fd < 0 ){
+        //    break;
+        //}
+        //wString aaa;
+
+        //auto ret = read(fd,buffer, SCRIPT_SIZE);
+        //// 読み込み失敗
+        //if (ret == -1)
+        //{
+        //    close(fd);
+        //    break;
+        //}
+        //close( fd );
+        CTinyJS  s(0);
         registerFunctions (&s);
         registerMathFunctions (&s);
-        s.execute(buffer);
+        //wString temp = s.execute(buffer);
         break;
     }
     return NULL;

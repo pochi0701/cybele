@@ -56,7 +56,14 @@ void js_print(CScriptVar* v, void* userdata) {
 	//出力すべきデータがない時にHeader出さないと再送されてループする
 	// ここでこのコードは必要。<?print();?>セミコロンがないとうまくいかない
 	js->FlushBuf();
-	int num = send(js->socket, str.c_str(), str.length(), 0);
+	int num;
+	if (js->socket < 0) {
+		num = str.length ();
+		js->outBuffer += str;
+	}
+	else {
+		num = send (js->socket, str.c_str (), str.length (), 0);
+	}
 	if (num < 0) {
 		debug_log_output("Script Write Error at js_print");
 	}

@@ -29,7 +29,6 @@
 #include "cbl_String.h"
 #include "define.h"
 extern wString current_dir;
-static void line_buffer_sanitize(char* line_buf);
 // ********************************************
 // MIME リスト
 // とりあえず知ってる限り書いておく。
@@ -80,6 +79,7 @@ MIME_LIST_T     mime_list[] = {
 	{(char*)"text/html"			,(char*)"pl"     ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_SCRIPT     },
 	{(char*)"application/wasm"	,(char*)"wasm"   ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_SCRIPT     }, //JavaScript
 	{(char*)"application/pdf"	,(char*)"pdf"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   }, //JavaScript
+	{(char*)"application/json"	,(char*)"json"   ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_DOCUMENT   }, //JavaScript
 	{NULL, NULL, STREAM_TYPE::NOT_DEFINED, MIME_TYPE::NOT_MIME }
 };
 // ********************************************
@@ -329,7 +329,7 @@ void GLOBAL_PARAM_T::config_file_read(void)
 #else
 				// user_agent_proxy_override
 				else if (strcasecmp("user_agent_proxy_override", key) == 0) {
-					strncpy(user_agent_proxy_override, value, sizeof(user_agent_proxy_override)-1);
+					strncpy (user_agent_proxy_override, value, sizeof (user_agent_proxy_override) - 1);
 				}
 				// flag_execute_cgi
 				else if (strcasecmp("flag_execute_cgi", key) == 0) {

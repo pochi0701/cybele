@@ -76,7 +76,7 @@ int Cybelemain(void* arg)
 #ifdef linux
         strcpy(Application, argv[0]);
         if( Application[0] == '.' ){
-	getcwd(Application, sizeof(Application));
+	        std::ignore = getcwd(Application, sizeof(Application));
         }else{
             cut_after_last_character(Application,'/');
         }
@@ -262,7 +262,7 @@ int Initialize(void)
 	current_dir = curdir;
 	//ショートカットから呼ばれたときのパッチ。だましですよー
 #ifdef linux
-	chdir(current_dir.c_str());
+	std::ignore = chdir(current_dir.c_str());
 #else
 	SetCurrentDirectory(current_dir.c_str());
 #endif
@@ -284,8 +284,8 @@ int Initialize(void)
 	//DB初期化
 	catalog = new DBCatalog();
 
+	//memset(&global_param, 0, sizeof(global_param));
 	// 構造体まとめて初期化
-	memset(&global_param, 0, sizeof(global_param));
 	memset(access_allow_list, 0, sizeof(access_allow_list));
 	return 0;
 }
@@ -376,11 +376,11 @@ static void set_user_id(char* user, char* group)
 			return;
 		}
 		// setgid実行
-		setgid(user_group->gr_gid);
+		std::ignore = setgid(user_group->gr_gid);
 	}
 	// rootで両方の情報をとっておき、かつsetgidを先にしないと失敗する
 	// setuid実行
-	setuid(user_passwd->pw_uid);
+	std::ignore = setuid(user_passwd->pw_uid);
 	return;
 }
 // **************************************************************************

@@ -2114,8 +2114,8 @@ void wString::init_header(size_t content_length, int expire, const char* mime_ty
 	struct tm utc;
 	gmtime_r(&timer, &utc);
 	char work[80] = {};
-	const char* dow[] = { "Sun", "Mon","Tue", "Wed", "Thu", "Fri", "Sat" };
-	const char* mon[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	const static char* dow[] = { "Sun", "Mon","Tue", "Wed", "Thu", "Fri", "Sat" };
+	const static char* mon[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 	::sprintf(work, "%s, %d %s %d %02d:%02d:%02d",
 		dow[utc.tm_wday], utc.tm_mday, mon[utc.tm_mon], utc.tm_year + 1900, utc.tm_hour, utc.tm_min, utc.tm_sec);
 	this->cat_sprintf("Date: %s GMT\r\n", work);
@@ -2134,7 +2134,7 @@ void wString::init_header(size_t content_length, int expire, const char* mime_ty
 }
 
 /// <summary>
-/// 文字列をsocketに送出
+/// ヘッダー文字列をsocketに送出
 /// </summary>
 /// <param name="socket">送出ソケット</param>
 /// <param name="endflag">指定するとHTTPヘッダ終了(\r\n\r\n)</param>

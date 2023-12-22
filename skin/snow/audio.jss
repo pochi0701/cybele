@@ -21,6 +21,7 @@ if( url != undefined ){
 </head>
 <body>
     <div class="container">
+        <button class="btn btn-primary" type="button" onClick="history.back()">戻る</button><br>
         <?
         //UserAgentCheck
         ua      = _SERVER.HTTP_USER_AGENT;
@@ -38,9 +39,6 @@ if( url != undefined ){
             print( "</div>" );
         }
         ?>
-        <form>
-            <input class="btn btn-primary" type="button" value="戻る" onClick="history.back()">
-        </form>
     </div>
 </body>
 </html>
