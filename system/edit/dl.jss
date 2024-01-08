@@ -1,30 +1,30 @@
 <?
     target = _GET.target;
     dl     = _GET.dl;
-    tmp    = file_get_contents(dl);
-    basename = basename(dl);
-    target = rtrim(target,"/");
+    base   = basefile(dl);
+    tmp    = loadFromFile(dl);
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<!doctype html>
+<html lang="ja">
 <head>
-<meta charset="utf-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap5 SideBar demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 </head>
+<body>
+    <div>
+       
 <?
     if( ! tmp){
-	print( "<body onload=\"javascript:alert('{dl}はダウンロードできません。')\">");
+	  print( '<p class="text-danger">+base+"はダウンロードできません。</p>">');
     }else{
-	print( "<body>" );
-        if( strlen(target)>0){
-            if( basename.length == 0 || strpos(basename,".")==0){
-                basename = "index.html";
-            }
-            //print "[basename][target][tmp]";
-            if (fh = fopen("{target}/{basename}", 'w')) {
-                fwrite(fh, tmp);
-                fclose(fh);
-            }
+        if( target != undefined && target.length > 0){
+            saveToFile(target,tmp);
         }
     }
-?>
-</body></html>
+?>        
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</body>
+</html>

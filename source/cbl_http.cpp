@@ -31,6 +31,7 @@
 #include "cbl_tools.h"
 #include "cbl_String.h"
 #include "define.h"
+#include "TinyJS.h"
 /// <summary>
 /// サーバ HTTP処理部
 /// </summary>
@@ -233,7 +234,7 @@ void server_http_process(SOCKET accept_socket, char* access_host, char* client_a
 	}
 	else {
 		// ----------------------------------------
-		// ディレクトリ 内にindex.html or index.htm or index.cgi があったら、そちらを表示する。
+		// ディレクトリ 内にindex.html or index.htm or index.cgi or index.mdがあったら、そちらを表示する。
 		// ----------------------------------------
 		//request_uriの最後が?なら強制的にmenu.jssを起動。それ以外は通常のファイル処理
 		//request_uriの設定
