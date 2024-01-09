@@ -14,7 +14,6 @@
 #include "const.h"
 #include "cbl_http.h"
 #include "cbl_String.h"
-#include "TinyJS.h"
 
 // ==========================================================================
 // MIMEリスト保存用構造体
@@ -120,11 +119,6 @@ public:
 	int flag_allow_proxy;
 	/// <summary>Global IP</summary>
 	char global_ip[16];
-
-	/// <summary>
-	/// 内部JavaScript
-	/// </summary>
-	static CTinyJS* sjss;
 	/// ---------------------------------------------------------------------
 private:
 	/// <summary>

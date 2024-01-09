@@ -1,5 +1,9 @@
 <html>
 <head>
+<script>
+    localStorage.setItem('abc', 'aaa');
+    var b = localStorage.getItem('abc');
+</script>
 </head>
 <body>
   <?

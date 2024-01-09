@@ -73,7 +73,7 @@ unsigned int __stdcall batch(void* ptr)
         //    break;
         //}
         //close( fd );
-        CTinyJS  s(INVALID_SOCKET);
+        CTinyJS  s(0);
         registerFunctions (&s);
         registerMathFunctions (&s);
         //wString temp = s.execute(buffer);
