@@ -62,8 +62,8 @@ public:
 	void     operator+=(const char* str);
 	char     operator[](int index) const;
 	//STRING FUNCTION
-	bool            starts_with(const char* str);
-	bool            ends_with(const char* str);
+	bool            starts_with(const char* str, int pos = -1);
+	bool            ends_with(const char* str, int end_len = -1);
 	void            set_binary(const void* str, int addLen);
 	char            at(unsigned int index) const;
 	wString         substr(int start, int mylen = -1) const;

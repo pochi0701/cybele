@@ -1593,7 +1593,7 @@ void CScriptVar::getJSON (wString& destination, const wString& linePrefix)
 		wString indentedLinePrefix = linePrefix + "  ";
 		destination += "[\n";
 		int len = getArrayLength ();
-		if (len > 10000) len = 10000; // we don't want to get stuck here!
+		//if (len > 10000) len = 10000; // we don't want to get stuck here!
 
 		for (int i = 0; i < len; i++) {
 			getArrayIndex (i)->getJSON (destination, indentedLinePrefix);

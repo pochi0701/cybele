@@ -237,10 +237,20 @@ void wString::set_binary(const void* mem, int binaryLength)
 /// 先頭文字列の比較（バイナリ非対応）
 /// </summary>
 /// <param name="needle">検索する文字列</param>
+/// <param name="pos">検査開始位置</param>
 /// <returns>先頭と一致すればtrue</returns>
-bool wString::starts_with(const char* needle)
+bool wString::starts_with(const char* needle, int pos)
 {
-	return strstr(String, needle) == String;
+	auto nlen = strlen (needle);
+	if (nlen == 0 || nlen > len) {
+		return false;
+	}
+	if (pos >= 0) {
+		if (pos >= len - nlen + 1) {
+			return false;
+		}
+	}
+	return strstr (String + pos, needle) == String;
 }
 //---------------------------------------------------------------------------
 /// <summary>
@@ -249,13 +259,20 @@ bool wString::starts_with(const char* needle)
 /// </summary>
 /// <param name="needle">検索する文字列</param>
 /// <returns>先頭と一致すればtrue</returns>
-bool wString::ends_with(const char* needle)
+bool wString::ends_with(const char* needle, int end_len)
 {
-	auto clen = static_cast<unsigned int>(strlen(needle));
-	if (clen == 0 || clen > len) {
+	int temp_len = len;
+	if (end_len > 0) {
+		if (end_len == 0 || end_len > temp_len) {
+			return false;
+		}
+		temp_len = end_len;
+	}
+	auto nlen = static_cast<unsigned int>(strlen(needle));
+	if (nlen == 0 || nlen > len) {
 		return false;
 	}
-	return strcmp(String + len - clen, needle) == 0;
+	return strcmp(String + len - nlen, needle) == 0;
 }
 ///---------------------------------------------------------------------------
 /// <summary>
@@ -722,7 +739,8 @@ int wString::load_from_file(const char* FileName)
 {
 	long flen;
 	int  handle;
-	if (strncmp(FileName, "http://", 7) == 0) {
+	wString FileNamew = FileName;
+	if (FileNamew.starts_with("http://") || FileNamew.starts_with("https://")) {
 		wString tmp;
 		tmp = wString::http_get(const_cast<char*>(FileName));
 		*this = tmp;
