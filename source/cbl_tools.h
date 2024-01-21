@@ -29,7 +29,7 @@ typedef int SOCKET;
 // ==========================================================================
 // 汎用オープン(OS/文字コード差異吸収)
 // ==========================================================================
-int myopen(const char* filename, int amode, int option = 0);
+int myopen(const wString& filename, int amode, int option = 0);
 // uriエンコード／デコード
 extern int      uri_decode(char* dst, unsigned int dst_len, const char* src, unsigned int src_len);
 

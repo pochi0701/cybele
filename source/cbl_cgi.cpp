@@ -127,7 +127,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 	//新規: O_CREATE | O_TRUNC  | O_WRONLY(またはO_RDWR) | (O_BINARY) , S_IREAD | S_IWRITE
 	//読込: O_RDONLY                                     | (O_BINARY) 
 
-	int fd = myopen(script_filename, O_RDONLY | O_BINARY);
+	int fd = myopen(wString(script_filename), O_RDONLY | O_BINARY);
 	/* if we open as text, the number of bytes read may be > the size we read */
 	if (fd < 0) {
 		debug_log_output("Unable to open file '%s'", script_filename);

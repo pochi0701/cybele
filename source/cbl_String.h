@@ -62,8 +62,8 @@ public:
 	void     operator+=(const char* str);
 	char     operator[](int index) const;
 	//STRING FUNCTION
-	bool            starts_with(const char* str, int pos = -1);
-	bool            ends_with(const char* str, int end_len = -1);
+	bool            starts_with(const char* str, int pos = -1) const;
+	bool            ends_with(const char* str, int end_len = -1) const;
 	void            set_binary(const void* str, int addLen);
 	char            at(unsigned int index) const;
 	wString         substr(int start, int mylen = -1) const;
@@ -124,7 +124,7 @@ public:
 	int             header(const char* str, int flag = true, int status = 0);
 	//FILE OPERATION
 	static bool     rename_file(const wString& src, const wString& dst);
-	static int      FileCopy(const char* fname_r, const char* fname_w);
+	static int      FileCopy(const wString& fname_r, const wString& fname_w);
 	static int      delete_file(const wString& str);
 	static int      directory_exists(const char* str);
 	static int      directory_exists(const wString& str);
@@ -148,10 +148,10 @@ public:
 	static wString  png_size(const wString& png_filename);
 	static wString  gif_size(const wString& gif_filename);
 	static wString  jpeg_size(const wString& jpeg_filename);
-	int             load_from_file(const char* FileName);
-	int             load_from_file(const wString& str);
-	void            load_from_csv(const char* FileName);
-	void            load_from_csv(const wString& str);
+	int             load_from_file(const char* str);
+	int             load_from_file(const wString& FileName);
+	void            load_from_csv(const wString& FileName);
+	void            load_from_csv(const char* str);
 	int             save_to_file(const char* FileName);
 	int             save_to_file(const wString& str);
 	wString         nkfcnv(const wString& option);

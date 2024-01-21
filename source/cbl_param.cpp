@@ -445,17 +445,17 @@ int GLOBAL_PARAM_T::config_file_open(void)
 {
 	int         fd;
 #ifdef linux
-	fd = myopen(DEFAULT_CONF_FILENAME1, O_BINARY | O_RDONLY);
+	fd = myopen(wString(DEFAULT_CONF_FILENAME1), O_BINARY | O_RDONLY);
 	if (fd >= 0) {
 		printf("config '%s' open.\n", DEFAULT_CONF_FILENAME1);
 		return (fd);
 	}
-	fd = myopen(DEFAULT_CONF_FILENAME2, O_BINARY | O_RDONLY);
+	fd = myopen(wString(DEFAULT_CONF_FILENAME2), O_BINARY | O_RDONLY);
 	if (fd >= 0) {
 		printf("config '%s' open.\n", DEFAULT_CONF_FILENAME2);
 		return (fd);
 	}
-	fd = myopen(DEFAULT_CONF_FILENAME3, O_BINARY | O_RDONLY);
+	fd = myopen(wString(DEFAULT_CONF_FILENAME3), O_BINARY | O_RDONLY);
 	if (fd >= 0) {
 		printf("config '%s' open.\n", DEFAULT_CONF_FILENAME3);
 		return (fd);
@@ -463,7 +463,7 @@ int GLOBAL_PARAM_T::config_file_open(void)
 #else
 	char work[FILENAME_MAX];
 	snprintf(work, FILENAME_MAX, "%s%s%s", current_dir.c_str(), DELIMITER, DEFAULT_CONF_FILENAME1);
-	fd = myopen(work, O_BINARY | O_RDONLY);
+	fd = myopen(wString(work), O_BINARY | O_RDONLY);
 	if (fd >= 0) {
 		//              printf("config '%s' open.\n", DEFAULT_CONF_FILENAME1);
 		return (fd);

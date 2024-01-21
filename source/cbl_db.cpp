@@ -2513,7 +2513,7 @@ int DBCatalog::SaveToFile(void)
 {
 	//DBCatalog保存
 	wString path = current_dir + DELIMITER + CATFILE;
-	int fd = myopen(path.c_str(), O_CREAT | O_TRUNC | O_WRONLY | O_BINARY, S_IREAD | S_IWRITE);
+	int fd = myopen(path, O_CREAT | O_TRUNC | O_WRONLY | O_BINARY, S_IREAD | S_IWRITE);
 	if (fd < 0) {
 		return -1;
 	}

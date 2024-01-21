@@ -790,7 +790,7 @@ void debug_log_output(const char* fmt, ...)
 	// ログファイル出力
 	// =====================
 	if (fd < 0) {
-		fd = myopen(debug_log_filename, O_CREAT | O_APPEND | O_WRONLY | O_BINARY, S_IREAD | S_IWRITE);
+		fd = myopen(wString(debug_log_filename), O_CREAT | O_APPEND | O_WRONLY | O_BINARY, S_IREAD | S_IWRITE);
 		if (fd < 0) {
 			return;
 		}
@@ -811,6 +811,13 @@ void debug_log_output(const char* fmt, ...)
 char* path_sanitize(char* orig_dir, size_t dir_size)
 {
 	IGNORE_PARAMETER(dir_size);
+	//wString temp;
+	//temp = orig_dir;
+	//char work[1024] = {};
+	//nkf (orig_dir, work, dir_size * 3, "s");
+	//strcpy (orig_dir, work);
+	//
+
 #ifdef linux
 	char* p;
 	char* q;
@@ -1316,20 +1323,22 @@ void set_nonblocking_mode(int fd, int flag)
 //追加: O_CREAT | O_APPEND | O_WRONLY(またはO_RDWR) | (O_BINARY) , S_IREAD | S_IWRITE
 //新規: O_CREAT | O_TRUNC  | O_WRONLY(またはO_RDWR) | (O_BINARY) , S_IREAD | S_IWRITE
 //読込: O_RDONLY                                     | (O_BINARY)
-int myopen(const char* filename, int amode, int option)
+int myopen(const wString& filename, int amode, int option)
 {
 	//毎回オープンしないようにする
 	//static int hd = -1;
 #ifdef linux
 	if (option != 0) {
-		return open(filename, amode, option);
+		return open(filename.c_str(), amode, option);
 	}
 	else {
-		return open(filename, amode);
+		return open(filename.c_str(), amode);
 	}
 #else
+	wString FileNamew = filename;
+	FileNamew = FileNamew.nkfcnv ("Ws");
 	char work[1024];
-	strcpy(work, filename);
+	strcpy(work, FileNamew.c_str());
 	int ptr = 0;
 	while (work[ptr]) {
 		if (work[ptr] == '/') {

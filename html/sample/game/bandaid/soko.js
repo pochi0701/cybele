@@ -41,7 +41,7 @@ function loadText(){
         }
     }
     xmlHttp.onreadystatechange = checkStatus;
-    xmlHttp.open("GET", "./1/soko/screen.txt", true);
+    xmlHttp.open("GET", "./screen/screen.2", true);
     xmlHttp.send(null);
 }
 //読み込み完了した
@@ -179,8 +179,6 @@ function mouseMove(x, y){
     mouseX = x;
     mouseY = y;
 }
-
-
 function mouseDown(){
     var k = Math.floor((mouseY / hGap)-0.5);
     var l = Math.floor((mouseX / wGap)-0.5);

@@ -108,7 +108,7 @@ me=_SERVER.SCRIPT_NAME;
                             }
                             ext = extractFileExt(file).toLowerCase();
                             if( ext != "bak"){
-                                fname = basename(file).nkfconv("Sw");
+                                fname = basename(file);//.nkfconv("Sw");
                                 option = "";
                                 //make link tag
                                 stat = eval(file_stat(filePath));

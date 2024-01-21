@@ -2,8 +2,10 @@
 <head>
 <meta charset="utf-8">
 <title>画像一覧</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 </head>
 <body>
+<button type="button" class="btn btn-primary" onClick="window.close();">閉じる</button><br>
 <?
 //画像ファイル一覧を表示するパスを指定する
 
@@ -57,5 +59,6 @@ for (i=0;i<num;i++){
 print("</tr></table>");
 
 ?>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 </body>
 </html>

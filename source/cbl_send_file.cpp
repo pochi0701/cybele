@@ -172,7 +172,7 @@ int http_file_send(SOCKET accept_socket, char* filename, unsigned int content_le
 	// ---------------------
 	// ファイルオープン
 	// ---------------------
-	auto in_fd = myopen(filename, O_RDONLY | O_BINARY, S_IREAD);
+	auto in_fd = myopen(wString(filename), O_RDONLY | O_BINARY, S_IREAD);
 	if (in_fd < 0) {
 		debug_log_output("open() error.");
 		return (-1);
@@ -364,7 +364,7 @@ int copy_body(int in_fd, int out_fd, unsigned int content_length, unsigned int r
 long FileSize(char* file_name)
 {
 	long flen;
-	int  handle = myopen(file_name, O_RDONLY | O_BINARY, S_IREAD);
+	int  handle = myopen(wString(file_name), O_RDONLY | O_BINARY, S_IREAD);
 	if (handle < 0) {
 		return -1;
 	}

@@ -619,7 +619,7 @@ function tempDir() {
 
 // returns the full path to a page
 function pagePath(title) {
-    return (pageDir() + title.nkfconv("Ws"));
+    return (pageDir() + title);//.nkfconv("Ws"));
 }
 
 // clean up the temp directory
@@ -703,8 +703,9 @@ function pageList() {
     s = Object.keys(details);
     for (i = 0; i < s.length; i++) {
         dd = details[s[i]];
-        ff = basename(s[i]).nkfconv("Sw");
-        contents += "[[" + basename(s[i]).nkfconv("Sw") + "]]\t" + details[s[i]].toDateString(config.GENERAL.MODTIME_FORMAT) + "\n";
+        ff = basename(s[i]);//.nkfconv("Sw");
+        //contents += "[[" + basename(s[i]).nkfconv("Sw") + "]]\t" + details[s[i]].toDateString(config.GENERAL.MODTIME_FORMAT) + "\n";
+        contents += "[[" + basename(s[i]) + "]]\t" + details[s[i]].toDateString(config.GENERAL.MODTIME_FORMAT) + "\n";
     }
     return contents;
 }

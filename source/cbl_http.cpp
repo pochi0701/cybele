@@ -116,6 +116,14 @@ void server_http_process(SOCKET accept_socket, char* access_host, char* client_a
 		// 2004/07/20 Update end
 	}
 #endif
+	if (path_sanitize (http_recv_info.recv_uri, sizeof (http_recv_info.recv_uri)) == NULL) {
+		// BAD REQUEST!
+		debug_log_output ("BAD REQUEST!");
+		http_recv_info.http_not_found_response (accept_socket);
+		debug_log_output ("%s(%d) accept_socet\n", __FILE__, __LINE__);
+		//sClose(accept_socket);
+		return;
+	}
 	//PROXY判定
 	if (!strncmp(http_recv_info.recv_uri, "/-.-", 4)) {
 		// proxy
@@ -127,21 +135,14 @@ void server_http_process(SOCKET accept_socket, char* access_host, char* client_a
 		sClose(accept_socket);
 		return;
 	}
-	if (path_sanitize(http_recv_info.recv_uri, sizeof(http_recv_info.recv_uri)) == NULL) {
-		// BAD REQUEST!
-		debug_log_output("BAD REQUEST!");
-		http_recv_info.http_not_found_response(accept_socket);
-		debug_log_output("%s(%d) accept_socet\n", __FILE__, __LINE__);
-		//sClose(accept_socket);
-		return;
-	}
+
 	debug_log_output("sanitized recv_uri: %s", http_recv_info.recv_uri);
 
 	// ============================
 	// ファイルチェック
 	//  種類に応じて分岐
 	// ============================
-	result = http_recv_info.http_file_check();
+	result = http_recv_info.http_file_check ();
 	if (result == FILETYPES::_OPENDIR) { // ディレクトリだが終端が '/' ではない
 		char buffer[FILENAME_MAX];
 		sprintf(buffer, "%s/", http_recv_info.recv_uri);
