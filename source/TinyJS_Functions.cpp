@@ -199,7 +199,7 @@ void scStringSubstr (CScriptVar* c, void* userdata)
 	else
 		c->getReturnVar ()->setString ("");
 }
-//StartsWith
+//startsWith
 void scStringStartsWith (CScriptVar* c, void* userdata)
 {
 	IGNORE_PARAMETER (userdata);
@@ -212,7 +212,7 @@ void scStringStartsWith (CScriptVar* c, void* userdata)
 	else
 		c->getReturnVar ()->setInt (str.starts_with (needle.c_str ()));
 }
-//SubStr
+//endsWith
 void scStringEndsWith (CScriptVar* c, void* userdata)
 {
 	IGNORE_PARAMETER (userdata);
@@ -225,6 +225,24 @@ void scStringEndsWith (CScriptVar* c, void* userdata)
 	else
 		c->getReturnVar ()->setInt (str.ends_with (needle.c_str ()));
 }
+////startsWith
+//void scStringStartsWith2 (CScriptVar* c, void* userdata)
+//{
+//	IGNORE_PARAMETER (userdata);
+//	wString str = c->getParameter ("this")->getString ();
+//	wString needle = c->getParameter ("lo")->getString ();
+//
+//	c->getReturnVar ()->setInt (str.starts_with (needle.c_str ()));
+//}
+////endsWith
+//void scStringEndsWith2 (CScriptVar* c, void* userdata)
+//{
+//	IGNORE_PARAMETER (userdata);
+//	wString str = c->getParameter ("this")->getString ();
+//	wString needle = c->getParameter ("lo")->getString ();
+//
+//	c->getReturnVar ()->setInt (str.ends_with (needle.c_str ()));
+//}
 
 //AT
 
@@ -958,7 +976,9 @@ void registerFunctions (CTinyJS* tinyJS)
 	tinyJS->addNative ("function String.substring(lo,hi)", scStringSubstring, 0);
 	tinyJS->addNative ("function String.substr(lo,hi)", scStringSubstr, 0);
 	tinyJS->addNative ("function String.startsWith(lo,hi)", scStringStartsWith, 0);
+	//tinyJS->addNative ("function String.startsWith(lo)", scStringStartsWith2, 0);
 	tinyJS->addNative ("function String.endsWith(lo,hi)", scStringEndsWith, 0);
+	//tinyJS->addNative ("function String.endsWith(lo)", scStringEndsWith2, 0);
 	tinyJS->addNative ("function String.charAt(pos)", scStringCharAt, 0);
 	tinyJS->addNative ("function String.charCodeAt(pos)", scStringCharCodeAt, 0);
 	tinyJS->addNative ("function String.fromCharCode(char)", scStringFromCharCode, 0);

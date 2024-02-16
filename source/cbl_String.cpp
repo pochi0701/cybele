@@ -266,7 +266,7 @@ bool wString::ends_with (const char* needle, int end_len) const
 		if (end_len == 0 || end_len > temp_len) {
 			return false;
 		}
-		temp_len = end_len;
+		//temp_len = end_len;
 	}
 	auto nlen = static_cast<unsigned int>(strlen (needle));
 	if (nlen == 0 || nlen > len) {
@@ -2438,7 +2438,8 @@ wString wString::http_get (const wString& url, off_t offset)
 	portPos = host.Pos (":");
 	if (portPos >= 0) {
 		server_port = atoi (host.c_str () + portPos + 1);
-		host = host.substr (0, portPos - hostPos);
+		//host = host.substr (0, portPos - hostPos);
+		host = host.substr (0, portPos);
 	}
 	//ソケット作成と接続
 	server_socket = sock_connect (host.String, server_port);

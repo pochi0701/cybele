@@ -436,6 +436,12 @@ int HTTP_RECV_INFO::http_header_receive(SOCKET accept_socket)
 			else if (line.find("POST") != wString::npos) {
 				isGet = QUERY_METHOD::POST;
 			}
+			else if (line.find ("PUT") != wString::npos) {
+				isGet = QUERY_METHOD::PUT;
+			}
+			else if (line.find ("DELETE") != wString::npos) {
+				isGet = QUERY_METHOD::DEL;
+			}
 			else {
 				debug_log_output("'GET' not found. error.%d", accept_socket);
 				return (-1);

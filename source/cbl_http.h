@@ -32,7 +32,7 @@ enum class FILETYPES {
     _TMP = 2,
     _PLW = 3,
     _VOB = 5,
-    _CGI = 6
+    _CGI = 6,
 };
 enum class QUERY_METHOD
 {
@@ -41,6 +41,7 @@ enum class QUERY_METHOD
     HEAD = 2,
     POST = 3,
     PUT = 4,
+    DEL = 5,
 };
 // ==========================================================================
 // HTTP Request情報保存用構造体
