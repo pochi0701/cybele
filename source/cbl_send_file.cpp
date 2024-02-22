@@ -133,10 +133,10 @@ size_t HTTP_RECV_INFO::http_header_response(SOCKET accept_socket)
 	// --------------
 	//メモリ上にヘッダを作成して送出
 	send(accept_socket, send_http_header_buf.c_str(), send_header_data_len, 0);
-	debug_log_output("send_header_data_len = %d\n", send_header_data_len);
-	debug_log_output("--------\n");
-	debug_log_output("%s", send_http_header_buf.c_str());
-	debug_log_output("--------\n");
+	//debug_log_output("send_header_data_len = %d\n", send_header_data_len);
+	//debug_log_output("--------\n");
+	//debug_log_output("%s", send_http_header_buf.c_str());
+	//debug_log_output("--------\n");
 	return t_content_length;
 }
 
@@ -174,7 +174,7 @@ int http_file_send(SOCKET accept_socket, char* filename, unsigned int content_le
 	// ---------------------
 	auto in_fd = myopen(wString(filename), O_RDONLY | O_BINARY, S_IREAD);
 	if (in_fd < 0) {
-		debug_log_output("open() error.");
+		debug_log_output("open() error.:%d:[%s]",errno,filename);
 		return (-1);
 	}
 	//warifu = 0;
@@ -269,7 +269,7 @@ int copy_body(int in_fd, int out_fd, unsigned int content_length, unsigned int r
 		if (read_length == 0)
 		{
 			//読み終わった。contents_length変えるべき
-			debug_log_output("rw end %d %d", in_fd, out_fd);
+			//debug_log_output("rw end %d %d", in_fd, out_fd);
 			//debug_log_output("%s(%d) in_fd",__FILE__,__LINE__);
 			close(in_fd);
 			//debug_log_output("%s(%d) out_fd",__FILE__,__LINE__);
@@ -290,7 +290,7 @@ int copy_body(int in_fd, int out_fd, unsigned int content_length, unsigned int r
 			//読み込み正常終了
 		}
 		else {
-			debug_log_output("Normal read %d", read_length);
+			//debug_log_output("Normal read %d", read_length);
 			//読み込んだデータに割符復元処理を行う
 			//処理開始 total_read_size+range_start_pos
 			//if (warifu == 1) {
@@ -326,10 +326,10 @@ int copy_body(int in_fd, int out_fd, unsigned int content_length, unsigned int r
 		total_write_size += write_length;
 		if (content_length != 0)
 		{
-			debug_log_output("Streaming..  %ld / %ld ( %ld.%ld%% )\n",
-				total_write_size, content_length,
-				total_write_size * 100 / content_length,
-				(total_write_size * 1000 / content_length) % 10);
+			//debug_log_output("Streaming..  %ld / %ld ( %ld.%ld%% )\n",
+			//	total_write_size, content_length,
+			//	total_write_size * 100 / content_length,
+			//	(total_write_size * 1000 / content_length) % 10);
 		}
 	}
 }

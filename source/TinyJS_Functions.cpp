@@ -369,6 +369,12 @@ void scGetLocalAddress (CScriptVar* c, void* userdata)
 	IGNORE_PARAMETER (userdata);
 	c->getReturnVar ()->setString (wString::get_local_address ());
 }
+//getLocalPort
+void scGetLocalPort (CScriptVar* c, void* userdata)
+{
+	IGNORE_PARAMETER (userdata);
+	c->getReturnVar ()->setInt (wString::get_local_port ());
+}
 void scStringFromCharCode (CScriptVar* c, void* userdata)
 {
 	IGNORE_PARAMETER (userdata);
@@ -989,6 +995,7 @@ void registerFunctions (CTinyJS* tinyJS)
 	//tinyJS->addNative("function String.preg_match(pattern)",scPregStringMatch, 0 );
 	tinyJS->addNative ("function String.addSlashes()", scAddShashes, 0);
 	tinyJS->addNative ("function getLocalAddress()", scGetLocalAddress, 0);
+	tinyJS->addNative ("function getLocalPort()", scGetLocalPort, 0);
 	tinyJS->addNative ("function String.toLowerCase()", scToLowerCase, 0);
 	tinyJS->addNative ("function String.toUpperCase()", scToUpperCase, 0);
 	tinyJS->addNative ("function String.toDateString(format)", scIntegerToDateString, 0); // time to strng format

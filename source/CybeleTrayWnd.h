@@ -23,7 +23,6 @@ protected:
 	DECLARE_DYNAMIC(CCybeleTrayWnd)
 
 public:
-	int serverPort;
 	CCybeleTrayWnd();
 	virtual ~CCybeleTrayWnd();
 

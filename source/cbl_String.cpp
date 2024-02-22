@@ -43,6 +43,7 @@
 #include "cbl_tools.h"
 #include <time.h>
 #include "define.h"
+#include <fstream>
 #ifndef strrstr
 ///---------------------------------------------------------------------------
 /// <summary>
@@ -804,7 +805,7 @@ void wString::load_from_csv (const wString& FileName)
 	fd = myopen (FileName, O_RDONLY | O_BINARY, S_IREAD);
 	if (fd < 0) {
 		wString tmp;
-		tmp.sprintf ("%sファイルが開けません\n", FileName);
+		tmp.sprintf ("%sファイルが開けません\n", FileName.c_str());
 		perror (tmp.c_str ());
 		return;
 	}
@@ -1046,26 +1047,21 @@ wString wString::file_stats (const wString& str, int mode)
 //---------------------------------------------------------------------------
 int wString::file_exists (const char* str)
 {
-	int  flag = 0;
 #ifdef linux
 	struct stat send_filestat;
 	int  result = stat (str, &send_filestat);
 	if ((result == 0) && (S_ISREG (send_filestat.st_mode) == 1)) {
-		flag = 1;
+		return 1;
 	}
 #else
 	wString tmp (str);
 	wString tmp2 = tmp.nkfcnv ("Ws");
-	WIN32_FIND_DATA fd; //検索データ
-	HANDLE result = ::FindFirstFile (tmp2.String, &fd); //最初の検索で使用する関数
-	if (result != INVALID_HANDLE_VALUE) {
-		if ((fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
-			flag = 1;
-		}
-		FindClose (result); //ハンドルを閉じる
+	std::ifstream file (tmp2.String);
+	if (file.is_open ()) {
+		return 1;
 	}
 #endif
-	return flag;
+    return 0;
 }
 //---------------------------------------------------------------------------
 int wString::file_exists (const wString& str)
@@ -2238,6 +2234,18 @@ int wString::header (const char* str, int flag, int status)
 /********************************************************************************/
 wString wString::nkfcnv (const wString& option)
 {
+	auto ptr2 = 0;
+	auto kanji = false;
+	while (ptr2 < len) {
+		if (String[ptr2++] & 0x80) {
+			kanji = true;
+			break;
+		}
+	}
+	if (!kanji) {
+		return *this;
+	}
+
 	wString ptr (len * 3);
 	//=================================================
 	// libnkf 実行
@@ -2953,6 +2961,15 @@ wString wString::get_local_address (void)
 	//strcpy(ip, inet_ntoa(inaddr));
 	return inet_ntoa (inaddr);
 #endif
+}
+extern GLOBAL_PARAM_T global_param;
+/// <summary>
+/// ローカルポートを文字列として返す
+/// </summary>
+/// <returns>ローカルポート</returns>
+int wString::get_local_port (void)
+{
+	return global_param.server_port;
 }
 //---------------------------------------------------------------------------
 

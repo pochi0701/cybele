@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="utf-8">
@@ -25,7 +25,7 @@
     </nav>
     <div class="container">
         <div class="text-center">
-            <img src="images/cybele.png" width="304" height="79">
+            <img src="images/cybele.png" width="304" height="79"/>
         </div>
     </div>
     <div class="container d-flex align-items-center justify-content-center">
@@ -35,24 +35,24 @@
         </table>
     </div>
     <div>
-        <div class="text-end"><img src="images/birdland_logo.png"> </div>
+        <div class="text-end"><img src="images/birdland_logo.png"/> </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     <script>
         function setup(url) {
             axios.get(`/data/setup.json`)
                 .then(function (response) {
-                    var repl  = "<?print(getLocalAddress());?>:8000"
+                    var repl  = "<?print (getLocalAddress() + ':' + getLocalPort());?>"
                     var setup = eval(response.data);
                     var contents="";
-                    for( i = 0 ; i < setup.length;i++){
+                    for( i = 0 ; i < setup.length ; i++){
                         if( setup[i].url.indexOf('%LOCALADDRESS%') >= 0 ){
                             setup[i].url = setup[i].url.replace('%LOCALADDRESS%',repl);
                         }
                         contents += '<td><a href="'+setup[i].url+'">'+setup[i].image+'</a></td>\n';
                     }
                     document.getElementById("icons").innerHTML = contents;
-                    new QRCode(document.getElementById("qrcodeCanvas1"), { width: 96, height: 96, text: "http://<? print(getLocalAddress()); ?>:8000/" });  
+                    new QRCode(document.getElementById("qrcodeCanvas1"), { width: 96, height: 96, text: "http://<?print (getLocalAddress()+':'+getLocalPort()+'/');?>" });  
                     return false;
                 })
                 .catch(function (error) {

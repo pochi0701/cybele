@@ -1365,17 +1365,17 @@ int sClose(SOCKET socket)
 	int ret;
 #ifdef linux
 	ret = shutdown(socket, SD_BOTH);
-	if (ret != 0) debug_log_output("shutdown error=%s,%d,%d", strerror(errno), errno, socket);
+	//if (ret != 0) debug_log_output("shutdown error=%s,%d,%d", strerror(errno), errno, socket);
 	ret = close(socket);
-	if (ret != 0) debug_log_output("close error=%s,%d,%d", strerror(errno), errno, socket);
+	//if (ret != 0) debug_log_output("close error=%s,%d,%d", strerror(errno), errno, socket);
 #else
 	ret = shutdown(socket, SD_BOTH);
 	if (ret != 0) {
-		debug_log_output("shutdown error=%s,%d,%d", strerror(errno), errno, socket);
+		//debug_log_output("shutdown error=%s,%d,%d", strerror(errno), errno, socket);
 	}
 	ret = closesocket(socket);
 	if (ret != 0) {
-		debug_log_output("close error=%s,%d,%d", strerror(errno), errno, socket);
+		//debug_log_output("close error=%s,%d,%d", strerror(errno), errno, socket);
 	}
 #endif
 	return ret;

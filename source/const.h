@@ -190,6 +190,6 @@ enum class MIME_TYPE
 #define		MAX_COUNT_ALIAS			(3)
 #define     MAXTHREAD               (3)
 extern int                      loop_flag;
-extern int                      ready_flag;                                   //Accept完了フラグ
+//extern int                      ready_flag;                                   //Accept完了フラグ
 extern SOCKET                   listen_socket;                                // 待ち受けSocket
 #endif

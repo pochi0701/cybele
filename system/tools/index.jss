@@ -1,4 +1,4 @@
-﻿<!doctype html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="utf-8">
@@ -24,7 +24,7 @@
     </nav>
     <div class="container">
         <div class="text-center">
-            <img src="cybele.png" width="304" height="79">
+            <img src="cybele.png" width="304" height="79"/>
         </div>
     </div>
     <div class="container d-flex align-items-center justify-content-center">
@@ -35,17 +35,17 @@
     </div>
 
     <div>
-        <div class="text-end"><img src="/images/birdland_logo.png"> </div>
+        <div class="text-end"><img src="/images/birdland_logo.png"/></div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     <script>
         function setup(url) {
             axios.get(`setup.json`)
                 .then(function (response) {
-                    var repl  = "<?print(getLocalAddress());?>:8000"
+                    var repl  = "<?print (getLocalAddress() + ':' + getLocalPort());?>"
                     var setup = eval(response.data);
                     var contents="";
-                    for( i = 0 ; i < setup.length;i++){
+                    for( i = 0 ; i < setup.length ; i++){
                         if( setup[i].url.indexOf('%LOCALADDRESS%') >= 0 ){
                             setup[i].url = setup[i].url.replace('%LOCALADDRESS%',repl);
                         }

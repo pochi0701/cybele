@@ -149,13 +149,13 @@ unsigned int __stdcall accessloop(void* arg)
 	// =====================
 	// メインループ
 	// =====================
-	ready_flag += 1;
+	//ready_flag += 1;
 	while (loop_flag) {
 		// ====================
 		// Accept待ち.
 		// ====================
 
-		debug_log_output("Waiting for a new client...");
+		//debug_log_output("Waiting for a new client...");
 		// 接続Socket
 		auto accept_socket = accept(lis_soc, (struct sockaddr*)&caddr, &caddr_len);
 		if (SERROR(accept_socket)) // accept失敗チェック
@@ -192,13 +192,13 @@ void thread_process(ACCESS_INFO& ac_in)
 	SOCKET accept_socket = (unsigned int)ac_in.accept_socket;
 	struct sockaddr_in  caddr = ac_in.caddr;         // クライアントソケットアドレス構造体
 	strcpy(access_host, ac_in.access_host);
-	debug_log_output("\n\n=============================================================\n");
-	debug_log_output("Socket Accept!!(accept_socket=%d)\n", accept_socket);
+	//debug_log_output("\n\n=============================================================\n");
+	//debug_log_output("Socket Accept!!(accept_socket=%d)\n", accept_socket);
 	//child_count ++;
 	std::ignore = rand();
 	// caddr 情報表示
-	debug_log_output("client addr = %s\n", inet_ntoa(caddr.sin_addr));
-	debug_log_output("client port = %d\n", ntohs(caddr.sin_port));
+	//debug_log_output("client addr = %s\n", inet_ntoa(caddr.sin_addr));
+	//debug_log_output("client port = %d\n", ntohs(caddr.sin_port));
 	// ==============================
 	// アクセスチェック
 	// ==============================
@@ -211,7 +211,7 @@ void thread_process(ACCESS_INFO& ac_in)
 	// -------------------------------------------------------------------------
 	if (access_allow_list[0].flag == FALSE) { // アクセスリストが空。
 		// チェックＯＫとする。
-		debug_log_output("No Access Allow List. No Check.\n");
+		//debug_log_output("No Access Allow List. No Check.\n");
 		access_check_ok = TRUE;
 	}
 	else {
@@ -264,8 +264,8 @@ void thread_process(ACCESS_INFO& ac_in)
 	else {
 		// HTTP鯖として、仕事実行
 		server_http_process(accept_socket, access_host, client_addr_str);
-		debug_log_output("HTTP process end.\n");
-		debug_log_output("=============================================================\n");
+		//debug_log_output ("HTTP Process done. From %s:%d\n", inet_ntoa (caddr.sin_addr), ntohs (caddr.sin_port));
+
 		//sClose(accept_socket);
 	}
 }

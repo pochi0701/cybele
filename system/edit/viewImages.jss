@@ -43,7 +43,7 @@ for (i=0;i<num;i++){
     //リンク付きで画像を表示する
     ext = extractFileExt(filename).toLowerCase();
     if  (ext == "gif" || ext == "jgp" || ext == "jpeg" || ext == "png" ){
-        print("<td><a href=\""+filename+"\"><img src = \""+filename+"\" title=\""+filename+"\" width=\"128\" border=\"0\"><br/>"+basename(filename)+"</a></td>");
+        print("<td><a href=\""+filename+"\"><img src = \""+filename+"\" title=\""+filename+"\" width=\"128\" border=\"0\"/><br/>"+basename(filename)+"</a></td>");
 
         //カウント数の初期化
         cnt = cnt + 1;

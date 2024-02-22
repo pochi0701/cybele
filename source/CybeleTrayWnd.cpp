@@ -14,6 +14,7 @@
 
 // CCybeleTrayWnd
 extern int Cybelemain(void* argv);
+extern GLOBAL_PARAM_T global_param;
 
 IMPLEMENT_DYNAMIC(CCybeleTrayWnd, CTrayWnd)
 #if 0
@@ -56,7 +57,12 @@ void CCybeleTrayWnd::CblStart()
 	threadHandle = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)Cybelemain, NULL, 0, &id);
 	//cbl_run_flag = true;   // Cybele起動フラグON
 	char work[256];
-	sprintf_s (work, 256, "start http://127.0.0.1:%d/", serverPort);
+	while (global_param.server_port == 0) {
+		Sleep (100);
+	}
+	Sleep (1000);
+
+	sprintf_s (work, 256, "start http://127.0.0.1:%d/", global_param.server_port);
 	system (work);
 	//ShellExecute(NULL, "open", "http://127.0.0.1:8000/", NULL, NULL, SW_SHOW);
 }
@@ -86,7 +92,6 @@ void CCybeleTrayWnd::CblStop(void)
 }
 CCybeleTrayWnd::CCybeleTrayWnd() :	m_hIcon_main(NULL)
 {
-	serverPort = 8000;
 	//threadHandle = NULL;
 	OleInitialize(NULL);
 	//MacAddrの設定

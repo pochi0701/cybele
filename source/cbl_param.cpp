@@ -498,21 +498,21 @@ void GLOBAL_PARAM_T::line_buffer_sanitize(char* line_buf)
 /// <param name="mime_type_size">格納先サイズ</param>
 void MIME_LIST_T::check_file_extension_to_mime_type(const char* file_extension, char* mime_type, int mime_type_size)
 {
-	int     i;
 	strncpy(mime_type, DEFAULT_MIME_TYPE, mime_type_size-1);
-	debug_log_output("file_extension='%s'\n", file_extension);
+	//debug_log_output("file_extension='%s'\n", file_extension);
 	// -------------------------------------------
 	// ファイルの拡張子比較。Content-type を決定
 	// -------------------------------------------
-	for (i = 0;; i++) {
-		if (mime_list[i].mime_type == NULL)
+	for (auto i = 0;; i++) {
+		if (mime_list[i].mime_type == NULL) {
 			break;
+		}
 		if (strcasecmp(mime_list[i].file_extension, file_extension) == 0) {
 			strncpy(mime_type, mime_list[i].mime_type, mime_type_size-1);
 			break;
 		}
 	}
-	debug_log_output("mime_type='%s'\n", mime_type);
+	//debug_log_output("mime_type='%s'\n", mime_type);
 	return;
 }
 

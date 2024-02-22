@@ -166,7 +166,7 @@ public:
 	static wString  http_get(const wString& url, const off_t offset = 0);
 	static wString  http_rest(const wString& methods, const wString& url, const wString& data);
 	static wString  get_local_address(void);
-
+	static int      get_local_port (void);
 };
 extern wString current_dir;
 #endif
