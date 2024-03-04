@@ -1,7 +1,7 @@
 ﻿################################################################################
 # cbl makefile
-#						$Revision: 1.6 $
-#						$Date: 2004/02/25 19:16:51 $
+#						$Revision: 1.7 $
+#						$Date: 2024/03/04 19:16:51 $
 ################################################################################
 #CROSS=mipsel-linux-uclibc-
 GCC=$(CROSS)gcc
@@ -38,7 +38,6 @@ objs = cbl_main.o   \
        TinyJS_MathFunctions.o        \
        cbl_db.o       \
        utf8tbl.o     \
-       libnkf.o      \
        dregex.o
 
 # 定義d済マクロの再定義

@@ -44,6 +44,7 @@
 #include <time.h>
 #include "define.h"
 #include <fstream>
+#include "libnkf.hpp"
 #ifndef strrstr
 ///---------------------------------------------------------------------------
 /// <summary>
@@ -2250,9 +2251,11 @@ wString wString::nkfcnv (const wString& option)
 	//=================================================
 	// libnkf 実行
 	//=================================================
-	nkf (static_cast<const char*>(String), static_cast<char*>(ptr.c_str ()), len * 3, static_cast<const char*>(option.c_str ()));
+	nkf_cnv* nkfcnv = new nkf_cnv ();
+	nkfcnv->nkf (static_cast<const char*>(String), static_cast<char*>(ptr.c_str ()), len * 3, static_cast<const char*>(option.c_str ()));
 	// 文字列の長さの調整
 	ptr.len = (unsigned int)strlen (ptr.c_str ());
+	delete nkfcnv;
 	return ptr;
 }
 #endif

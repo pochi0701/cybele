@@ -20,8 +20,6 @@ typedef int SOCKET;
 #include <time.h>
 #include <sys/types.h>
 #endif
-#define		CR		(0x0D)
-#define		LF		(0x0A)
 #define		OUTPUT_LOG_ROTATE_SIZE		(1024*1024*1900)	/* 1.9Gbyte */
 #define		OUTPUT_LOG_ROTATE_MAX		5					/* 何回のrotateを許すか */
 #include        "cbl_String.h"
@@ -93,7 +91,7 @@ public:
 	int     mp3_id3_tag_read(const char* mp3_filename);
 	int     mp3_id3v1_tag_read(const char* mp3_filename);
 	int     mp3_id3v2_tag_read(const char* mp3_filename);
-	unsigned int id3v2_len(unsigned char* buf);
+	unsigned int id3v2_len(const unsigned char* buf);
 };
 extern struct tm* gmtime_r(const time_t* timer, struct tm* tmbuf);
 extern struct tm* localtime_r(const time_t* timer, struct tm* tmbuf);
