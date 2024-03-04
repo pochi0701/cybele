@@ -11,7 +11,6 @@
 // ==========================================================================
 //---------------------------------------------------------------------------
 #include "config.h"
-#ifdef UTF8_OUTPUT_ENABLE
 unsigned short euc_to_utf8_A1[] = {
 	0x3000, 0x3001, 0x3002, 0xFF0C, 0xFF0E, 0x30FB, 0xFF1A,
 	0xFF1B, 0xFF1F, 0xFF01, 0x309B, 0x309C, 0x00B4, 0xFF40, 0x00A8,
@@ -1130,8 +1129,6 @@ unsigned short* euc_to_utf8_2bytes[] = {
 	0,              0,              0,              0,
 	0,              0,              0,
 };
-#endif /* UTF8_OUTPUT_ENABLE */
-#ifdef UTF8_INPUT_ENABLE
 unsigned short utf8_to_euc_C2[] = {
 	0,      0,      0,      0,      0,      0,      0,      0,
 	0,      0,      0,      0,      0,      0,      0,      0,
@@ -4854,4 +4851,3 @@ unsigned short** utf8_to_euc_3bytes[] = {
 	utf8_to_euc_E8, utf8_to_euc_E9,              0,              0,
 	0,              0,              0, utf8_to_euc_EF,
 };
-#endif /* UTF8_INPUT_ENABLE */

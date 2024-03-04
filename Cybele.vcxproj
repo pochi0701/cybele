@@ -220,7 +220,6 @@
     <ClCompile Include="source\CybeleTrayWnd.cpp" />
     <ClCompile Include="source\dirent.cpp" />
     <ClCompile Include="source\dregex.cpp" />
-    <ClCompile Include="source\libnkf.cpp" />
     <ClCompile Include="source\ssdp.cpp" />
     <ClCompile Include="source\stdafx.cpp" />
     <ClCompile Include="source\TinyJS.cpp" />
@@ -255,6 +254,7 @@
     <ClInclude Include="source\define.h" />
     <ClInclude Include="source\dirent.h" />
     <ClInclude Include="source\dregex.h" />
+    <ClInclude Include="source\libnkf.hpp" />
     <ClInclude Include="source\node.hpp" />
     <ClInclude Include="source\Resource.h" />
     <ClInclude Include="source\stdafx.h" />
