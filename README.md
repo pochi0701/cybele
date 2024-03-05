@@ -1,4 +1,4 @@
-# Lightweight Web Servers
+# Lightweight Web/Application Servers
 - Built-in JavaScript in the server-side language
 - SQL already implemented
 - Just download and start, no installation required, ready to go in 10 seconds.
