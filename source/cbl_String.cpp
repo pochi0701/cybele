@@ -2235,17 +2235,17 @@ int wString::header (const char* str, int flag, int status)
 /********************************************************************************/
 wString wString::nkfcnv (const wString& option)
 {
-	auto ptr2 = 0;
-	auto kanji = false;
-	while (ptr2 < len) {
-		if (String[ptr2++] & 0x80) {
-			kanji = true;
-			break;
-		}
-	}
-	if (!kanji) {
-		return *this;
-	}
+	//auto ptr2 = 0;
+	//auto kanji = false;
+	//while (ptr2 < len) {
+	//	if (String[ptr2++] & 0x80) {
+	//		kanji = true;
+	//		break;
+	//	}
+	//}
+	//if (!kanji) {
+	//	return *this;
+	//}
 
 	wString ptr (len * 3);
 	//=================================================
@@ -3401,3 +3401,4 @@ wString wString::jpeg_size (const wString& jpeg_filename)
 	tmp.sprintf ("{\"x\":%d,\"y\":%d}", x, y);
 	return tmp;
 }
+
