@@ -37,6 +37,7 @@
 //#include  "cbl.h"
 //#include  "const.h"
 #include "cbl_tools.h"
+#include "libnkf.hpp"
 #include "define.h"
 static char debug_log_filename[FILENAME_MAX];	// デバッグログ出力ファイル名(フルパス)
 static char debug_log_initialize_flag = (1);	// デバッグログ初期化フラグ
@@ -1234,14 +1235,6 @@ SOCKET sock_connect(char* host, int port)
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-//int open(unsigned char *pathname, int flags)
-//{
-//    return open((char*)pathname,flags);
-//}
-//int open(unsigned char *pathname, int flags, mode_t mode)
-//{
-//    return open((char*)pathname,flags,mode);
-//}
 #if 1
 /********************************************************************************/
 // 日本語文字コード変換。
@@ -1294,7 +1287,8 @@ void convert_language_code(const char* in, char* out, size_t len, int in_flag, i
 	// libnkf 実行
 	//=================================================
 	*out = 0;
-	nkf(static_cast<const char*>(in), out, len, static_cast<const char*>(nkf_option));
+	nkf_cnv* nkfcnv = new nkf_cnv ();
+	nkfcnv->nkf(static_cast<const char*>(in), out, len, static_cast<const char*>(nkf_option));
 	return;
 }
 #endif
@@ -1552,7 +1546,7 @@ int  mp3::mp3_id3v1_tag_read(const char* mp3_filename)
 	return 0;
 }
 /////////////////////////////////////////////////////////////////////////////
-unsigned int mp3::id3v2_len(unsigned char* buf)
+unsigned int mp3::id3v2_len(const unsigned char* buf)
 {
 	return buf[0] * 0x200000 + buf[1] * 0x4000 + buf[2] * 0x80 + buf[3];
 }

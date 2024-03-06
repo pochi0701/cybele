@@ -44,6 +44,7 @@
 #include <time.h>
 #include "define.h"
 #include <fstream>
+#include "libnkf.hpp"
 #ifndef strrstr
 ///---------------------------------------------------------------------------
 /// <summary>
@@ -2234,25 +2235,27 @@ int wString::header (const char* str, int flag, int status)
 /********************************************************************************/
 wString wString::nkfcnv (const wString& option)
 {
-	auto ptr2 = 0;
-	auto kanji = false;
-	while (ptr2 < len) {
-		if (String[ptr2++] & 0x80) {
-			kanji = true;
-			break;
-		}
-	}
-	if (!kanji) {
-		return *this;
-	}
+	//auto ptr2 = 0;
+	//auto kanji = false;
+	//while (ptr2 < len) {
+	//	if (String[ptr2++] & 0x80) {
+	//		kanji = true;
+	//		break;
+	//	}
+	//}
+	//if (!kanji) {
+	//	return *this;
+	//}
 
 	wString ptr (len * 3);
 	//=================================================
 	// libnkf 実行
 	//=================================================
-	nkf (static_cast<const char*>(String), static_cast<char*>(ptr.c_str ()), len * 3, static_cast<const char*>(option.c_str ()));
+	nkf_cnv* nkfcnv = new nkf_cnv ();
+	nkfcnv->nkf (static_cast<const char*>(String), static_cast<char*>(ptr.c_str ()), len * 3, static_cast<const char*>(option.c_str ()));
 	// 文字列の長さの調整
 	ptr.len = (unsigned int)strlen (ptr.c_str ());
+	delete nkfcnv;
 	return ptr;
 }
 #endif
@@ -3398,3 +3401,4 @@ wString wString::jpeg_size (const wString& jpeg_filename)
 	tmp.sprintf ("{\"x\":%d,\"y\":%d}", x, y);
 	return tmp;
 }
+
