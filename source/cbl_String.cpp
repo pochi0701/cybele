@@ -2948,7 +2948,10 @@ wString wString::get_local_address (void)
 	IN_ADDR inaddr = {};
 	// GetBestRouteで外に出られるアドレスを正とする。
 	// もし全てのインターフェースが外に出られる場合はGetBestRouteが選択したルートとする。
-	for (auto i = 0; i < hostend->h_length; i++) {
+	////for (auto i = 0; i < hostend->h_length; i++) {
+	auto i = 0;
+	while( hostend->h_addr_list[i] != NULL)
+	{
 		//DWORD aaa = (Dhostend->h_addr_list[i];
 		// TODO:３バイト比較。厳密にすべき。
 		if (memcmp (static_cast<void*>(hostend->h_addr_list[i]), static_cast<void*>(&dwDestAddr), 3) == 0) {
@@ -2958,6 +2961,7 @@ wString wString::get_local_address (void)
 			inaddr.S_un.S_un_b.s_b4 = hostend->h_addr_list[i][3];
 			break;
 		}
+	    i += 1;
 	}
 	//ip.resize(256);
 	//static char ip[256];

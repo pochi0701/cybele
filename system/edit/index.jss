@@ -140,6 +140,14 @@ if( sf == ""){
             if(path == undefined){
                 return;
             }
+            debugger;
+            checkEditData();
+            var elm = getElements();
+            if(elm[this.lastIndexed].modify){
+                if( window.confirm(extractFileName(elm[this.lastIndexed].filepath)+"は変更されています。保存しますか？") ){
+                    saveCode();
+                }
+            }
             document_root = "<? print(_SERVER.DOCUMENT_ROOT); ?>";
             if (path.endsWith('md')) {
                 path = "http://<?print(_SERVER.HTTP_HOST);?>" + path.substring(document_root.length, path.length) + "?action=MarkDown.jss";
