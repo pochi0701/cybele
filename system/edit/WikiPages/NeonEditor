@@ -23,9 +23,6 @@
 
 **エディター表示部分**
 %%<i class="fa fa-cloud-upload fa-lg"></i>%%:ファイルセーブ
-%%<i class="fa fa-television fa-lg"></i>%%:ファイル表示（セーブしません）
-ファイルタイプにより動作が異なります。
-%%<i class="fa fa-expand fa-lg"></i>%%:ツリー表示切替
-メニュー部分がアコーディオン表示となります。
+%%<i class="fa fa-television fa-lg"></i>%%:ファイル表示（セーブしません）ファイルタイプにより動作が異なります。
 %%<i class="fa fa-times fa-lg"></i>%%:アクティブなタブのクローズ
 タブ：アクティブなタブの表示切替。アクティブなタブはオレンジ色で表示されます。
