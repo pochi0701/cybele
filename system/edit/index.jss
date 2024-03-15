@@ -119,6 +119,7 @@ if( sf == ""){
             this.filepath = path;
         }
         function init() {
+            debugger;
             // list取得[{"filepath":filepath,"modify":false/true}]
             elm = getElements();
             this.lastIndexed = (elm.length>0)?0:-1;
@@ -137,6 +138,7 @@ if( sf == ""){
         }
 
         function viewCode(path) {
+            debugger;
             if(path == undefined){
                 return;
             }
@@ -387,6 +389,7 @@ if( sf == ""){
         }
         // file load
         function loadFile(path) {
+            path = decodeURI(path);
             axios.get(`${scriptn}file_load.jss?path=${path}`)
                 .then(function (response) {
                     // check current data
