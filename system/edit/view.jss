@@ -106,8 +106,8 @@ if( sf == ""){
             if (editor == undefined) {
                 return false;
             }
-            code = editor.getValue();
-            saveFile(this.filepath, code);
+            mycode = editor.getValue();
+            saveFile(this.filepath, mycode);
             return false;
         }
         // file load

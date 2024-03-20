@@ -119,7 +119,6 @@ if( sf == ""){
             this.filepath = path;
         }
         function init() {
-            debugger;
             // list取得[{"filepath":filepath,"modify":false/true}]
             elm = getElements();
             this.lastIndexed = (elm.length>0)?0:-1;
@@ -131,23 +130,23 @@ if( sf == ""){
                  // Tree表示
                 treeView("?root=" + extractFilePath(elm[this.lastIndexed].filepath));
             }else{
-                showMarkDown(scriptp+"sample.md");
+                showMarkDown(scriptp+"develop.md");
                 treeView("");
             }
             return false;
         }
 
         function viewCode(path) {
-            debugger;
             if(path == undefined){
                 return;
             }
-            debugger;
             checkEditData();
-            var elm = getElements();
-            if(elm[this.lastIndexed].modify){
-                if( window.confirm(extractFileName(elm[this.lastIndexed].filepath)+"は変更されています。保存しますか？") ){
-                    saveCode();
+            if(this.lastIndexed>=0){
+                var elm = getElements();
+                if(elm[this.lastIndexed].modify){
+                    if( window.confirm(extractFileName(elm[this.lastIndexed].filepath)+"は変更されています。保存しますか？") ){
+                        saveCode();
+                    }
                 }
             }
             document_root = "<? print(_SERVER.DOCUMENT_ROOT); ?>";
@@ -255,7 +254,7 @@ if( sf == ""){
                 if( window.confirm(extractFileName(elm[this.lastIndexed].filepath)+"は変更されています。破棄してよろしいですか？") ){
                     elm.splice(this.lastIndexed,1);
                     if(elm.length == 0){
-                        showMarkDown(scriptp+"sample.md");
+                        showMarkDown(scriptp+"develop.md");
                     }else{
                         this.lastIndexed -= 1;
                         if(this.lastIndexed < 0){
@@ -270,7 +269,7 @@ if( sf == ""){
             }else{
                 elm.splice(this.lastIndexed,1);
                 if(elm.length == 0){
-                    showMarkDown(scriptp+"sample.md");
+                    showMarkDown(scriptp+"develop.md");
                 }else{
                     this.lastIndexed -= 1;
                     if(this.lastIndexed < 0){
