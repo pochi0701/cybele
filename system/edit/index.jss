@@ -140,7 +140,6 @@ if( sf == ""){
             if(path == undefined){
                 return;
             }
-            debugger;
             checkEditData();
             var elm = getElements();
             if(elm[this.lastIndexed].modify){
