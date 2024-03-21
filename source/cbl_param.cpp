@@ -323,7 +323,7 @@ void GLOBAL_PARAM_T::config_file_read(void)
 					strncpy(work_root, value, sizeof(work_root)-1);
 					// 最後が'/'じゃなかったら、'/'を追加
 					if (work_root[strlen(work_root) - 1] != DELIMITER[0]) {
-						strncat(work_root, DELIMITER, strlen(DELIMITER));
+						strncat(work_root, DELIMITER, sizeof(DELIMITER));
 					}
 				}
 #else

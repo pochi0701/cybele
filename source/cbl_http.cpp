@@ -697,7 +697,7 @@ FILETYPES HTTP_RECV_INFO::http_file_check (void)
 		// skin置き場にあるモノとして、フルパス生成。
 		strncpy (send_filename, global_param.skin_root, sizeof (send_filename) - 1);
 		strncat (send_filename, global_param.skin_name, sizeof (send_filename) - 1);
-		strncat (send_filename, work_data, strlen (send_filename) - 1);
+		strncat (send_filename, work_data, sizeof (send_filename) - 1);
 		// '/' が重なってるところの重複を排除。
 		//		duplex_character_to_unique(send_filename, '/');
 		// 2004/10/13 Delete start
