@@ -1,5 +1,21 @@
 [
   {
+    "url": "#",
+    "image": "<img src=\"images/transparent.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "#",
+    "image": "<img src=\"images/transparent.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "#",
+    "image": "<img src=\"images/transparent.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "#",
+    "image": "<img src=\"images/transparent.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
     "url": "/system/edit/help.html",
     "image": "<img src=\"images/help.png\" width=\"96\" height=\"96\" border=\"0\">"
   },
@@ -20,7 +36,7 @@
     "image": "<img src=\"images/menu.png\" width=\"96\" height=\"96\" border=\"0\">"
   },
   {
-    "url": "sample/lesson/",
+    "url": "sample/school/",
     "image": "<img src=\"images/lesson.png\" width=\"96\" height=\"96\" border=\"0\">"
   },
   {
