@@ -48,7 +48,7 @@ unsigned int __stdcall batch(void* ptr)
     char script_filename[128];
     char cur_dir[256];
 #ifdef linux
-    getcwd (current_dir, sizeof (current_dir));
+    getcwd (cur_dir, sizeof (cur_dir));
 #else
     GetCurrentDirectory (256, cur_dir);
 #endif
@@ -58,25 +58,9 @@ unsigned int __stdcall batch(void* ptr)
         //イベントが合致したら指定jssを起動
         wString buffer;
         buffer.load_from_file (script_filename);
-        //char buffer[SCRIPT_SIZE]={};
-        //int fd = myopen( script_filename, O_RDONLY | O_BINARY);
-        //if( fd < 0 ){
-        //    break;
-        //}
-        //wString aaa;
-
-        //auto ret = read(fd,buffer, SCRIPT_SIZE);
-        //// 読み込み失敗
-        //if (ret == -1)
-        //{
-        //    close(fd);
-        //    break;
-        //}
-        //close( fd );
         CTinyJS  s(INVALID_SOCKET);
         registerFunctions (&s);
         registerMathFunctions (&s);
-        //wString temp = s.execute(buffer);
         break;
     }
     return NULL;

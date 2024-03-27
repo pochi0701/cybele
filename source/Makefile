@@ -61,5 +61,22 @@ $(program): $(objs)
 .cybele: clean
 clean:
 	$(RM) -f $(program) $(objs)
+# ターゲット 'hello' の定義
+hello:
+	echo "Hello, World"
+
+# ターゲット 'install' の定義
+install: ../cybele
+	mkdir -p /var/www
+	mkdir -p /var/www/html
+	-killall cybele
+	cp ../cybele /var/www
+	cp ../cbl.conf.linux /var/www/cbl.conf
+	cp -r ../html /var/www
+	cp -r ../database /var/www
+	cp -r ../system /var/www
+	cp -r ../skin /var/www
+	cp ../README.md /var/www
+	/var/www/cybele
 
 # ヘッダーファイルの依存関係
