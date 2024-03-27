@@ -1086,9 +1086,9 @@ wString wString::extract_file_dir (const wString& str)
 	return temp;
 }
 //---------------------------------------------------------------------------
-int wString::create_dir (const wString& str)
+bool wString::create_dir (const wString& str)
 {
-	int flag = 0;
+	bool flag = false;
 #ifdef linux
 	//0x777ではちゃんとフォルダできない
 	flag = (mkdir (str.String, 0777) != -1);

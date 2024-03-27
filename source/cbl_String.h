@@ -138,7 +138,7 @@ public:
 	static wString  extract_file_name(const wString& str, const char* delim = DELIMITER);
 	static wString  extract_file_ext(const wString& str);
 	static wString  find_mime_type(const wString& file_name);
-	static int      create_dir(const wString& str);
+	static bool     create_dir(const wString& str);
 	static wString  change_file_ext(const wString& str, const char* ext);
 	static unsigned long file_size_by_name(char* str);
 	static unsigned long file_size_by_name(wString& str);

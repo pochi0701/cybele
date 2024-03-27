@@ -40,9 +40,13 @@ if (del != undefined && del.length > 0) {
     //リネーム
 } else if (renf != undefined && rent != undefined && renf.length > 0 && rent.length > 0) {
     if (file_exists(renf) && (!file_exists(rent))) {
-        rename(renf, rent);
+        if(!rename(renf, rent)){
+            print("<p class=\"text-danger\">"+renf+"は"+rent+"に変更できませんでした。</p>");
+        }
     } else if (dir_exists(renf) && (!dir_exists(rent))) {
-        rename(renf, rent);
+        if(!rename(renf, rent)){
+            print("<p class=\"text-danger\">"+renf+"は"+rent+"に変更できませんでした。</p>");
+        }
     } else if (file_exists(rent)) {
         print("<p class=\"text-danger\">すでに同名のファイルが存在します</p>");
     }
@@ -50,14 +54,18 @@ if (del != undefined && del.length > 0) {
 } else if (dir_exists(root) && newDir != undefined && newDir.length > 0) {
     var path = root + "/" + newDir;
     if (!file_exists(path)) {
-        mkdir(path);
+        if(!mkdir(path)){
+            print("<p class=\"text-danger\">"+newDir+"は作成できませんでした。</p>");
+        }
     }
     root = path;
     //ファイル名取得、作成
 } else if (dir_exists(root) && newFile != undefined && newFile.length > 0) {
     var path = root + "/" + newFile;
     if (!file_exists(path)) {
-        touch(path);
+        if( !touch(path)){
+            print("<p class=\"text-danger\">"+newFile+"は作成できませんでした。</p>");
+        }
     }
 }
 var sf = root.substring(base.length, root.length);
