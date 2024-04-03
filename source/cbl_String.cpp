@@ -904,7 +904,7 @@ wString wString::trim (void)
 	wString temp (*this);
 	if (temp.len) {
 		//先頭の空白等を抜く
-		while (temp.len && *temp.String <= ' ') {
+		while (temp.len && *reinterpret_cast<unsigned char*>(temp.String) <= ' ') {
 #ifdef linux
 			char* src = temp.String;
 			char* dst = src + 1;
@@ -917,7 +917,7 @@ wString wString::trim (void)
 			temp.len--;
 		}
 		//末尾の空白等を抜く
-		while (temp.len && temp.String[temp.len - 1] <= ' ') {
+		while (temp.len && reinterpret_cast<unsigned char*>(temp.String)[temp.len - 1] <= ' ') {
 			temp.String[--temp.len] = 0;
 		}
 	}
@@ -931,7 +931,7 @@ wString wString::rtrim (void)
 	wString temp (*this);
 	if (temp.len) {
 		//末尾の空白等を抜く
-		while (temp.len && temp.String[temp.len - 1] <= ' ') {
+		while (temp.len && reinterpret_cast<unsigned char*>(temp.String)[temp.len - 1] <= ' ') {
 			temp.String[--temp.len] = 0;
 		}
 	}
@@ -969,7 +969,7 @@ wString wString::ltrim (void)
 	wString temp (*this);
 	if (temp.len) {
 		//先頭の空白等を抜く
-		while (temp.len && *temp.String <= ' ') {
+		while (temp.len && *reinterpret_cast<unsigned char*>(temp.String) <= ' ') {
 			char* src = temp.String;
 			char* dst = src + 1;
 			while (*src) {

@@ -34,7 +34,7 @@
 #include  <io.h>
 #include  <process.h>
 #endif
-//#include  "cbl.h"
+#include  "cbl.h"
 //#include  "const.h"
 #include "cbl_tools.h"
 #include "libnkf.hpp"
@@ -753,7 +753,7 @@ void debug_log_output(const char* fmt, ...)
 	// デバッグログ 初期化フラグをチェック
 	// =========================================
 	if (debug_log_initialize_flag != 0) {
-		return;
+		debug_log_initialize(global_param.debug_log_filename);
 	}
 	// =========================================
 	// Debug出力文字列生成。

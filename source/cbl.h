@@ -95,8 +95,10 @@ public:
 	int server_port;
 	/// <summary>システムパスワード</summary>
 	char system_password[30];
-	/// <summary>Document Root</summary>
+	/// <summary>document root</summary>
 	char  document_root[FILENAME_MAX];
+	/// <summary>server root</summary>
+	char  server_root[FILENAME_MAX];
 	/// <summary>ファイルパスエイリアス</summary>
 	char alias_key[MAX_COUNT_ALIAS][FILENAME_MAX];
 	char alias_rep[MAX_COUNT_ALIAS][FILENAME_MAX];

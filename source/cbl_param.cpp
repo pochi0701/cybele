@@ -260,8 +260,11 @@ void GLOBAL_PARAM_T::config_file_read(void)
 					//strncpy(document_org, value, sizeof(document_org));
 #ifdef linux
 					strncpy(document_root, value, sizeof(document_root)-1);
+					strncpy(server_root, cut_after_last_character(value, '/'),sizeof(server_root)-1)
 					//printf("%s\n", value );
 #else
+					// server_root新設
+					strncpy(server_root, current_dir.c_str(), sizeof(server_root));
 					// ":"が含まれていなければ、相対パスとみなす
 					if (strchr(value, ':') == NULL) {
 						//現在のディレクトリを取ってはいけない。現在のディレクトリは不定
@@ -270,6 +273,13 @@ void GLOBAL_PARAM_T::config_file_read(void)
 					else {
 						strncpy(document_root, value, sizeof(document_root)-1);
 					}
+					// ここでUTF-8化する
+					// TODO UTF-8化
+					char work[FILENAME_MAX];
+					strcpy(work, document_root);
+					convert_language_code(reinterpret_cast<const char*>(work), reinterpret_cast<char*>(document_root), sizeof(document_root), CODE_SJIS, CODE_UTF8);
+					strcpy(work, server_root);
+					convert_language_code(reinterpret_cast<const char*>(work), reinterpret_cast<char*>(server_root), sizeof(server_root), CODE_SJIS, CODE_UTF8);
 #endif
 				}
 				// alias
@@ -461,9 +471,9 @@ int GLOBAL_PARAM_T::config_file_open(void)
 		return (fd);
 	}
 #else
-	char work[FILENAME_MAX];
-	snprintf(work, FILENAME_MAX, "%s%s%s", current_dir.c_str(), DELIMITER, DEFAULT_CONF_FILENAME1);
-	fd = myopen(wString(work), O_BINARY | O_RDONLY);
+	wString work;
+	work.sprintf("%s%s%s", current_dir.c_str(), DELIMITER, DEFAULT_CONF_FILENAME1);
+	fd = myopen(work.nkfcnv("Sw"), O_BINARY | O_RDONLY);
 	if (fd >= 0) {
 		//              printf("config '%s' open.\n", DEFAULT_CONF_FILENAME1);
 		return (fd);

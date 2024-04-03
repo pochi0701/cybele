@@ -50,6 +50,7 @@ int HTTP_RECV_INFO::http_cgi_response(SOCKET accept_socket)
 	char ext[4];
 	//WINDOWSでドライブから始まる場合
 	if (send_filename[1] != ':') {
+		// TODO server_rootを使うべきだが以下のコードは出来てない
 		char cwd[FILENAME_MAX];
 		debug_log_output("WARNING: send_filename[1] != ':', send_filename = '%s'", send_filename);
 		if (getcwd(cwd, sizeof(cwd)) == NULL) {

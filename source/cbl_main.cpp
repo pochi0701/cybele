@@ -133,6 +133,8 @@ int Cybelemain(void* arg)
 	// コンフィグファイル読む(cbl.conf)
 	// =============================================
 	global_param.config_file_read();
+
+
 	// デーモンモードについては、コマンドラインパラメータを優先
 	if (flag_daemon)
 	{
@@ -151,7 +153,6 @@ int Cybelemain(void* arg)
 #ifdef linux
 		printf("debug log output start..\n");
 #endif
-		debug_log_initialize(global_param.debug_log_filename);
 		debug_log_output("\n%s boot up.", SERVER_NAME);
 		debug_log_output("debug log output start..\n");
 	}
@@ -247,7 +248,7 @@ int Initialize(void)
 	WORD version = MAKEWORD(2, 0);
 	WSAStartup(version, &wsa);
 
-
+	// arg0 相当のファイル名取得
 	int ret = ::GetModuleFileName(NULL, Application, sizeof(Application));
 	if (ret == 0)
 	{
