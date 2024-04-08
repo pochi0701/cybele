@@ -1699,7 +1699,7 @@ void CTinyJS::FlushBuf (void)
 	//残りのバッファ出力
 	if (prBuffer.length () > 0) {
 		if (lex->dataPos >= prPos) {
-			if (socket <= 0) {
+			if (socket == 0) {
 				outBuffer += prBuffer;
 			}
 			else {

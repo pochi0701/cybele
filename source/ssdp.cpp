@@ -45,9 +45,9 @@ const char buff[] = "M-SEARCH * HTTP/1.1\r\n"
 "USER-AGENT: CYBELE/1.0\r\n\r\n";
 
 int    ssdp_client(wString& str, int loops);
-int    sClose(SOCKET socket);
+int    sClose(SOCKET& socket);
 #if 0
-int sClose(SOCKET socket)
+int sClose(SOCKET& socket)
 {
 	int ret;
 #ifdef linux

@@ -257,7 +257,7 @@ int Initialize(void)
 
 	//char Application[256];
 	wString apName = wString::linux_file_name(Application);
-	curdir = wString::extract_file_dir(apName).trim();
+	curdir = wString::extract_file_dir(apName).trim().nkfcnv("Sw");
 #endif
 	//curdir.trim();
 	current_dir = curdir;
@@ -265,7 +265,7 @@ int Initialize(void)
 #ifdef linux
 	std::ignore = chdir(current_dir.c_str());
 #else
-	SetCurrentDirectory(current_dir.c_str());
+	SetCurrentDirectory(current_dir.nkfcnv("Ws").c_str());
 #endif
 	/* TODO : work_rootに従って削除すること */
 	if (!wString::directory_exists(curdir + DELIMITER"work")) {

@@ -39,7 +39,7 @@
 #include "cbl_tools.h"
 #include "libnkf.hpp"
 #include "define.h"
-static char debug_log_filename[FILENAME_MAX];	// デバッグログ出力ファイル名(フルパス)
+//static char debug_log_filename[FILENAME_MAX];	// デバッグログ出力ファイル名(フルパス)
 static char debug_log_initialize_flag = (1);	// デバッグログ初期化フラグ
 static void cut_before_n_length(char* sentence, unsigned int n);
 static void cut_after_n_length(char* sentence, unsigned int n);
@@ -718,17 +718,17 @@ void make_datetime_string(char* sentence)
 // デバッグ出力初期化(ファイル名セット)関数
 // この関数を最初に呼ぶまでは、デバッグログは一切出力されない。
 //*******************************************************************
-void debug_log_initialize(const char* set_debug_log_filename)
+void debug_log_initialize()
 {
-	// 引数チェック
-	if (set_debug_log_filename == NULL) {
-		return;
-	}
-	if (strlen(set_debug_log_filename) == 0) {
-		return;
-	}
-	// デバッグログファイル名をセット。
-	strncpy(debug_log_filename, set_debug_log_filename, sizeof(debug_log_filename));
+	//// 引数チェック
+	//if (set_debug_log_filename == NULL) {
+	//	return;
+	//}
+	//if (strlen(set_debug_log_filename) == 0) {
+	//	return;
+	//}
+	//// デバッグログファイル名をセット。
+	//strncpy(debug_log_filename, set_debug_log_filename, sizeof(debug_log_filename));
 	// デバッグログ 初期化完了フラグを0に。
 	debug_log_initialize_flag = 0;
 	return;
@@ -753,7 +753,7 @@ void debug_log_output(const char* fmt, ...)
 	// デバッグログ 初期化フラグをチェック
 	// =========================================
 	if (debug_log_initialize_flag != 0) {
-		debug_log_initialize(global_param.debug_log_filename);
+		debug_log_initialize();
 	}
 	// =========================================
 	// Debug出力文字列生成。
@@ -791,13 +791,17 @@ void debug_log_output(const char* fmt, ...)
 	// ログファイル出力
 	// =====================
 	if (fd < 0) {
-		fd = myopen(wString(debug_log_filename), O_CREAT | O_APPEND | O_WRONLY | O_BINARY, S_IREAD | S_IWRITE);
+		fd = myopen(global_param.debug_log_filename, O_CREAT | O_APPEND | O_WRONLY | O_BINARY, S_IREAD | S_IWRITE);
 		if (fd < 0) {
 			return;
 		}
 	}
 	// 出力
-	write(fd, buf, (unsigned int)strlen(buf));
+	auto len2 = write(fd, buf, (unsigned int)strlen(buf));
+	if (len2 <= 0)
+	{
+		return;
+	}
 	// メッセージ実体を出力
 	//close(fd);
 	// ファイルクローズ
@@ -861,288 +865,288 @@ char* path_sanitize(char* orig_dir, size_t dir_size)
 #endif
 	return orig_dir;
 }
-static int myMkdir(wString FileName);
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-//階層フォルダを作成する
-//引数フォルダ名(最後が\で終わる）またはフルパス名（ファイル名含む）
-int myMkdir(wString FileName)
-{
-	while (FileName.length() > 0 && FileName[FileName.length() - 1] != '/') {
-		FileName = FileName.substr(0, FileName.length() - 1);
-	}
-	if (FileName.length() > 0) {
-		FileName = FileName.substr(0, FileName.length() - 1);
-	}
-	else {
-		FileName = "/";
-	}
-	if (wString::directory_exists(FileName)) {
-		return true;
-	}
-	else {
-		//１つ上のフォルダを作って
-		if (FileName.Pos("/") != (int)wString::npos &&
-			myMkdir(FileName.set_length(FileName.length() - 1)) == (int)true) {
-			//自分のフォルダ作成
-			wString::create_dir(FileName);
-		}
-		else {
-			return false;
-		}
-	}
-	return true;
-}
-/////////////////////////////////////////////////////////////////////////////////////////
-#define HTTP_BUF_SIZE (1024*10)
-/// <summary>
-/// HTTPDownload
-/// </summary>
-/// <param name="src">読み取り元URL</param>
-/// <param name="dst">保存先ファイル名</param>
-/// <param name="offset">０なら全取得,サイズ指定ならサイズに満たない場合、超えた場合全取得</param>
-/// <returns>1:成功 2:サイズ同じ　false:失敗</returns>
-int HTTPDownload(char* src, char* dst, off_t offset)
-{
-	time_t      rbgn_time = time(NULL) + NO_RESPONSE_TIMEOUT;
-
-	int         recv_len;                       //読み取り長さ
-	int         content_length = 0;
-	int         len;
-	char* work1;
-	char* work2;
-	int         fd = -1;                        //ファイルディスクリプタ
-	char        host[256] = {};
-	char        server[256] = {};
-	SOCKET      server_socket;                  //サーバーソケット
-	int         status = true;
-	int         server_port = HTTP_SERVER_PORT;
-	//出力ファイルの設定
-	// ================
-	// 実体転送開始
-	// ================
-
-	//準備
-	//領域の取得
-	auto buf = mycalloc(HTTP_BUF_SIZE, 1);
-	//ホスト名の設定
-	strncpy(host, src, sizeof(host));
-	//先頭のHTTP://を抜く
-	work2 = strstr(host, "://") + 3;
-	if (work2 != NULL) {
-		strcpy(host, work2);
-	}
-	//次の'/'からが本体
-	work1 = strstr(host, "/");
-	strcpy(server, work1);
-	//'/'の所で切る
-	*work1 = 0;
-	//ポートがあれば取得
-	work1 = strstr(host, ":");
-	if (work1) {
-		server_port = atoi(work1 + 1);
-		*work1 = 0;
-	}
-
-	//strcpy( host, work2 );
-	//ソケット作成と接続
-	server_socket = wString::sock_connect(host, server_port);
-	if (!SERROR(server_socket)) {
-		//元ファイルがあった場合
-		if (offset != 0) {
-			//コネクションクローズしない
-			sprintf(buf, "HEAD %s HTTP/1.0\r\n"
-				"Accept: */*\r\n"
-				"User-Agent: %s\r\n"
-				"Host: %s\r\n"
-				"Connection: close\r\n\r\n",
-				wString(server).uri_encode().c_str(),
-				USERAGENT,
-				host);
-			//サーバに繋がってheadをとった
-			if (send(server_socket, buf, (int)strlen(buf), 0) != SOCKET_ERROR) {
-				//初回分からヘッダを削除
-				recv_len = recv(server_socket, buf, HTTP_BUF_SIZE, 0);
-				int num = atoi(strchr(buf, ' ') + 1);
-				if (200 <= num && num < 300) {
-					//len = 0;
-					buf[recv_len] = 0;
-					//\r\n\r\nを探す
-					work1 = strstr(buf, "Content-Length:");
-					if (work1) {
-						work1 += 16;
-						content_length = atoi(work1);
-						//PHPとかで中身がない。
-					}
-					else {
-						sClose(server_socket);
-						myfree(buf);
-						return false;
-					}
-				}
-				else if (num == 302) {
-					//Location:----\r\n
-					work1 = strstr(buf, "Location:") + 10;
-					if (work1) {
-						work2 = work1;
-						while (work2[0] != '\r' || work2[1] != '\n') {
-							work2++;
-						}
-						*work2 = 0;
-						sClose(server_socket);
-						status = HTTPDownload(work1, dst, offset);
-						myfree(buf);
-						return status;
-					}
-					sClose(server_socket);
-					myfree(buf);
-					return false;
-				}
-				//サーバから返答なし
-			}
-			else {
-				sClose(server_socket);
-				myfree(buf);
-				return false;
-			}
-			sClose(server_socket);
-			server_socket = wString::sock_connect(host, server_port);
-			if (SERROR(server_socket)) {
-
-				myfree(buf);
-				return false;
-			}
-			//HTTP1.0 GET発行 レンジ付き
-			if (offset < content_length) {   //range発行
-				sprintf(buf, "GET %s HTTP/1.0\r\n"
-					"Accept: */*\r\n"
-#ifdef linux
-					"User-Agent: %s\r\nHost: %s\r\nRange: bytes=%ld-\r\nConnection: close\r\n\r\n",
-#elif raspberry
-					"User-Agent: %s\r\nHost: %s\r\nRange: bytes=%zu-\r\nConnection: close\r\n\r\n",
-#else
-					"User-Agent: %s\r\nHost: %s\r\nRange: bytes=%ld-\r\nConnection: close\r\n\r\n",
-#endif
-					wString(server).uri_encode().c_str(),
-					//"Mozilla/4.0 (compatible; MSIE 5.5; Windows 98)",
-					USERAGENT,
-					host,
-					offset);
-				//                               GetAuthorization(void),
-				myMkdir(wString(dst));
-				fd = open(dst, O_WRONLY | O_APPEND | O_BINARY, 0777);
-				//HTTP1.0 GET発行 ファイルが変なので全部取得
-			}
-			else if (offset > content_length) {
-				sprintf(buf, "GET %s HTTP/1.0\r\n"
-					"Accept: */*\r\n"
-					"User-Agent: %s\r\nHost: %s\r\nConnection: close\r\n\r\n",
-					wString(server).uri_encode().c_str(),
-					USERAGENT,
-					host);
-				//                               GetAuthorization(void),
-				myMkdir(wString(dst));
-				fd = open(dst, O_WRONLY | O_TRUNC | O_BINARY, 0777);
-				//取得済み
-			}
-			else {
-				sClose(server_socket);
-				myfree(buf);
-				return 2;
-			}
-
-
-			//ファイルはありません。
-		}
-		else {
-			sprintf(buf, "GET %s HTTP/1.0\r\n"
-				"Accept: */*\r\n"
-				"User-Agent: %s\r\nHost: %s\r\nConnection: close\r\n\r\n",
-				wString(server).uri_encode().c_str(),
-				USERAGENT,
-				host);
-			myMkdir(wString(dst));
-			fd = open(dst, O_WRONLY | O_CREAT | O_BINARY, 0777);
-		}
-		//ファイルがないならエラー
-		if (fd < 0) {
-			sClose(server_socket);
-			myfree(buf);
-			debug_log_output("open() error.");
-			return (false);
-		}
-		//サーバに繋がった
-		if (send(server_socket, buf, (int)strlen(buf), 0) != SOCKET_ERROR) {
-			//初回分からヘッダを削除
-			recv_len = recv(server_socket, buf, HTTP_BUF_SIZE, 0);
-			int num = atoi(strchr(buf, ' ') + 1);
-			if (num == 200 || num == 206) {
-				len = 0;
-				//コンテンツ長さ
-				content_length = atoi(strstr(buf, "Content-Length:") + 16);
-				//\r\n\r\nを探す
-				work1 = strstr(buf, HTTP_DELIMITER) + 4;//sizeof( HTTP_DELIMITER );//実体の先頭
-				recv_len -= (int)(work1 - buf);
-				memcpy(buf, work1, recv_len);           //移動
-				write(fd, buf, recv_len);                //書き込めないことはないと
-				len += recv_len;
-				rbgn_time = time(NULL) + NO_RESPONSE_TIMEOUT;
-				while (loop_flag) {
-					recv_len = recv(server_socket, buf, HTTP_BUF_SIZE, 0);
-					if (recv_len < 0) {
-						break;
-					}
-					else if (recv_len > 0) {
-						write(fd, buf, recv_len);            //書き込めないことはないと
-						//新興
-						//ここを更新しないと１０秒で書き込みが終わる。
-						rbgn_time = time(NULL) + NO_RESPONSE_TIMEOUT;
-						//buf += recv_len;
-						len += recv_len;
-						//指定時刻書き込めなかったら落ちる
-					}
-					else if (len == content_length) {
-						status = 1;
-						break;
-					}
-					else if (time(NULL) > rbgn_time) {
-						status = false;
-						break;
-					}
-				}
-			}
-			else if (num == 302) {
-				work1 = strstr(buf, "Location:") + 10;
-				if (work1) {
-					work2 = work1;
-					while (work2[0] != '\r' || work2[1] != '\n') {
-						work2++;
-					}
-					*work2 = 0;
-					sClose(server_socket);
-					close(fd);
-					status = HTTPDownload(work1, dst, offset);
-					myfree(buf);
-					return status;
-				}
-			}
-			else {
-				close(fd);
-				fd = -1;
-				unlink(dst);
-				status = false;
-			}
-		}
-		sClose(server_socket);
-	}
-	// スレッド終了
-	myfree(buf);
-	if (fd != -1) {
-		close(fd);
-	}
-	//ExitThread(TRUE);
-	return status;
-}
+//static int myMkdir(wString FileName);
+////---------------------------------------------------------------------------
+////---------------------------------------------------------------------------
+////階層フォルダを作成する
+////引数フォルダ名(最後が\で終わる）またはフルパス名（ファイル名含む）
+//int myMkdir(wString FileName)
+//{
+//	while (FileName.length() > 0 && FileName[FileName.length() - 1] != '/') {
+//		FileName = FileName.substr(0, FileName.length() - 1);
+//	}
+//	if (FileName.length() > 0) {
+//		FileName = FileName.substr(0, FileName.length() - 1);
+//	}
+//	else {
+//		FileName = "/";
+//	}
+//	if (wString::directory_exists(FileName)) {
+//		return true;
+//	}
+//	else {
+//		//１つ上のフォルダを作って
+//		if (FileName.Pos("/") != (int)wString::npos &&
+//			myMkdir(FileName.set_length(FileName.length() - 1)) == (int)true) {
+//			//自分のフォルダ作成
+//			wString::create_dir(FileName);
+//		}
+//		else {
+//			return false;
+//		}
+//	}
+//	return true;
+//}
+///////////////////////////////////////////////////////////////////////////////////////////
+//#define HTTP_BUF_SIZE (1024*10)
+///// <summary>
+///// HTTPDownload
+///// </summary>
+///// <param name="src">読み取り元URL</param>
+///// <param name="dst">保存先ファイル名</param>
+///// <param name="offset">０なら全取得,サイズ指定ならサイズに満たない場合、超えた場合全取得</param>
+///// <returns>1:成功 2:サイズ同じ　false:失敗</returns>
+//int HTTPDownload(char* src, char* dst, off_t offset)
+//{
+//	time_t      rbgn_time = time(NULL) + NO_RESPONSE_TIMEOUT;
+//
+//	int         recv_len;                       //読み取り長さ
+//	int         content_length = 0;
+//	int         len;
+//	char* work1;
+//	char* work2;
+//	int         fd = -1;                        //ファイルディスクリプタ
+//	char        host[256] = {};
+//	char        server[256] = {};
+//	SOCKET      server_socket;                  //サーバーソケット
+//	int         status = true;
+//	int         server_port = HTTP_SERVER_PORT;
+//	//出力ファイルの設定
+//	// ================
+//	// 実体転送開始
+//	// ================
+//
+//	//準備
+//	//領域の取得
+//	auto buf = mycalloc(HTTP_BUF_SIZE, 1);
+//	//ホスト名の設定
+//	strncpy(host, src, sizeof(host));
+//	//先頭のHTTP://を抜く
+//	work2 = strstr(host, "://") + 3;
+//	if (work2 != NULL) {
+//		strcpy(host, work2);
+//	}
+//	//次の'/'からが本体
+//	work1 = strstr(host, "/");
+//	strcpy(server, work1);
+//	//'/'の所で切る
+//	*work1 = 0;
+//	//ポートがあれば取得
+//	work1 = strstr(host, ":");
+//	if (work1) {
+//		server_port = atoi(work1 + 1);
+//		*work1 = 0;
+//	}
+//
+//	//strcpy( host, work2 );
+//	//ソケット作成と接続
+//	server_socket = wString::sock_connect(host, server_port);
+//	if (!SERROR(server_socket)) {
+//		//元ファイルがあった場合
+//		if (offset != 0) {
+//			//コネクションクローズしない
+//			sprintf(buf, "HEAD %s HTTP/1.0\r\n"
+//				"Accept: */*\r\n"
+//				"User-Agent: %s\r\n"
+//				"Host: %s\r\n"
+//				"Connection: close\r\n\r\n",
+//				wString(server).uri_encode().c_str(),
+//				USERAGENT,
+//				host);
+//			//サーバに繋がってheadをとった
+//			if (send(server_socket, buf, (int)strlen(buf), 0) != SOCKET_ERROR) {
+//				//初回分からヘッダを削除
+//				recv_len = recv(server_socket, buf, HTTP_BUF_SIZE, 0);
+//				int num = atoi(strchr(buf, ' ') + 1);
+//				if (200 <= num && num < 300) {
+//					//len = 0;
+//					buf[recv_len] = 0;
+//					//\r\n\r\nを探す
+//					work1 = strstr(buf, "Content-Length:");
+//					if (work1) {
+//						work1 += 16;
+//						content_length = atoi(work1);
+//						//PHPとかで中身がない。
+//					}
+//					else {
+//						sClose(server_socket);
+//						myfree(buf);
+//						return false;
+//					}
+//				}
+//				else if (num == 302) {
+//					//Location:----\r\n
+//					work1 = strstr(buf, "Location:") + 10;
+//					if (work1) {
+//						work2 = work1;
+//						while (work2[0] != '\r' || work2[1] != '\n') {
+//							work2++;
+//						}
+//						*work2 = 0;
+//						sClose(server_socket);
+//						status = HTTPDownload(work1, dst, offset);
+//						myfree(buf);
+//						return status;
+//					}
+//					sClose(server_socket);
+//					myfree(buf);
+//					return false;
+//				}
+//				//サーバから返答なし
+//			}
+//			else {
+//				sClose(server_socket);
+//				myfree(buf);
+//				return false;
+//			}
+//			sClose(server_socket);
+//			server_socket = wString::sock_connect(host, server_port);
+//			if (SERROR(server_socket)) {
+//
+//				myfree(buf);
+//				return false;
+//			}
+//			//HTTP1.0 GET発行 レンジ付き
+//			if (offset < content_length) {   //range発行
+//				sprintf(buf, "GET %s HTTP/1.0\r\n"
+//					"Accept: */*\r\n"
+//#ifdef linux
+//					"User-Agent: %s\r\nHost: %s\r\nRange: bytes=%ld-\r\nConnection: close\r\n\r\n",
+//#elif raspberry
+//					"User-Agent: %s\r\nHost: %s\r\nRange: bytes=%zu-\r\nConnection: close\r\n\r\n",
+//#else
+//					"User-Agent: %s\r\nHost: %s\r\nRange: bytes=%ld-\r\nConnection: close\r\n\r\n",
+//#endif
+//					wString(server).uri_encode().c_str(),
+//					//"Mozilla/4.0 (compatible; MSIE 5.5; Windows 98)",
+//					USERAGENT,
+//					host,
+//					offset);
+//				//                               GetAuthorization(void),
+//				myMkdir(wString(dst));
+//				fd = open(dst, O_WRONLY | O_APPEND | O_BINARY, 0777);
+//				//HTTP1.0 GET発行 ファイルが変なので全部取得
+//			}
+//			else if (offset > content_length) {
+//				sprintf(buf, "GET %s HTTP/1.0\r\n"
+//					"Accept: */*\r\n"
+//					"User-Agent: %s\r\nHost: %s\r\nConnection: close\r\n\r\n",
+//					wString(server).uri_encode().c_str(),
+//					USERAGENT,
+//					host);
+//				//                               GetAuthorization(void),
+//				myMkdir(wString(dst));
+//				fd = open(dst, O_WRONLY | O_TRUNC | O_BINARY, 0777);
+//				//取得済み
+//			}
+//			else {
+//				sClose(server_socket);
+//				myfree(buf);
+//				return 2;
+//			}
+//
+//
+//			//ファイルはありません。
+//		}
+//		else {
+//			sprintf(buf, "GET %s HTTP/1.0\r\n"
+//				"Accept: */*\r\n"
+//				"User-Agent: %s\r\nHost: %s\r\nConnection: close\r\n\r\n",
+//				wString(server).uri_encode().c_str(),
+//				USERAGENT,
+//				host);
+//			myMkdir(wString(dst));
+//			fd = open(dst, O_WRONLY | O_CREAT | O_BINARY, 0777);
+//		}
+//		//ファイルがないならエラー
+//		if (fd < 0) {
+//			sClose(server_socket);
+//			myfree(buf);
+//			debug_log_output("open() error.");
+//			return (false);
+//		}
+//		//サーバに繋がった
+//		if (send(server_socket, buf, (int)strlen(buf), 0) != SOCKET_ERROR) {
+//			//初回分からヘッダを削除
+//			recv_len = recv(server_socket, buf, HTTP_BUF_SIZE, 0);
+//			int num = atoi(strchr(buf, ' ') + 1);
+//			if (num == 200 || num == 206) {
+//				len = 0;
+//				//コンテンツ長さ
+//				content_length = atoi(strstr(buf, "Content-Length:") + 16);
+//				//\r\n\r\nを探す
+//				work1 = strstr(buf, HTTP_DELIMITER) + 4;//sizeof( HTTP_DELIMITER );//実体の先頭
+//				recv_len -= (int)(work1 - buf);
+//				memcpy(buf, work1, recv_len);           //移動
+//				write(fd, buf, recv_len);                //書き込めないことはないと
+//				len += recv_len;
+//				rbgn_time = time(NULL) + NO_RESPONSE_TIMEOUT;
+//				while (loop_flag) {
+//					recv_len = recv(server_socket, buf, HTTP_BUF_SIZE, 0);
+//					if (recv_len < 0) {
+//						break;
+//					}
+//					else if (recv_len > 0) {
+//						write(fd, buf, recv_len);            //書き込めないことはないと
+//						//新興
+//						//ここを更新しないと１０秒で書き込みが終わる。
+//						rbgn_time = time(NULL) + NO_RESPONSE_TIMEOUT;
+//						//buf += recv_len;
+//						len += recv_len;
+//						//指定時刻書き込めなかったら落ちる
+//					}
+//					else if (len == content_length) {
+//						status = 1;
+//						break;
+//					}
+//					else if (time(NULL) > rbgn_time) {
+//						status = false;
+//						break;
+//					}
+//				}
+//			}
+//			else if (num == 302) {
+//				work1 = strstr(buf, "Location:") + 10;
+//				if (work1) {
+//					work2 = work1;
+//					while (work2[0] != '\r' || work2[1] != '\n') {
+//						work2++;
+//					}
+//					*work2 = 0;
+//					sClose(server_socket);
+//					close(fd);
+//					status = HTTPDownload(work1, dst, offset);
+//					myfree(buf);
+//					return status;
+//				}
+//			}
+//			else {
+//				close(fd);
+//				fd = -1;
+//				unlink(dst);
+//				status = false;
+//			}
+//		}
+//		sClose(server_socket);
+//	}
+//	// スレッド終了
+//	myfree(buf);
+//	if (fd != -1) {
+//		close(fd);
+//	}
+//	//ExitThread(TRUE);
+//	return status;
+//}
 wString GetAuthorization(const wString& AuthorizedString)
 {
 	wString auth;
@@ -1183,20 +1187,20 @@ void Sleep(unsigned int milliseconds)
 	}
 }
 #endif
-char* mymalloc(size_t size)
-{
-	return(new char[size]);
-}
-char* mycalloc(size_t size1, int num)
-{
-	char* tmp = new char[size1 * num];
-	memset(tmp, 0, size1 * num);
-	return tmp;
-}
-void myfree(char* ptr)
-{
-	delete[] ptr;
-}
+//char* mymalloc(size_t size)
+//{
+//	return(new char[size]);
+//}
+//char* mycalloc(size_t size1, int num)
+//{
+//	char* tmp = new char[size1 * num];
+//	memset(tmp, 0, size1 * num);
+//	return tmp;
+//}
+//void myfree(char* ptr)
+//{
+//	delete[] ptr;
+//}
 // ソケットを作成し、相手に接続するラッパ. 失敗 = -1
 //---------------------------------------------------------------------------
 SOCKET sock_connect(char* host, int port)
@@ -1316,7 +1320,7 @@ void set_nonblocking_mode(int fd, int flag)
 //linux/windows共用オープン
 //追加: O_CREAT | O_APPEND | O_WRONLY(またはO_RDWR) | (O_BINARY) , S_IREAD | S_IWRITE
 //新規: O_CREAT | O_TRUNC  | O_WRONLY(またはO_RDWR) | (O_BINARY) , S_IREAD | S_IWRITE
-//読込: O_RDONLY                                     | (O_BINARY)
+//読込: O_RDONLY                                    | (O_BINARY)
 int myopen(const wString& filename, int amode, int option)
 {
 	//毎回オープンしないようにする
@@ -1330,31 +1334,35 @@ int myopen(const wString& filename, int amode, int option)
 	}
 #else
 	wString FileNamew = filename;
-	FileNamew = FileNamew.nkfcnv ("Ws");
-	char work[1024];
-	strcpy(work, FileNamew.c_str());
-	int ptr = 0;
-	while (work[ptr]) {
-		if (work[ptr] == '/') {
-			work[ptr] = '\\';
-		}
-		ptr++;
-	}
+	//FileNamew = FileNamew.nkfcnv ("Ws");
+	//char work[FILENAME_MAX];
+	//strcpy(work, FileNamew.c_str());
+	////int ptr = 0;
+	//wString::windows_file_name(work);
+	//while (work[ptr]) {
+	//	if (work[ptr] == '/') {
+	//		work[ptr] = '\\';
+	//	}
+	//	ptr++;
+	//}
 	if (option != 0) {
 		//if (hd < 0) {
-		return open(work, amode, option);
+		auto ret =  open(FileNamew.nkfcnv("Ws").windows_file_name().c_str(), amode, option);
+		return ret;
+
 		//}
 	}
 	else {
 		//if (hd < 0) {
-		return open(work, amode);
+		auto ret =  open(FileNamew.nkfcnv("Ws").windows_file_name().c_str(), amode);
+		return ret;
 		//}
 	}
 	//return hd;
 #endif
 }
 //汎用ソケットクローズ
-int sClose(SOCKET socket)
+int sClose(SOCKET& socket)
 {
 	int ret;
 #ifdef linux
@@ -1372,6 +1380,7 @@ int sClose(SOCKET socket)
 		//debug_log_output("close error=%s,%d,%d", strerror(errno), errno, socket);
 	}
 #endif
+	socket = 0;
 	return ret;
 }
 //#ifdef linux
@@ -1470,7 +1479,7 @@ int  mp3::mp3_id3v1_tag_read(const char* mp3_filename)
 	unsigned char       buf[128];
 	off_t               length;
 	memset(buf, '\0', sizeof(buf));
-	fd = open(mp3_filename, O_RDONLY);
+	fd = myopen(mp3_filename, O_RDONLY);
 	if (fd < 0)
 	{
 		return -1;
@@ -1582,7 +1591,7 @@ int  mp3::mp3_id3v2_tag_read(const char* mp3_filename)
 	int i;
 	int flag_extension = 0;
 	memset(buf, '\0', sizeof(buf));
-	fd = open(mp3_filename, O_RDONLY);
+	fd = myopen(mp3_filename, O_RDONLY);
 	if (fd < 0)
 	{
 		return -1;

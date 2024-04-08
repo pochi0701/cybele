@@ -745,9 +745,8 @@ void scUnlink (CScriptVar* c, void* userdata)
 	wString path = c->getParameter ("path")->getString ();
 #ifdef linux
 #else
-	path = path.nkfcnv ("Ws");
 #endif
-	int res = unlink (path.c_str ());
+	int res = wString::delete_file(path);
 	int ret = (res == 0) ? true : false;
 	c->getReturnVar ()->setInt (ret);
 }
@@ -790,9 +789,8 @@ void scRmdir (CScriptVar* c, void* userdata)
 	wString path = c->getParameter ("path")->getString ();
 #ifdef linux
 #else
-	path = path.nkfcnv ("Ws");
 #endif
-	int res = rmdir (path.c_str ());
+	int res = wString::delete_folder (path);
 	int ret = (res == 0) ? true : false;
 	c->getReturnVar ()->setInt (ret);
 }

@@ -46,7 +46,7 @@ unsigned int __stdcall batch(void* ptr)
 {
     IGNORE_PARAMETER(ptr);
     char script_filename[128];
-    char cur_dir[256];
+    //char cur_dir[256];
 //#ifdef linux
 //    getcwd (cur_dir, sizeof (cur_dir));
 //#else

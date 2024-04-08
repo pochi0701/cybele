@@ -114,11 +114,11 @@ void GLOBAL_PARAM_T::global_param_init(void)
 	flag_debug_log_output = DEFAULT_FLAG_DEBUG_LOG_OUTPUT;
 #ifndef linux
 	/// debuglogを完全パスに
-	char cwd[FILENAME_MAX];
-	std::ignore = _getcwd(cwd, sizeof(cwd));
-	sprintf(debug_log_filename, "%s%s%s", cwd, DELIMITER, DEFAULT_DEBUG_LOG_FILENAME);
+	wString cwd = wString::get_current_dir();
+	debug_log_filename.sprintf("%s%s%s", cwd.c_str(), DELIMITER, DEFAULT_DEBUG_LOG_FILENAME);
 #else
-	strncpy(debug_log_filename, DEFAULT_DEBUG_LOG_FILENAME, sizeof(debug_log_filename)-1);
+	debug_log_filename = DEFAULT_DEBUG_LOG_FILENAME
+	//strncpy(debug_log_filename, DEFAULT_DEBUG_LOG_FILENAME, sizeof(debug_log_filename)-1);
 #endif    
 	// スキン情報使用フラグ
 	flag_use_skin = DEFAULT_FLAG_USE_SKIN;
@@ -231,7 +231,7 @@ void GLOBAL_PARAM_T::config_file_read(void)
 				}
 				// debug_log_filename
 				else if (strcasecmp("debug_log_filename", key) == 0) {
-					strncpy(debug_log_filename, value, sizeof(debug_log_filename)-1);
+					debug_log_filename = value;
 				}
 				// exec_user
 				else if (strcasecmp("exec_user", key) == 0) {
@@ -275,11 +275,11 @@ void GLOBAL_PARAM_T::config_file_read(void)
 					}
 					// ここでUTF-8化する
 					// TODO UTF-8化
-					char work[FILENAME_MAX];
-					strcpy(work, document_root);
-					convert_language_code(reinterpret_cast<const char*>(work), reinterpret_cast<char*>(document_root), sizeof(document_root), CODE_SJIS, CODE_UTF8);
-					strcpy(work, server_root);
-					convert_language_code(reinterpret_cast<const char*>(work), reinterpret_cast<char*>(server_root), sizeof(server_root), CODE_SJIS, CODE_UTF8);
+					////char work[FILENAME_MAX];
+					////strcpy(work, document_root);
+					////convert_language_code(reinterpret_cast<const char*>(work), reinterpret_cast<char*>(document_root), sizeof(document_root), CODE_SJIS, CODE_UTF8);
+					////strcpy(work, server_root);
+					////convert_language_code(reinterpret_cast<const char*>(work), reinterpret_cast<char*>(server_root), sizeof(server_root), CODE_SJIS, CODE_UTF8);
 #endif
 				}
 				// alias
@@ -473,7 +473,7 @@ int GLOBAL_PARAM_T::config_file_open(void)
 #else
 	wString work;
 	work.sprintf("%s%s%s", current_dir.c_str(), DELIMITER, DEFAULT_CONF_FILENAME1);
-	fd = myopen(work.nkfcnv("Sw"), O_BINARY | O_RDONLY);
+	fd = myopen(work, O_BINARY | O_RDONLY);
 	if (fd >= 0) {
 		//              printf("config '%s' open.\n", DEFAULT_CONF_FILENAME1);
 		return (fd);
@@ -531,7 +531,7 @@ void MIME_LIST_T::check_file_extension_to_mime_type(const char* file_extension, 
 /// </summary>
 void GLOBAL_PARAM_T::config_sanity_check()
 {
-	struct stat sb;
+	// struct stat sb;
 #ifdef linux
 	char cwd[FILENAME_MAX];
 	char buf[FILENAME_MAX];
@@ -551,8 +551,10 @@ void GLOBAL_PARAM_T::config_sanity_check()
 		strncpy(document_root, DEFAULT_DOCUMENT_ROOT
 			, sizeof(document_root)-1);
 	}
-	if (stat(document_root, &sb) != 0) {
-		debug_log_output("document_root: %s: %s", document_root, strerror(errno));
+	if (!wString::directory_exists(document_root))
+	{
+		//stat(document_root, &sb) != 0) {
+		debug_log_output("Document root not exists: %s: %s", document_root, strerror(errno));
 		exit(-1);
 	}
 	//TODO:statを機種固有ライブラリに移行

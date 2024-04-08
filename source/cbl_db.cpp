@@ -2487,12 +2487,16 @@ int DBCatalog::LoadFromFile(void)
 {
 	unsigned int len;
 	unsigned int max;
-	int    fd;
 	char   name[1024] = {};
 	dblist.clear();
 	//オープン
 	if (!wString::file_exists(CATFILE)) return 0;
-	fd = open(CATFILE, O_RDONLY | O_BINARY);
+	auto fd = myopen(CATFILE, O_RDONLY | O_BINARY);
+	if (fd < 0)
+	{
+		debug_log_output("Database Catalog open error %s", CATFILE);
+		return -1;
+	}
 	//dbname read
 	if (read(fd, &max, sizeof(unsigned int)) != sizeof(unsigned int)) { err("can't read"); close(fd); return -1; }
 	//read all database

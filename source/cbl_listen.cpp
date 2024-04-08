@@ -118,7 +118,7 @@ void	server_listen(void)
 	//handle2 = CreateThread(0, 0, (LPTHREAD_START_ROUTINE) accessloop , (void*)&listen_socket, 0, &id2);
 	//handle3 = CreateThread(0, 0, (LPTHREAD_START_ROUTINE) accessloop , (void*)&listen_socket, 0, &id3);
 	for (auto i = 0; i < MAXTHREAD; i++) {
-		thread_handle[i] = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, accessloop, (void*)&listen_socket, 0, &id[i]));
+		thread_handle[i] = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, accessloop, static_cast<void*>(&listen_socket), 0, &id[i]));
 	}
 
 	WaitForMultipleObjects(MAXTHREAD, thread_handle, TRUE, INFINITE);

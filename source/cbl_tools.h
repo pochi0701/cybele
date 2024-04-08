@@ -46,15 +46,15 @@ extern void     make_datetime_string(char* sentence);
 extern void     filename_to_extension(char* filename, char* extension_buf, unsigned int extension_buf_size);
 //extern wString  insertStr(int pos, const wString& fill);
 extern int      nkf(const char* in, char* out, size_t len, const char* options);
-extern int      HTTPDownload(char* src, char* dst, off_t offset);
+//extern int      HTTPDownload(char* src, char* dst, off_t offset);
 // path から ./ と ../ を取り除く。dir に結果が格納される。
 extern char*    path_sanitize(char* dir, size_t dir_size);
 // DebugLog 出力
-extern void     debug_log_initialize(const char* set_debug_log_filename);
+extern void     debug_log_initialize();
 extern void     debug_log_output(const char* fmt, ...);
 
 //システム処理
-extern int      sClose(SOCKET socket);
+extern int      sClose(SOCKET& socket);
 extern int      readLine(int fd, char* line_buf_p, int line_max);
 extern wString  GetAuthorization(const wString& AuthorizedString);
 
@@ -63,9 +63,9 @@ extern int      getTargetFile(const char* LinkFile, char* TargetFile);
 extern void     Sleep(unsigned int milliseconds);
 
 #endif
-char* mymalloc(size_t size);
-char* mycalloc(size_t size1, int num);
-void  myfree(char* ptr);
+//char* mymalloc(size_t size);
+//char* mycalloc(size_t size1, int num);
+//void  myfree(char* ptr);
 bool  split(const char* cut_char, wString& split1, wString& split2);
 /// <summary>クラスmp3</summary>
 class mp3 {

@@ -114,13 +114,13 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 	strncpy(next_cwd, script_filename, sizeof(next_cwd));
 	cut_after_last_character(next_cwd, '/');
 	struct stat results;
-	if (stat(script_filename, &results) != 0)
+	if (stat(wString(script_filename).nkfcnv("Ws").c_str(), &results) != 0)
 	{
 		debug_log_output("Cannot stat file! '%s'\n", script_filename);
 		return;
 	}
 	//指定フォルダにCD
-	if (chdir(next_cwd) != 0) {
+	if (chdir(wString(next_cwd).nkfcnv("Ws").c_str()) != 0) {
 		debug_log_output("chdir failed. err = %s", strerror(errno));
 	}
 	int size = results.st_size;

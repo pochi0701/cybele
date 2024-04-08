@@ -149,7 +149,7 @@ if( sf == ""){
                     }
                 }
             }
-            document_root = "<? print(_SERVER.DOCUMENT_ROOT); ?>";
+            document_root = encodeURI("<? print(_SERVER.DOCUMENT_ROOT); ?>");
             if (path.endsWith('md')) {
                 path = "http://<?print(_SERVER.HTTP_HOST);?>" + path.substring(document_root.length, path.length) + "?action=MarkDown.jss";
             } else {
@@ -158,7 +158,7 @@ if( sf == ""){
             myWin = window.open(path, path);
         }
         function QRCode(path) {
-            document_root = "<? print(_SERVER.DOCUMENT_ROOT); ?>";
+            document_root = encodeURI("<? print(_SERVER.DOCUMENT_ROOT); ?>");
             var path2 = path.substring(document_root.length, path.length);
             path = scriptn+"qrcode.jss?url=" + path2;
             myWin = window.open(path, path);

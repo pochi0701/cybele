@@ -8,6 +8,7 @@
 #endif
 #include "cbl_String.h"
 #include "define.h"
+#include "cbl_tools.h"
 //#define O_BINARY 0
 /////////////////////////////////////////////////////////////////////////////
 enum class dataType { STRING = 0, NUMBER };
@@ -44,9 +45,11 @@ public:
 	/// <param name="file">ファイル名</param>
 	/// <returns>成功:0 失敗:-1</returns>
 	int ropen(const wString& file) {
-		bufptr = 0;
-		fd = open(file.c_str(), O_RDONLY | O_BINARY);
-		if (fd < 0) return -1;
+		fd = myopen(file, O_RDONLY | O_BINARY);
+		if (fd < 0) {
+			debug_log_output("%s(%d):ropen(%s) Error.", __FILE__, __LINE__, file.c_str());
+			return -1;
+		}
 		rest = read(fd, static_cast<void*>(buf), sizeof(buf));
 		return 0;
 	}
@@ -57,9 +60,11 @@ public:
 	/// <param name="file">ファイル名</param>
 	/// <returns>成功:0 失敗:-1</returns>
 	int wopen(const wString& file) {
-		bufptr = 0;
-		fd = open(file.c_str(), O_CREAT | O_TRUNC | O_WRONLY | O_BINARY, S_IREAD | S_IWRITE);
-		if (fd < 0) return -1;
+		fd = myopen(file, O_CREAT | O_TRUNC | O_WRONLY | O_BINARY, S_IREAD | S_IWRITE);
+		if (fd < 0) {
+			debug_log_output("%s(%d):wopen(%s) Error.", __FILE__, __LINE__, file.c_str());
+			return -1;
+		}
 		return 0;
 	}
 

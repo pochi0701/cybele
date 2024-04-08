@@ -119,7 +119,7 @@ void server_http_process (SOCKET accept_socket, char* access_host, char* client_
 		// BAD REQUEST!
 		http_recv_info.http_not_found_response (accept_socket);
 		debug_log_output ("%s(%d) BAD REQUEST. Path sanitize %s\n", __FILE__, __LINE__,http_recv_info.recv_uri);
-		//sClose(accept_socket);
+		sClose(accept_socket);
 		return;
 	}
 	//PROXY判定
@@ -320,6 +320,7 @@ void server_http_process (SOCKET accept_socket, char* access_host, char* client_
 	}
 	//sClose(accept_socket);
 	debug_log_output ("HTTP Process done. From %s:%s\n", access_host, http_recv_info.recv_uri);
+	sClose(accept_socket);
 	return;
 }
 /////////////////////////////////////////////////////////////////////////////////
@@ -346,7 +347,7 @@ FILETYPES HTTP_RECV_INFO::http_index (void)
 	// document_root/index.* のフルパス生成
 	// ----------------------------------------------
 	read_filename.sprintf ("%sindex.html", document_path.c_str ());
-	if (access (read_filename.c_str (), 0) == 0) {
+	if (wString::file_exists(read_filename)) {
 		strcat (request_uri, "index.html");
 		strcpy (send_filename, read_filename.c_str ());
 		// ファイルの拡張子より、Content-type を決定
@@ -357,7 +358,7 @@ FILETYPES HTTP_RECV_INFO::http_index (void)
 		return FILETYPES::_FILE;
 	}
 	read_filename.sprintf ("%sindex.htm", document_path.c_str ());
-	if (access (read_filename.c_str (), 0) == 0) {
+	if (wString::file_exists(read_filename)) {
 		strcat (request_uri, "index.htm");
 		strcpy (send_filename, read_filename.c_str ());
 		// ファイルの拡張子より、Content-type を決定
@@ -368,7 +369,7 @@ FILETYPES HTTP_RECV_INFO::http_index (void)
 		return FILETYPES::_FILE;
 	}
 	read_filename.sprintf ("%sindex.php", document_path.c_str ());
-	if (access (read_filename.c_str (), 0) == 0) {
+	if (wString::file_exists(read_filename)) {
 		strcat (request_uri, "index.php");
 		strcpy (send_filename, read_filename.c_str ());
 		// ファイルの拡張子より、Content-type を決定
@@ -379,7 +380,7 @@ FILETYPES HTTP_RECV_INFO::http_index (void)
 		return FILETYPES::_CGI;
 	}
 	read_filename.sprintf ("%sindex.jss", document_path.c_str ());
-	if (access (read_filename.c_str (), 0) == 0) {
+	if (wString::file_exists(read_filename)) {
 		strcat (request_uri, "index.jss");
 		strcpy (send_filename, read_filename.c_str ());
 		// ファイルの拡張子より、Content-type を決定

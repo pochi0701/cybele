@@ -48,7 +48,7 @@ public:
 	{
 		flag_daemon = 0;
 		flag_debug_log_output = 0;
-		*debug_log_filename = 0;
+		//*debug_log_filename = 0;
 		*exec_user = 0;
 		*exec_group = 0;
 		*server_name = 0;
@@ -56,6 +56,7 @@ public:
 		server_port = 0;
 		*system_password = 0;
 		*document_root = 0;
+		*server_root = 0;
 		*alias_key[0] = 0;
 		*alias_rep[0] = 0;
 		flag_use_skin = 0;
@@ -80,7 +81,7 @@ public:
 	char flag_daemon;
 	/// <summary>デバッグログ</summary>
 	char flag_debug_log_output;
-	char debug_log_filename[FILENAME_MAX];
+	wString debug_log_filename;
 	/// <summary>動作ユーザー名</summary>
 	char exec_user[32];
 	char exec_group[32];

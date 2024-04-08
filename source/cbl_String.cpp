@@ -753,6 +753,7 @@ int wString::load_from_file (const wString& FileName)
 		handle = myopen (FileName, O_RDONLY | O_BINARY, S_IREAD);
 #endif
 		if (handle < 0) {
+			debug_log_output("%s(%d):load_from_file(%s) Error.", __FILE__, __LINE__, FileName.c_str());
 			return -1;
 		}
 		flen = lseek (handle, 0, SEEK_END);
@@ -805,9 +806,7 @@ void wString::load_from_csv (const wString& FileName)
 	int first = 1;
 	fd = myopen (FileName, O_RDONLY | O_BINARY, S_IREAD);
 	if (fd < 0) {
-		wString tmp;
-		tmp.sprintf ("%sファイルが開けません\n", FileName.c_str());
-		perror (tmp.c_str ());
+		debug_log_output("%s(%d):load_from_csv(%s) Error.", __FILE__, __LINE__, FileName.c_str());
 		return;
 	}
 
@@ -868,6 +867,7 @@ int wString::save_to_file (const wString& FileName)
 	int handle = myopen (FileName, O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IREAD | S_IWRITE);
 #endif
 	if (handle < 0) {
+		debug_log_output("%s(%d):save_to_file(%s) Error.", __FILE__, __LINE__, FileName.c_str());
 		return handle;
 	}
 	write (handle, String, len);
@@ -993,8 +993,7 @@ wString wString::file_stats (const char* str, int mode)
 	struct stat      stat_buf;
 	wString buf = "undefined";
 	wString path = str;
-	path = path.nkfcnv ("Ws");
-	if (stat (path.c_str (), &stat_buf) == 0) {
+	if (stat (path.nkfcnv("Ws").c_str(), &stat_buf) == 0) {
 		if (mode == 0) {
 			/* ファイル情報を表示 */
 
@@ -1030,6 +1029,10 @@ wString wString::file_stats (const char* str, int mode)
 			}
 		}
 	}
+	else
+	{
+		debug_log_output("%s(%d):file_stats(%s) Error.", __FILE__, __LINE__, str);
+	}
 	return buf;
 }
 //---------------------------------------------------------------------------
@@ -1062,6 +1065,7 @@ int wString::file_exists (const char* str)
 		return 1;
 	}
 #endif
+	//debug_log_output("%s(%d):file_exists(%s) Error.", __FILE__, __LINE__, tmp.c_str());
     return 0;
 }
 //---------------------------------------------------------------------------
@@ -1086,6 +1090,12 @@ wString wString::extract_file_dir (const wString& str)
 	return temp;
 }
 //---------------------------------------------------------------------------
+
+/// <summary>
+/// フォルダ作成
+/// </summary>
+/// <param name="str">utf-8フォルダ名</param>
+/// <returns>成功:true 失敗:false</returns>
 bool wString::create_dir (const wString& str)
 {
 	bool flag = false;
@@ -1093,13 +1103,14 @@ bool wString::create_dir (const wString& str)
 	//0x777ではちゃんとフォルダできない
 	flag = (mkdir (str.String, 0777) != -1);
 #else
-	wString str2 = str;
-	str2 = str2.nkfcnv ("Ws");
-	char work[2048];
-	strcpy (work, str2.c_str ());
-	windows_file_name (work);
-	if (!directory_exists (work)) {
-		flag = (mkdir (work) != -1);
+	wString str2(str);
+
+	if (!directory_exists (str2)) {
+		flag = (mkdir (str2.nkfcnv("Ws").windows_file_name().c_str()) != -1);
+		if (!flag)
+		{
+			debug_log_output("%s(%d):create_dir(%s) Error.", __FILE__, __LINE__, str2.c_str());
+		}
 	}
 #endif
 	return flag;
@@ -1155,7 +1166,9 @@ bool wString::rename_file (const wString& src, const wString& dst)
 	if (rename (src2.c_str (), dst2.c_str ()) >= 0) {
 		return true;
 	}
-	else {
+	else
+	{
+		//debug_log_output("%s(%d):rename_file(%s,%s) Error.", __FILE__, __LINE__, src.c_str(),dst.c_str());
 		return false;
 	}
 }
@@ -1167,7 +1180,8 @@ unsigned long wString::file_size_by_name (char* str)
 #ifdef linux
 	handle = open (str, 0);
 #else
-	handle = open (str, O_BINARY);
+	wString temp = str;
+	handle = open (temp.nkfcnv("Ws").c_str(), O_BINARY);
 #endif
 	pos = lseek (handle, 0, SEEK_END);
 	close (handle);
@@ -1245,7 +1259,8 @@ int wString::delete_file (const wString& str)
 	flag = (unlink (str.String) == 0);
 #else
 	char work[2048];
-	strcpy (work, str.c_str ());
+	wString str2 = str;
+	strcpy (work, str2.nkfcnv("Ws").c_str());
 	windows_file_name (work);
 	if (file_exists (work)) {
 		if (unlink (work) == 0) {
@@ -1253,6 +1268,27 @@ int wString::delete_file (const wString& str)
 		}
 	}
 #endif
+	debug_log_output("%s(%d):delete_file(%s) Error.", __FILE__, __LINE__, str2.c_str());
+	return flag;
+}
+//---------------------------------------------------------------------------
+int wString::delete_folder(const wString& str)
+{
+	int flag = 0;
+#ifdef linux
+	flag = (rmdir(str.String) == 0);
+#else
+	char work[2048];
+	wString str2 = str;
+	strcpy(work, str2.nkfcnv("Ws").c_str());
+	windows_file_name(work);
+	if (directory_exists(work)) {
+		if (rmdir(work) == 0) {
+			flag = 1;
+		}
+	}
+#endif
+	debug_log_output("%s(%d):delete_file(%s) Error.", __FILE__, __LINE__, str2.c_str());
 	return flag;
 }
 //---------------------------------------------------------------------------
@@ -1270,15 +1306,15 @@ int wString::directory_exists (const char* str)
 	//char tmp[1024];
 	// TODO SJIS変換
 	wString tmp (str);
-	tmp.nkfcnv ("Ws");
+	wString tmp2 = tmp.nkfcnv ("Ws");
 
 	//strcpy(tmp, str);
 	// フォルダの末尾は'/'以外
-	if (tmp.ends_with ("/")) {
-		tmp = tmp.substr (0, tmp.len - 1);
+	if (tmp2.ends_with ("/")) {
+		tmp2 = tmp2.substr (0, tmp2.len - 1);
 	}
 	WIN32_FIND_DATA fd; //検索データ
-	HANDLE result = ::FindFirstFile (tmp.String, &fd); //最初の検索で使用する関数
+	HANDLE result = ::FindFirstFile (tmp2.String, &fd); //最初の検索で使用する関数
 	if (result != INVALID_HANDLE_VALUE) {
 		if ((fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY) {
 			flag = 1;
@@ -1286,6 +1322,10 @@ int wString::directory_exists (const char* str)
 		FindClose (result); //ハンドルを閉じる
 	}
 #endif
+	//if (flag == 0)
+	//{
+	//	debug_log_output("%s(%d):directory_exists(%s) Error.", __FILE__, __LINE__, tmp2.c_str());
+	//}
 	return flag;
 }
 //---------------------------------------------------------------------------
@@ -1370,7 +1410,7 @@ wString wString::enum_folder_json (const wString& Path)
 	Path2 = Path;
 	Path2 = Path2.nkfcnv ("Ws");
 	//Directoryオープン
-	if ((dir = opendir (Path.String)) != NULL) {
+	if ((dir = opendir (Path2.String)) != NULL) {
 		struct dirent* ent;
 		std::vector<wString> list;
 		//ファイルリスト
@@ -1407,7 +1447,19 @@ wString wString::enum_folder_json (const wString& Path)
 #endif
 }
 
-
+wString wString::get_current_dir()
+{
+	char cwd[FILENAME_MAX];
+	if (getcwd(cwd, sizeof(cwd)) == NULL) {
+		debug_log_output("get_current_dir: error %s", strerror(errno));
+		exit(-1);
+	}
+#ifdef linux
+	return wString(cwd);
+#else
+	return wString(cwd).nkfcnv("Sw");
+#endif
+	}
 
 ///---------------------------------------------------------------------------
 /// <summary>
@@ -1449,8 +1501,9 @@ wString wString::enum_folder (const wString& Path)
 	wString              temp;
 	wString              Path2;
 	Path2 = Path;
+	Path2 = Path2.nkfcnv("Ws");
 	//Directoryオープン
-	if ((dir = opendir (Path.String)) != NULL) {
+	if ((dir = opendir (Path2.String)) != NULL) {
 		struct dirent* ent;
 		std::vector<wString> list;
 		//ファイルリスト
@@ -2857,6 +2910,27 @@ char* wString::windows_file_name (char* FileName)
 		ptr++;
 	}
 	return work;
+#endif
+}
+/// <summary>
+/// Windows用パス名に変更(副作用あり）
+/// </summary>
+/// <param name="FileName">変換するパス名</param>
+/// <returns>変換した文字列</returns>
+wString wString::windows_file_name()
+{
+#ifdef linux
+	return *this;
+#else
+
+	//char* work = FileName;
+	for (auto i = 0U; i < len; i++)
+	{
+		if (String[i] == '/') {
+			String[i] = '\\';
+		}
+	}
+	return *this;
 #endif
 }
 /// <summary>

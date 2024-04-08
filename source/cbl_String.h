@@ -100,8 +100,10 @@ public:
 	int             rfind(const char* str, int index = 0) const;
 	int             rfind(char ch, int index = 0) const;
 	//URL and encode
-	static char*	linux_file_name(char* FileName);
-	static char*	windows_file_name(char* FileName);
+	static char* linux_file_name(char* FileName);
+	static char* windows_file_name(char* FileName);
+	wString linux_file_name();
+	wString windows_file_name();
 	wString         uri_encode(void);
 	wString         uri_decode(void);
 	wString         htmlspecialchars(void);
@@ -126,6 +128,7 @@ public:
 	static bool     rename_file(const wString& src, const wString& dst);
 	static int      FileCopy(const wString& fname_r, const wString& fname_w);
 	static int      delete_file(const wString& str);
+	static int      delete_folder(const wString& str);
 	static int      directory_exists(const char* str);
 	static int      directory_exists(const wString& str);
 	static wString  file_stats(const char* str, int mode = 0);
@@ -144,6 +147,7 @@ public:
 	static unsigned long file_size_by_name(wString& str);
 	static wString  enum_folder(const wString& Path);
 	static wString  enum_folder_json(const wString& Path);
+	static wString  get_current_dir();
 	static bool     check_url(const wString& url);
 	static wString  png_size(const wString& png_filename);
 	static wString  gif_size(const wString& gif_filename);
