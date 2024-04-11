@@ -2288,17 +2288,17 @@ int wString::header (const char* str, int flag, int status)
 /********************************************************************************/
 wString wString::nkfcnv (const wString& option)
 {
-	//auto ptr2 = 0;
-	//auto kanji = false;
-	//while (ptr2 < len) {
-	//	if (String[ptr2++] & 0x80) {
-	//		kanji = true;
-	//		break;
-	//	}
-	//}
-	//if (!kanji) {
-	//	return *this;
-	//}
+	auto ptr2 = 0;
+	auto kanji = false;
+	while (ptr2 < len) {
+		if (String[ptr2++] & 0x80) {
+			kanji = true;
+			break;
+		}
+	}
+	if (!kanji) {
+		return *this;
+	}
 
 	wString ptr (len * 3);
 	//=================================================
@@ -2538,16 +2538,17 @@ wString wString::http_get (const wString& url, off_t offset)
 			hostPos = ptr.Pos (HTTP_DELIMITER) + 4;//sizeof( HTTP_DELIMITER );//実体の先頭
 			recv_len -= hostPos;
 			buf = ptr.substr (hostPos, recv_len);
+			wString work(8000);
 			//転送する
 			while (loop_flag) {
-				recv_len = recv (server_socket, ptr.String, ptr.capacity () - 1, 0);
+				recv_len = recv (server_socket, work.String, work.capacity (), 0);
 				if (recv_len <= 0) {
 					break;
 				}
 				//エラーにならない。
-				ptr.len = recv_len;
-				ptr.String[recv_len] = 0;
-				buf += ptr;
+				work.len = recv_len;
+				//work.String[recv_len] = 0;
+				buf += work;
 			}
 		}
 		else {
