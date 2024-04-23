@@ -23,3 +23,6 @@ Bug fixes in db
 ## Ver. 202308
 Markdown file display available
 Modified scripts, folders, etc.
+
+## Ver. 202404
+MultiBytes file system support.

@@ -372,7 +372,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 		delete p;
 	}
 	mp.clear();
-	debug_log_output("Script was %s\n", script_filename);
+	//debug_log_output("Script was %s\n", script_filename);
 	return;
 }
 

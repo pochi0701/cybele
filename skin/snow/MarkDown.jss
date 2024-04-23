@@ -21,11 +21,15 @@ url = _GET.url;
           color: #fff; /* 文字色 */
           white-space: pre-wrap; /* はみ出たときに折り返す */
         }
+        table, td, th {
+          border: 1px #000000 solid;
+        }
       //-->
     </style>
 </head>
 <body>
     <div class="container">
+        <input type="button" class="btn btn-primary" value="編集" accesskey="/" onClick="location.href='/system/edit/view.jss?root=<?print(url);?>';">
         <input type="button" class="btn btn-primary" value="戻る" onClick="history.back();">
         <div id="md"></id>
     </div>
@@ -35,12 +39,13 @@ url = _GET.url;
             axios.get(`${url}`)
                 .then(function (response) {
                     // コンバーターを作成する
-                    var converter = new showdown.Converter();
+                    let converter = new showdown.Converter();
                     converter.setOption('tables', true);
+                    converter.setFlavor('github');
                     // markdownをhtmlに変換する
-                    var markdown = response.data;
-                    var html = converter.makeHtml(markdown);
-                    var mydiv = document.getElementById("md");
+                    let markdown = response.data;
+                    let html = converter.makeHtml(markdown);
+                    let mydiv = document.getElementById("md");
                     mydiv.innerHTML = html;
                     return false;
                 })
