@@ -62,6 +62,7 @@ unsigned int __stdcall batch(void* ptr)
         CTinyJS  s(INVALID_SOCKET);
         registerFunctions (&s);
         registerMathFunctions (&s);
+        s.execute (buffer);
         break;
     }
     return NULL;
