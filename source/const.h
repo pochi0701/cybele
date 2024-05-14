@@ -95,7 +95,7 @@ typedef int socklen_t;
 #define DEFAULT_SERVER_PORT             (8000)
 #define DEFAULT_DOCUMENT_ROOT           "/"
 #define DEFAULT_FLAG_DAEMON             TRUE
-#define DEFAULT_FLAG_AUTO_DETECT        TRUE
+//#define DEFAULT_FLAG_AUTO_DETECT        TRUE
 #define DEFAULT_MIME_TYPE               "text/plain"
 
 #ifdef linux

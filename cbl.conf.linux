@@ -71,7 +71,6 @@ flag_use_skin           true
 ##  init起動するなら、フルパス指定に変えないと不具合が出ます。
 ##
 skin_root               /var/www/skin
-#skin_root              /usr/local/wizd/skin
 
 
 ## 使用するスキン名を設定します。
@@ -141,7 +140,7 @@ flag_debug_log_output  true
 
 
 ## DebugLog 出力ファイル名
-##  default: /tmp/wizd_debug.log
+##  default: /tmp/cbl_debug.log
 ##
 #debug_log_filename     /dev/tty
 debug_log_filename     /tmp/cbl_debug.log

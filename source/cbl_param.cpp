@@ -103,7 +103,7 @@ void GLOBAL_PARAM_T::global_param_init(void)
 	// デーモン化フラグ
 	flag_daemon = DEFAULT_FLAG_DAEMON;
 	// 自動検出
-	flag_auto_detect = DEFAULT_FLAG_AUTO_DETECT;
+	//flag_auto_detect = DEFAULT_FLAG_AUTO_DETECT;
 	// デフォルトServer名。gethostname()する。
 	gethostname(server_name, sizeof(server_name));
 	// デフォルトHTTP 待ち受けPort.
@@ -217,18 +217,19 @@ void GLOBAL_PARAM_T::config_file_read(void)
 			{
 
 				// flag_auto_detect
-				if (strcasecmp("flag_auto_detect", key) == 0) {
-					readTF(value, flag_auto_detect);
+				//if (strcasecmp("flag_auto_detect", key) == 0) {
+				//	readTF(value, flag_auto_detect);
+				//}
+				// flag_debug_log_output
+				if (strcasecmp("flag_debug_log_output", key) == 0) {
+					readTF(value, flag_debug_log_output);
 				}
 #ifdef linux
 				// flag_daemon
 				else if (strcasecmp("flag_daemon", key) == 0) {
 					readTF(value, flag_daemon);
 				}
-				// flag_debug_log_output
-				else if (strcasecmp("flag_debug_log_output", key) == 0) {
-					readTF(value, flag_debug_log_output);
-				}
+
 				// debug_log_filename
 				else if (strcasecmp("debug_log_filename", key) == 0) {
 					debug_log_filename = value;

@@ -52,7 +52,7 @@ public:
 		*exec_user = 0;
 		*exec_group = 0;
 		*server_name = 0;
-		flag_auto_detect = 0;
+		//flag_auto_detect = 0;
 		server_port = 0;
 		*system_password = 0;
 		*document_root = 0;
@@ -89,7 +89,7 @@ public:
 	/// 自動検出系
 	/// <summary>サーバホスト名</summary>
 	char server_name[32];
-	char flag_auto_detect;
+	//char flag_auto_detect;
 	/// ---------------------------------------------------------------------
 	/// HTTP Server系
 	/// <summary>HTTP Server Port</summary>

@@ -26,7 +26,16 @@ url = _GET.url;
         table, td, th {
             border: 1px #000000 solid;
         }
-
+        table th {
+            color: #fff;
+            background: #88f;
+        }
+        table td {
+	        background: #eee;
+        }
+        table tr:nth-child(odd) td {
+	        background: #fff;
+        }
         // -->
     </style>
 </head>

@@ -178,31 +178,30 @@ int Cybelemain(void* arg)
 	// Server自動検出を使うばあい、
 	// Server Detect部をForkして実行
 	// ==================================
-	if (global_param.flag_auto_detect == TRUE) {
-
-		// 以下子プロセス部
+	//if (global_param.flag_auto_detect == TRUE) {
+    // 以下子プロセス部
 #ifdef linux
-		int pid = fork();
-		if (pid < 0) // fork失敗チェック
-		{
-			perror("fork");
-			exit(1);
-		}
-		if (pid == 0)
-		{
-			// 以下子プロセス部
-			batch(NULL);
-			exit(0);
-		}
-#else
-		//かえって遅い気がします。
-		//*HANDLE handle = _beginthreadex(NULL,0,functionptr,(void*)param,0,NULL);
-		//handle = CreateThread(0, 0, (LPTHREAD_START_ROUTINE) batch , NULL, NULL , &id);
-		handle = reinterpret_cast<HANDLE>(_beginthreadex(0, 0, batch, NULL, 0, &id));
-		//標準以下
-		//SetThreadPriority(handle,THREAD_PRIORITY_BELOW_NORMAL);
-#endif
+	int pid = fork();
+	if (pid < 0) // fork失敗チェック
+	{
+		perror("fork");
+		exit(1);
 	}
+	if (pid == 0)
+	{
+		// 以下子プロセス部
+		batch(NULL);
+		exit(0);
+	}
+#else
+	//かえって遅い気がします。
+	//*HANDLE handle = _beginthreadex(NULL,0,functionptr,(void*)param,0,NULL);
+	//handle = CreateThread(0, 0, (LPTHREAD_START_ROUTINE) batch , NULL, NULL , &id);
+	handle = reinterpret_cast<HANDLE>(_beginthreadex(0, 0, batch, NULL, 0, &id));
+	//標準以下
+	//SetThreadPriority(handle,THREAD_PRIORITY_BELOW_NORMAL);
+#endif
+	//}
 
 	// =======================
 	// HTTP Server仕事開始
