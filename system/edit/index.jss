@@ -179,7 +179,6 @@ if( sf == ""){
         function deleteFile(uri, file) {
             urie = uri + (uri.endsWith("/") ? "" : "/");
             if (window.confirm(file + "を削除します。よろしいですか？")) {
-                alert("?root=" + uri + "&del=" + urie + encodeURI(file));
                 treeView("?root=" + uri + "&del=" + urie + encodeURI(file));
             }
             return false;
