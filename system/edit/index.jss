@@ -93,6 +93,7 @@ if( sf == ""){
         const extractFileExt = str => str.slice(str.lastIndexOf("."));
         const extractFileName = str => str.slice(str.lastIndexOf("/") + 1);
         const extractFilePath = str => str.substring(0, str.lastIndexOf("/"));
+        const document_root = "<?print(_SERVER.DOCUMENT_ROOT);?>";
         var editor;
         var filepath;
         var lastIndexed;
@@ -142,26 +143,25 @@ if( sf == ""){
             }
             checkEditData();
             if(this.lastIndexed>=0){
-                var elm = getElements();
+                let elm = getElements();
                 if(elm[this.lastIndexed].modify){
                     if( window.confirm(extractFileName(elm[this.lastIndexed].filepath)+"は変更されています。保存しますか？") ){
                         saveCode();
                     }
                 }
             }
-            document_root = encodeURI("<? print(_SERVER.DOCUMENT_ROOT); ?>");
             if (path.endsWith('md')) {
                 path = "http://<?print(_SERVER.HTTP_HOST);?>" + path.substring(document_root.length, path.length) + "?action=MarkDown.jss";
             } else {
                 path = "http://<?print(_SERVER.HTTP_HOST);?>" + path.substring(document_root.length, path.length);
             }
-            myWin = window.open(path, path);
+            myWin = window.open(encodeURI(path), path);
         }
         function QRCode(path) {
-            document_root = encodeURI("<? print(_SERVER.DOCUMENT_ROOT); ?>");
+            //document_root = encodeURI("<? print(_SERVER.DOCUMENT_ROOT); ?>");
             var path2 = path.substring(document_root.length, path.length);
             path = scriptn+"qrcode.jss?url=" + path2;
-            myWin = window.open(path, path);
+            myWin = window.open(encodeURI(path), path);
         }
         function openDir(url) {
             root = url;
@@ -179,6 +179,7 @@ if( sf == ""){
         function deleteFile(uri, file) {
             urie = uri + (uri.endsWith("/") ? "" : "/");
             if (window.confirm(file + "を削除します。よろしいですか？")) {
+                alert("?root=" + uri + "&del=" + urie + encodeURI(file));
                 treeView("?root=" + uri + "&del=" + urie + encodeURI(file));
             }
             return false;

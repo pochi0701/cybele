@@ -1252,23 +1252,25 @@ wString wString::change_file_ext (const wString& str, const char* ext)
 	return str.substr (0, pos + 1) + ext;
 }
 //---------------------------------------------------------------------------
-int wString::delete_file (const wString& str)
+int wString::delete_file(const wString& str)
 {
 	int flag = 0;
 #ifdef linux
-	flag = (unlink (str.String) == 0);
+	flag = (unlink(str.String) == 0);
 #else
 	char work[2048];
 	wString str2 = str;
-	strcpy (work, str2.nkfcnv("Ws").c_str());
-	windows_file_name (work);
-	if (file_exists (work)) {
-		if (unlink (work) == 0) {
+	if (file_exists(str2)) {
+		strcpy(work, str2.nkfcnv("Ws").c_str());
+		windows_file_name(work);
+		if (unlink(work) == 0) {
 			flag = 1;
 		}
 	}
 #endif
-	debug_log_output("%s(%d):delete_file(%s) Error.", __FILE__, __LINE__, str2.c_str());
+	if (flag == 0) {
+		debug_log_output("%s(%d):delete_file(%s) Error.", __FILE__, __LINE__, str2.c_str());
+	}
 	return flag;
 }
 //---------------------------------------------------------------------------
