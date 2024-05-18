@@ -1261,6 +1261,7 @@ int wString::delete_file(const wString& str)
 	char work[2048];
 	wString str2 = str;
 	if (file_exists(str2)) {
+		// MS932に変換して実行
 		strcpy(work, str2.nkfcnv("Ws").c_str());
 		windows_file_name(work);
 		if (unlink(work) == 0) {
@@ -1282,9 +1283,11 @@ int wString::delete_folder(const wString& str)
 #else
 	char work[2048];
 	wString str2 = str;
-	strcpy(work, str2.nkfcnv("Ws").c_str());
-	windows_file_name(work);
-	if (directory_exists(work)) {
+	// str2はUTF-8
+	if (directory_exists(str2)) {
+		// MS932に変換して実行
+		strcpy(work, str2.nkfcnv("Ws").c_str());
+		windows_file_name(work);
 		if (rmdir(work) == 0) {
 			flag = 1;
 		}

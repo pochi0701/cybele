@@ -35,9 +35,11 @@ if (del != undefined && del.length > 0) {
     if (file_exists(del)) {
         unlink(del);
     } else if (dir_exists(del)) {
-        rmdir(del);
+        if( rmdir(del)){
+            print("<p class=\"text-danger\">"+del+"は削除できませんでした。</p>");        
+        }
     }
-    //リネーム
+// リネーム
 } else if (renf != undefined && rent != undefined && renf.length > 0 && rent.length > 0) {
     if (file_exists(renf) && (!file_exists(rent))) {
         if(!rename(renf, rent)){
@@ -50,7 +52,7 @@ if (del != undefined && del.length > 0) {
     } else if (file_exists(rent)) {
         print("<p class=\"text-danger\">すでに同名のファイルが存在します</p>");
     }
-    //パス名取得、作成
+// パス名取得、作成
 } else if (dir_exists(root) && newDir != undefined && newDir.length > 0) {
     var path = root + "/" + newDir;
     if (!file_exists(path)) {
@@ -79,7 +81,7 @@ print("<table>\n");
 //親ディレクトリ
 var filePath = dirname(root);
 if (filePath != "" && filePath.indexOf(base) >= 0) {
-    var url = encodeURI(filePath);
+    var url = filePath;
     print("<tr><td><a href=\"#\" onClick='openDir(\"" + url + "\");'>[<i class=\"fas fa-angle-double-up fa-lg\"></i>]</a></td><td></td><td></td></tr>\n");
 }
 //ディレクトリの場合
@@ -96,13 +98,13 @@ if (dir_exists(root)) {
         for (var i = 0; i < files.length; i++) {
             var file = files[i];
             var filePath = root + "/" + basename(file);
-            var filePathe = encodeURI(filePath);
+            var filePathe = filePath;
             if (dir_exists(file)) {
                 //make link tag
                 var stat = eval(file_stat(file));
                 var title = stat.date + " " + stat.permission;
                 var url1 = filePathe;
-                var url3 = encodeURI(root);
+                var url3 = root;
                 print("<tr><td>\n");
                 print("<div class=\"dropdown\">\n");
                 print("<a href=\"#\" data-bs-toggle=\"dropdown\" class=\"dropdown-item\">[" + basename(file) + "]</a>\n");
@@ -119,13 +121,13 @@ if (dir_exists(root)) {
         for (var i = 0; i < files.length; i++) {
             var file = files[i];
             var filePath = root + "/" + basename(file);
-            var filePathe = encodeURI(filePath);
+            var filePathe = filePath;
             var filePathf = filePath.substring(base.length, filePath.length);
             if (file_exists(filePath)) {
                 var ext = extractFileExt(file);
                 var disp = 1;
                 if (ext.toLowerCase() == "bak") {
-                    disp = 0;
+                    disp = 1;
                 } else if (ext == "swf" || ext == "jpg" || ext == "gif" || ext == "png") {
                     disp = 2;
                 } else if (ext == "mp3") {
@@ -140,7 +142,7 @@ if (dir_exists(root)) {
                     //make link tag
                     var stat = eval(file_stat(filePath));
                     var title = stat.date + " " + stat.permission;
-                    var url3 = encodeURI(root);
+                    var url3 = root;
                     var wte = "";
                     if (disp == 1) {
                         wte = "loadFile(\"" + filePathe + "\");";

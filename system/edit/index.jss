@@ -158,8 +158,7 @@ if( sf == ""){
             myWin = window.open(encodeURI(path), path);
         }
         function QRCode(path) {
-            //document_root = encodeURI("<? print(_SERVER.DOCUMENT_ROOT); ?>");
-            var path2 = path.substring(document_root.length, path.length);
+            let path2 = path.substring(document_root.length, path.length);
             path = scriptn+"qrcode.jss?url=" + path2;
             myWin = window.open(encodeURI(path), path);
         }
@@ -187,6 +186,7 @@ if( sf == ""){
             msg = window.prompt("作成するフォルダ名を入力してください", "フォルダ名");
             if (msg != null && window.confirm("フォルダ" + msg + "を" + root + "に作成します。よろしいですか？")) {
                 treeView("?root=" + root + "&dirName=" + encodeURI(msg));
+                root = root + "/" + msg;
             }
             return false;
         }
