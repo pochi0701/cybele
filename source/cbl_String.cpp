@@ -264,7 +264,7 @@ bool wString::starts_with (const char* needle, int pos) const
 bool wString::ends_with (const char* needle, int end_len) const
 {
 	int temp_len = len;
-	if (end_len > 0) {
+	if (end_len >= 0) {
 		if (end_len == 0 || end_len > temp_len) {
 			return false;
 		}
@@ -564,7 +564,7 @@ wString wString::substr (int start, int cut_len) const
 //---------------------------------------------------------------------------
 int wString::find (const wString& str, int index) const
 {
-	char* ptr = strstr (String + index, str.String);
+	const char* ptr = strstr (String + index, str.String);
 	if (ptr == NULL) {
 		return npos;
 	}
@@ -583,7 +583,7 @@ int wString::find (const wString& str, int index) const
 /// <returns>見つかった場合先頭からの文字位置（0スタート)、見つからなかった場合wString:npos</returns>
 int wString::find (const char* str, int index) const
 {
-	char* ptr = strstr (String + index, str);
+	const char* ptr = strstr (String + index, str);
 	if (ptr == NULL) {
 		return npos;
 	}
@@ -599,7 +599,7 @@ int wString::find (const char* str, int index) const
 /// <returns>見つかった場合先頭からの文字位置（0スタート)、見つからなかった場合wString:npos</returns>
 int wString::find (char ch, int index) const
 {
-	auto ptr = strchr (String + index, ch);
+	const char* ptr = strchr (String + index, ch);
 	if (ptr == NULL) {
 		return npos;
 	}
@@ -615,7 +615,7 @@ int wString::find (char ch, int index) const
 /// <returns>見つかった場合先頭からの文字位置（0スタート)、見つからなかった場合wString:npos</returns>
 int wString::rfind (const wString& str, int index) const
 {
-	auto ptr = strrstr (String + index, str.String);
+	const char* ptr = strrstr (String + index, str.String);
 	if (ptr == NULL) {
 		return npos;
 	}
@@ -632,7 +632,7 @@ int wString::rfind (const wString& str, int index) const
 /// <returns>成功：文字位置 失敗:wString::npos</returns>
 int wString::rfind (const char* str, int index) const
 {
-	auto ptr = strrstr (String + index, str);
+	const char* ptr = strrstr (String + index, str);
 	if (ptr == NULL) {
 		return npos;
 	}
@@ -649,7 +649,7 @@ int wString::rfind (const char* str, int index) const
 /// <returns>成功：文字位置 失敗:wString::npos</returns>
 int wString::rfind (char ch, int index) const
 {
-	auto ptr = strrchr (String + index, ch);
+	const char* ptr = strrchr (String + index, ch);
 	if (ptr == NULL) {
 		return npos;
 	}
@@ -681,7 +681,7 @@ int wString::rfind (char ch, int index) const
 /// <returns>見つからない場合wString::npos,存在する場合、先頭を０とした位置情報</returns>
 int wString::Pos (const char* pattern, int pos) const
 {
-	auto ptr = strstr (String + pos, pattern);
+	const char* ptr = strstr (String + pos, pattern);
 	if (ptr == NULL) {
 		return npos;
 	}

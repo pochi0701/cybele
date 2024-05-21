@@ -952,6 +952,17 @@ void scRestful (CScriptVar* c, void* userdata)
 	data = wString::http_rest (method, url, send);
 	c->getReturnVar ()->setString (data);
 }
+//ファイル内容取得
+void scRandomUUID(CScriptVar* c, void* userdata)
+{
+	IGNORE_PARAMETER(userdata);
+	wString data;
+	data = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
+	for (auto ptr = 0; ptr < data.length(); ptr++) {
+
+	}
+	c->getReturnVar()->setString(data);
+}
 
 // ----------------------------------------------- Register Functions
 void registerFunctions (CTinyJS* tinyJS)
@@ -1035,4 +1046,5 @@ void registerFunctions (CTinyJS* tinyJS)
 	tinyJS->addNative ("function shutdown(password)", scShutDown, 0);
 	tinyJS->addNative ("function ssdp()", scSSDP, 0);
 	tinyJS->addNative ("function restful(method,url,send)", scRestful, 0);
+	tinyJS->addNative ("function randomUUID()", scRandomUUID, 0);
 }
