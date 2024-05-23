@@ -845,7 +845,7 @@ void wString::load_from_csv (const wString& FileName)
 		work += wString ("[") + t + "]";
 	}
 	work += "]";
-	*this = work.nkfcnv ("Sw");
+	*this = work;
 	close (fd);
 	return;
 }

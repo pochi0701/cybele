@@ -128,28 +128,30 @@ struct input_code
 class nkf_cnv
 {
 public:
-	nkf_cnv () {}
+	nkf_cnv ()
+	{
+	}
 	/* buffers */
 	unsigned char hold_buf[HOLD_SIZE * 2] = {};
-	int           hold_count;
+	int           hold_count = 0;
 	/* MIME preprocessor fifo */
 #define MIME_BUF_SIZE (1024) /* 2^n ring buffer */
 #define MIME_BUF_MASK (MIME_BUF_SIZE - 1)
 #define Fifo(n) mime_buf[(n) & MIME_BUF_MASK]
-	unsigned char mime_buf[MIME_BUF_SIZE];
-	unsigned int  mime_top;
-	unsigned int  mime_last;  /* decoded */
-	unsigned int  mime_input; /* undecoded */
+	unsigned char mime_buf[MIME_BUF_SIZE] = {};
+	unsigned int  mime_top = 0;
+	unsigned int  mime_last = 0;  /* decoded */
+	unsigned int  mime_input = 0; /* undecoded */
 	/* flags */
-	int estab_f;
-	int rot_f;             /* rot14/43 mode */
-	int input_f;           /* non fixed input code */
-	int mime_f;            /* convert MIME B base64 or Q */
-	int mimebuf_f;         /* MIME buffered input */
-	int iso8859_f;         /* ISO8859 through */
-	int mimeout_f;         /* base64 mode */
-	int x0201_f;           /* Assume NO JISX0201 */
-	int w_oconv16_begin_f; /* utf-16 header */
+	int estab_f = 0;
+	int rot_f = 0;             /* rot14/43 mode */
+	int input_f = 0;           /* non fixed input code */
+	int mime_f = 0;            /* convert MIME B base64 or Q */
+	int mimebuf_f = 0;         /* MIME buffered input */
+	int iso8859_f = 0;         /* ISO8859 through */
+	int mimeout_f = 0;         /* base64 mode */
+	int x0201_f = 0;           /* Assume NO JISX0201 */
+	int w_oconv16_begin_f = 0; /* utf-16 header */
 
 	int  utf16_mode = UTF16_INPUT;
 	struct input_code input_code_list[4] = {
@@ -158,10 +160,11 @@ public:
 	{"UTF-8",     0, 0, 0, {0, 0, 0}, &nkf_cnv::w_status, &nkf_cnv::w_iconv},
 	{0}
 	};
-	int mimeout_mode;
-	int base64_count;
+	int mimeout_mode = 0;
+	int base64_count = 0;
 	/* options */
-	unsigned char kanji_intro, ascii_intro;
+	unsigned char kanji_intro = 0;
+	unsigned char ascii_intro = 0;
 	/* converters */
 #ifdef DEFAULT_CODE_JIS
 #define DEFAULT_CONV &nkf_cnv::j_oconv
@@ -176,29 +179,29 @@ public:
 #define DEFAULT_CONV &nkf_cnv::w_oconv
 #endif
 /* process default */
-	void (nkf_cnv::* output_conv)(int c2, int c1);
-	void (nkf_cnv::* oconv)(int c2, int c1);
+	void (nkf_cnv::* output_conv)(int c2, int c1) = NULL;
+	void (nkf_cnv::* oconv)(int c2, int c1) = NULL;
 	/* s_iconv or oconv */
-	int (nkf_cnv::* iconv)(int c2, int c1, int c0);
-	void (nkf_cnv::* o_zconv)(int c2, int c1);
-	void (nkf_cnv::* o_crconv)(int c2, int c1);
-	void (nkf_cnv::* o_rot_conv)(int c2, int c1);
-	void (nkf_cnv::* o_base64conv)(int c2, int c1);
+	int (nkf_cnv::* iconv)(int c2, int c1, int c0) = NULL;
+	void (nkf_cnv::* o_zconv)(int c2, int c1) = NULL;
+	void (nkf_cnv::* o_crconv)(int c2, int c1) = NULL;
+	void (nkf_cnv::* o_rot_conv)(int c2, int c1) = NULL;
+	void (nkf_cnv::* o_base64conv)(int c2, int c1) = NULL;
 	/* redirections */
-	void (nkf_cnv::* o_putc)(int c);
-	int  (nkf_cnv::* i_getc)(char* f); /* general input */
-	int  (nkf_cnv::* i_ungetc)(int c, char* f);
-	void (nkf_cnv::* o_mputc)(int c); /* output of mputc */
-	int  (nkf_cnv::* i_mgetc)(char*); /* input of mgetc */
-	int  (nkf_cnv::* i_mungetc)(int c, char* f);
+	void (nkf_cnv::* o_putc)(int c) = NULL;
+	int  (nkf_cnv::* i_getc)(char* f) = NULL; /* general input */
+	int  (nkf_cnv::* i_ungetc)(int c, char* f) = NULL;
+	void (nkf_cnv::* o_mputc)(int c) = NULL; /* output of mputc */
+	int  (nkf_cnv::* i_mgetc)(char*) = NULL; /* input of mgetc */
+	int  (nkf_cnv::* i_mungetc)(int c, char* f) = NULL;
 	/* for strict mime */
-	int  (nkf_cnv::* i_mgetc_buf)(char*); /* input of mgetc_buf */
-	int  (nkf_cnv::* i_mungetc_buf)(int c, char* f);
+	int  (nkf_cnv::* i_mgetc_buf)(char*) = NULL; /* input of mgetc_buf */
+	int  (nkf_cnv::* i_mungetc_buf)(int c, char* f) = NULL;
 	/* Global states */
-	int output_mode,      /* output kanji mode */
-		input_mode,       /* input kanji mode */
-		shift_mode;       /* TRUE shift out, or X0201  */
-	int mime_decode_mode; /* MIME mode B base64, Q hex */
+	int output_mode = 0;      /* output kanji mode */
+	int input_mode = 0;       /* input kanji mode */
+	int shift_mode = 0;       /* TRUE shift out, or X0201  */
+	int mime_decode_mode =0 ; /* MIME mode B base64, Q hex */
 	/* X0201 / X0208 conversion tables */
 	/* X0201 kana conversion table */
 	/* 90-9F A0-DF */
@@ -261,15 +264,16 @@ public:
 	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	 0x00, 0x00 };
 #define CRLF (1)
-	int crmode_f; /* CR, NL, CRLF */
-	int prev_cr;
-	int z_prev2, z_prev1;
-	size_t len_in;
-	size_t len_out;
-	size_t glen;
-	char* gout;
-	int offlag;
-	int ncflag;
+	int crmode_f = 0; /* CR, NL, CRLF */
+	int prev_cr = 0;
+	int z_prev2 = 0;
+	int z_prev1 = 0;
+	size_t len_in = 0;
+	size_t len_out = 0;
+	size_t glen = 0;
+	char* gout = NULL;
+	int offlag = 0;
+	int ncflag = 0;
 	int nkf (const char* in, char* out, size_t len, const char* options)
 	{
 		mime_top = 0;
@@ -1835,7 +1839,7 @@ mime_c4_retry:
 		return (i);
 	}
 	const char basis_64[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	int b64c;
+	int b64c = 0;
 	void  open_mime (int mode)
 	{
 		unsigned char* p;

@@ -1432,7 +1432,7 @@ CScriptVar* CScriptVar::mathsOp (CScriptVar* b, LEX_TYPES op)
 /// copy value of val to this.
 /// </summary>
 /// <param name="val">varable copy from.</param>
-void CScriptVar::copySimpleData (CScriptVar* val)
+void CScriptVar::copySimpleData (const CScriptVar* val)
 {
 	data = val->data;
 	intData = val->intData;

@@ -1558,6 +1558,8 @@ Database::Database(const wString& myname) {
 	wString path = current_dir + DELIMITER + "database" + DELIMITER;
 	//load_from_file(path + name + ".db");
 	LoadFromFile(path + myname + ".db");
+	// 自分の名前を設定する
+	this->name = myname;
 	ref = 0;
 	changed = false;
 }
@@ -1818,7 +1820,8 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 			// CREATE TABLE FROM
 			else if (ret == CMDS::TXFROM) {
 				if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("No file assigned");            return -1; }
-				FILE* rs = fopen(reinterpret_cast<char*>(token), "r");
+
+				FILE* rs = fopen(wString(reinterpret_cast<char*>(token)).nkfcnv("Ws").c_str(), "r");
 				if (rs) {
 					char work[4096];
 					fgets(work, 4096, rs);

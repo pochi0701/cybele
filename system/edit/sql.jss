@@ -40,8 +40,22 @@
         database.DBDisConnect();
     }
 
-
-
+   // UPLOAD
+   var root = _SERVER.DOCUMENT_ROOT;
+   if( _POST != undefined ){
+     s = Object.keys(_POST);  
+     for( var i=0 ; i<s.length ; i++ ){
+         print( "["+s[i]+"] =>"+_POST[s[i]]+"<br>\n" );
+     }
+     if( !root.endsWith("/",0)){
+         root += "/";
+     }
+     if( _POST.upload != undefined)
+     {
+       var file = btoa(_POST.upload.filebody);
+       saveToFile(root+_POST.upload.filename,file);
+     }
+   }
 ?>
 <!doctype html>
 <html lang="ja">
@@ -51,8 +65,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
-    <script type="text/javascript">
-    <!--
+    <script>
         var databases=[<?for(i=1;i<databases.length;i++){print((i>1)?',':'');print('"'+databases[i]+'"');}?>];
         var tables=[<?
                     for(i=1;i<databases.length;i++){
@@ -141,7 +154,6 @@
         hpt += '<tr><td>テーブル名変更</td><td>ALTER TABLE TABLENAME RENAME TO NEWTABLENAME;</td></tr>';
         hpt += '<tr><td>テーブル項目名変更</td><td>ALTER TABLE TABLENAME RENAME COLUMN OLDCOLUMN TO NEWCOLUMN;</td></tr>';
         hpt += '</tbody></table>';
-        //-->
         function loadFinished(){
             selectDatabase(selected);
         }
@@ -165,10 +177,13 @@
     </nav>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-5">
-            <label for="formFile" class="form-label">CSV To Table</label>
-            <input class="form-control" type="file" id="formFile" accept="text/csv" onchange="OnFileSelect( this );">
-            </div>
+            <form action="/system/edit/sql.jss" method="post" enctype="multipart/form-data" >
+              <label for="formFile" class="form-label">CSV To Table</label>
+              <div class="input-group">
+                <input class="form-control" type="file" id="formFile" name="upload" accept="text/csv">
+                <input class="btn btn-primary" type="submit" value="upload">
+              </div>
+            </form>
         </div>
         <div class="row">
             <div class="col-md-2">

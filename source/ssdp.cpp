@@ -114,7 +114,7 @@ int ssdp_client(wString& str, int loops)
 	for (auto i = 0; i < loops; i++) {
 		//printf("buff:\n%s\n",buff);
 
-		Ret = sendto(sock, buff, (int)strlen(buff), 0, (struct sockaddr*)&their_addr, len);
+		Ret = sendto(sock, buff, static_cast<int>(strlen(buff)), 0, reinterpret_cast<struct sockaddr*>(&their_addr), len);
 		if (Ret < 0) {
 			//printf("error in SENDTO() function");
 			sClose(sock);
@@ -136,7 +136,7 @@ int ssdp_client(wString& str, int loops)
 
 #else
 			int    timeout = 600;// 0.6 seconds
-			Ret = setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout));
+			Ret = setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char*>(&timeout), sizeof(timeout));
 #endif
 			//printf( "%d===",Ret);
 			if (Ret < 0) {

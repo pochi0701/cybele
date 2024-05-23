@@ -332,7 +332,7 @@ protected:
 
 	/** Copy the basic data and flags from the variable given, with no
 	  * children. Should be used internally only - by copyValue and deepCopy */
-	void copySimpleData (CScriptVar* val);
+	void copySimpleData (const CScriptVar* val);
 
 	friend class CTinyJS;
 };

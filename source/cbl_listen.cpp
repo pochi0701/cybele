@@ -68,18 +68,18 @@ void	server_listen(void)
 	// (ソケットが再利用されるため）
 	// ===============================
 	sock_opt_val = 1;
-	setsockopt(listen_socket, SOL_SOCKET, SO_REUSEADDR, (char*)&sock_opt_val, sizeof(sock_opt_val));
+	setsockopt(listen_socket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&sock_opt_val), sizeof(sock_opt_val));
 	// ===========================================
 	// ソケットアドレス構造体に値をセット
 	// ===========================================
-	memset((char*)&saddr, 0, sizeof(saddr));
+	memset(reinterpret_cast<char*>(&saddr), 0, sizeof(saddr));
 	saddr.sin_family = AF_INET;
 	saddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	saddr.sin_port = htons((u_short)global_param.server_port);
 	// =============================
 	// bind 実行
 	// =============================
-	ret = bind(listen_socket, (struct sockaddr*)&saddr, sizeof(saddr));
+	ret = bind(listen_socket, reinterpret_cast<struct sockaddr*>(&saddr), sizeof(saddr));
 	debug_log_output("binding...");
 	if (ret < 0) { // bind 失敗チェック
 		debug_log_output("bind() error. ret=%d\n", ret);
@@ -157,7 +157,7 @@ unsigned int __stdcall accessloop(void* arg)
 
 		//debug_log_output("Waiting for a new client...");
 		// 接続Socket
-		auto accept_socket = accept(lis_soc, (struct sockaddr*)&caddr, &caddr_len);
+		auto accept_socket = accept(lis_soc, reinterpret_cast<struct sockaddr*>(&caddr), &caddr_len);
 		if (SERROR(accept_socket)) // accept失敗チェック
 		{
 			debug_log_output("accept() error. ret=%d\n", accept_socket);

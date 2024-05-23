@@ -183,14 +183,14 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 		script1.cat_sprintf("var _SERVER.SERVER_NAME=\"%s\";", wString::escape(global_param.server_name).c_str());
 		//SERVER PORT
 		socklen = sizeof(saddr);
-		getsockname(accept_socket, (struct sockaddr*)&saddr, &socklen);
+		getsockname(accept_socket, reinterpret_cast<struct sockaddr*>(&saddr), &socklen);
 		script1.cat_sprintf("var _SERVER.SERVER_ADDR=\"%s\";", wString::escape(inet_ntoa(saddr.sin_addr)).c_str());
 		snprintf(server_port, sizeof(server_port), "%u", ntohs(saddr.sin_port));
 		script1.cat_sprintf("var _SERVER.SERVER_PORT=\"%s\";", wString::escape(server_port).c_str());
 		script1.cat_sprintf("var _SERVER.DOCUMENT_ROOT=\"%s\";", wString::escape(global_param.document_root).c_str());
 		//REMOTE ADDR
 		socklen = sizeof(saddr);
-		getpeername(accept_socket, (struct sockaddr*)&saddr, &socklen);
+		getpeername(accept_socket, reinterpret_cast<struct sockaddr*>(&saddr), &socklen);
 		script1.cat_sprintf("var _SERVER.REMOTE_ADDR=\"%s\";", wString::escape(inet_ntoa(saddr.sin_addr)).c_str());
 		//REMOTE PORT
 		snprintf(remote_port, sizeof(remote_port), "%u", ntohs(saddr.sin_port));

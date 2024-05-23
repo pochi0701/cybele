@@ -58,7 +58,7 @@ void js_print (CScriptVar* v, void* userdata)
 	// ここでこのコードは必要。<?print();?>セミコロンがないとうまくいかない
 	js->FlushBuf ();
 	int num;
-	if (js->socket < 0) {
+	if (js->socket == INVALID_SOCKET) {
 		num = str.length ();
 		js->outBuffer += str;
 	}
