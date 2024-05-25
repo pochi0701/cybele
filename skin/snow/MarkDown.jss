@@ -93,6 +93,7 @@ url = _GET.url;
                         return false;
                     })
                     .catch(function (error) {
+                        window.location.href = "/system/edit/view.jss?root="+url;
                         console.log(error);
                     });
             }

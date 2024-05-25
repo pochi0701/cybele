@@ -295,7 +295,7 @@ SOCKET HTTP_RECV_INFO::send_header ()
 	//出力バッファ 1:GET 2:HEAD
 	const char* GETHEAD[4] = { "","GET","HEAD","" };
 	//GET/HEAD
-	send_http_header_buf.sprintf ("%s %s HTTP/1.0\r\n", GETHEAD[(int)isGet], base_url.c_str ());
+	send_http_header_buf.sprintf ("%s %s HTTP/1.0\r\n", GETHEAD[(int)method], base_url.c_str ());
 	send_http_header_buf.cat_sprintf ("Host: %s\r\n", p_target_host_name.c_str ());
 	//User Agent設定
 	if (global_param.user_agent_proxy_override[0]) {

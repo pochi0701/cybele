@@ -30,9 +30,7 @@ enum class FILETYPES {
     _FILE = 0,
     _DIR = 1,
     _TMP = 2,
-    _PLW = 3,
-    _VOB = 5,
-    _CGI = 6,
+    _CGI = 3,
 };
 enum class QUERY_METHOD
 {
@@ -60,10 +58,10 @@ public:
     off_t  range_end_pos;            // Rangeデータ 終了位置
     char   mime_type[128];           //
     char   send_filename[QUERY_MAX]; // フルパス
-    char   action[128];              // ?action=  の内容
+    char   action[256];              // ?action=  の内容
     char   request_uri[QUERY_MAX];   // 受信した生のURI
     char   boundary[128];            // multipart/fomr-dataの時のboundary
-    QUERY_METHOD    isGet;		     // GETなら1HEADなら2POSTなら3
+    QUERY_METHOD    method;		     // GETなら1HEADなら2POSTなら3
 
 	HTTP_RECV_INFO()
 	{
@@ -81,7 +79,7 @@ public:
 		*action = 0;
 		*request_uri = 0;
 		*boundary = 0;
-		isGet = QUERY_METHOD::NONE;
+		method = QUERY_METHOD::NONE;
 	};
     // JavaScript実行
     void jss(SOCKET accpet_socket, char* script_filename, char* query_string);

@@ -199,7 +199,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 		script1.cat_sprintf("var _SERVER.GATEWAY_INTERFACE=\"%s\";", "CGI/1.1");
 		script1.cat_sprintf("var _SERVER.SERVER_PROTOCOL=\"%s\";", "HTTP/1.0");
 		char GETPOST[4][5] = { "","GET","HEAD","POST" };
-		script1.cat_sprintf("var _SERVER.REQUEST_METHOD=\"%s\";", GETPOST[(int)isGet]);
+		script1.cat_sprintf("var _SERVER.REQUEST_METHOD=\"%s\";", GETPOST[(int)method]);
 
 		script1.cat_sprintf("var _SERVER.QUERY_STRING=\"%s\";", wString::escape(query_string).c_str());
 		script1.cat_sprintf("var _SERVER.REQUEST_URI=\"%s\";", wString::escape(request_uri).c_str());
@@ -238,7 +238,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 		}
 
 		//POSTの展開
-		if (isGet == QUERY_METHOD::POST) {
+		if (method == QUERY_METHOD::POST) {
 			char buf[1025] = {};
 			int contentsize = atoi(content_length);
 			int readsize;

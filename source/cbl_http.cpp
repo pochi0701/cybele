@@ -60,15 +60,6 @@ void server_http_process (SOCKET accept_socket, char* access_host, char* client_
 		sClose (accept_socket);
 		return;
 	}
-	// 2004/09/24 TEST ----------------------------------------------------------------------------------
-	// 2004/08/30 Add start
-	// 2004/08/30 Add end
-	// 2004/09/24 TEST ----------------------------------------------------------------------------------
-	//debug_log_output("HTTP Header receive end!\n");
-	//debug_log_output("recv_uri:'%s'\n", http_recv_info.recv_uri);
-	//debug_log_output("user_agent:'%s'\n", http_recv_info.user_agent);
-	//debug_log_output("range_start_pos=%d\n", http_recv_info.range_start_pos);
-	//debug_log_output("range_end_pos=%d\n", http_recv_info.range_end_pos);
 	// ==========================
 	// = User-Agent チェック
 	// ==========================
@@ -141,86 +132,53 @@ void server_http_process (SOCKET accept_socket, char* access_host, char* client_
 	//  種類に応じて分岐
 	// ============================
 	result = http_recv_info.http_file_check ();
-	if (result == FILETYPES::_OPENDIR) { // ディレクトリだが終端が '/' ではない
+	// ディレクトリだが終端が '/' ではない
+	if (result == FILETYPES::_OPENDIR) { 
 		char buffer[FILENAME_MAX];
 		sprintf (buffer, "%s/", http_recv_info.recv_uri);
 		http_recv_info.http_redirect_response (accept_socket, buffer);
 	}
-	else if (result < FILETYPES::_FILE) { // ファイルが見つからない
+	// file?action=/skin_root/skin_name/action.jss
+	else if (*http_recv_info.action) {
+		// ----------------------------------------
+		// jss実行
+		// ----------------------------------------
+		debug_log_output ("%s start!\n", http_recv_info.action);
+		// send_filename = skin_root/skin_name/action 
+		wString skin_filename;
+		skin_filename += global_param.skin_root;
+		skin_filename += global_param.skin_name;
+		if (!skin_filename.ends_with (DELIMITER)) {
+			skin_filename += DELIMITER;
+		}
+		skin_filename += http_recv_info.action;
+		strcpy (http_recv_info.send_filename, skin_filename.c_str ());
+
+		for (unsigned int i = 0; i < strlen (http_recv_info.request_uri); i++) {
+			if (http_recv_info.request_uri[i] == '?') {
+				http_recv_info.request_uri[i] = 0;
+				break;
+			}
+		}
+		skin_filename.sprintf ("%s?url=%s", http_recv_info.action, http_recv_info.request_uri);
+		strcpy (http_recv_info.request_uri, skin_filename.c_str ());
+		http_recv_info.http_cgi_response (accept_socket);
+		//debug_log_output ("%s end!\n", http_recv_info.action);
+		debug_log_output ("HTTP Process action done. From %s:%s\n", access_host, http_recv_info.recv_uri);
+		return;
+	}
+	// ファイルが見つからない
+	else if (result < FILETYPES::_FILE) { 
 		http_recv_info.http_not_found_response (accept_socket);
 		return;
 	}
-	else if (result == FILETYPES::_FILE) { // ファイル実体ならば、実体転送。
-		// actionに、ImageViewerが指示されている？
-		if (*http_recv_info.action) {
-			// ----------------------------------------
-			// jss実行
-			// ----------------------------------------
-			debug_log_output ("%s start!\n", http_recv_info.action);
-			char skin_filename[256] = {};
-			//strncpy(http_recv_info_p->send_filename, global_param.document_root, sizeof(http_recv_info_p->send_filename));
-			strncat (skin_filename, global_param.skin_root, sizeof (skin_filename) - 1); // スキン名（ディレクトリ）
-			strncat (skin_filename, global_param.skin_name, sizeof (skin_filename) - 1); // スキン名（ディレクトリ）
-			if (skin_filename[strlen (skin_filename) - 1] != DELIMITER[0]) { // 最後が'/'じゃなかったら、'/'を追加
-				strncat (skin_filename, DELIMITER, sizeof (skin_filename) - 1);
-			}
-			strcat (skin_filename, http_recv_info.action);
-			//strcat(skin_filename,".jss");
-			strcpy (http_recv_info.send_filename, skin_filename);
-			//http_image_viewer(accept_socket, &http_recv_info);
-			for (unsigned int i = 0; i < strlen (http_recv_info.request_uri); i++) {
-				if (http_recv_info.request_uri[i] == '?') {
-					http_recv_info.request_uri[i] = 0;
-					break;
-				}
-			}
-			sprintf (skin_filename, "%s?url=%s", http_recv_info.action, http_recv_info.request_uri);
-			strcpy (http_recv_info.request_uri, skin_filename);
-			http_recv_info.http_cgi_response (accept_socket);
-			//debug_log_output ("%s end!\n", http_recv_info.action);
-			debug_log_output ("HTTP Process action done. From %s:%s\n", access_host, http_recv_info.recv_uri);
-			return;
-		}
-		else { // アクションに指定無し。
-			// ----------------------------------------
-			// ファイルの実体
-			// HTTPリクエストヘッダに従ってデータを返信。
-			// ----------------------------------------
-			 //debug_log_output("HTTP response start!\n");
-			http_recv_info.http_file_response (accept_socket);
-			//debug_log_output("HTTP response end!\n");
-		}
-	}
-	else if (result == FILETYPES::_PLW) {
-		// ---------------------------------------------
-		// plw/uplファイル(`・ω・´)
-		// リストファイルから、プレイリスト生成して返信
-		// ---------------------------------------------
-		//debug_log_output ("HTTP Cybele play list create and response start!\n");
-		//http_listfile_to_playlist_create(accept_socket, &http_recv_info);
-		//debug_log_output ("HTTP Cybele play list create and response end!\n");
-#if 0
-	}
-	else if (result == FILETYPES::_VOB) {
-		// ---------------------------------------------
-		// vobファイル 連結
-		// vobを連結して返信
-		// ---------------------------------------------
-		// actionに、SinglePlayが指示されている？
-		if (strcasecmp (http_recv_info.action, "SinglePlay") == 0) {
-			// ----------------------------------------
-			// Musicファイル 単独プレイ
-			// ----------------------------------------
-			debug_log_output ("Single Play start!(VOB)\n");
-			//http_music_single_play(accept_socket, &http_recv_info);
-			debug_log_output ("Single Play end!(VOB)\n");
-		}
-		else { // アクションに指定無し。
-			debug_log_output ("HTTP vob file response start!\n");
-			http_vob_file_response (accept_socket, &http_recv_info);
-			debug_log_output ("HTTP vob file response end!\n");
-		}
-#endif
+	// ファイル実体ならば、実体転送。
+	else if (result == FILETYPES::_FILE) { 
+		// ----------------------------------------
+		// ファイルの実体
+		// HTTPリクエストヘッダに従ってデータを返信。
+		// ----------------------------------------
+		http_recv_info.http_file_response (accept_socket);
 	}
 	else if (result == FILETYPES::_CGI) {
 		// ---------------------------------------------
@@ -257,8 +215,8 @@ void server_http_process (SOCKET accept_socket, char* access_host, char* client_
 			http_recv_info.http_cgi_response (accept_socket);
 			debug_log_output ("File menu convert done.\n");
 			return;
-			//通常の処理
 		}
+		// 通常の処理
 		else {
 			result = http_recv_info.http_index ();
 			if (result == FILETYPES::_FILE) {
@@ -277,34 +235,6 @@ void server_http_process (SOCKET accept_socket, char* access_host, char* client_
 				debug_log_output ("HTTP Process CGI done. From %s:%s\n", access_host, http_recv_info.recv_uri);
 				return;
 			}
-			//else if (result == FILETYPES::_DIR)
-			//{
-
-			//	wString tmp(http_recv_info.request_uri);
-			//	if (!tmp.ends_with("/")) {
-			//		tmp += "/?";
-			//	}
-			//	if (!tmp.ends_with("?")) {
-			//		tmp += "?";
-			//	}
-			//	int pos = tmp.Pos("?");
-			//	if (pos >= 0) {
-			//		strcpy(http_recv_info.recv_uri, "/menu.jss");
-			//		tmp = tmp.substr(pos + 1, tmp.Length() - pos - 1);
-			//		if (tmp.Length()) {
-			//			sprintf(http_recv_info.request_uri, "/menu.jss?%s", tmp.c_str());
-			//		}
-			//		else {
-			//			sprintf(http_recv_info.request_uri, "/menu.jss?root=%s", http_recv_info.send_filename);
-			//		}
-			//		//send file nameの設定
-			//		sprintf(http_recv_info.send_filename, "%s%smenu.jss", global_param.skin_root, global_param.skin_name);
-			//		http_recv_info.http_cgi_response(accept_socket);
-			//		debug_log_output("HTTP file menu end.\n");
-			//		return;
-			//		//通常の処理
-			//	}
-			//}
 			else {
 				debug_log_output ("%s(%d):BAD REQUEST!", __FILE__, __LINE__);
 
@@ -324,7 +254,6 @@ void server_http_process (SOCKET accept_socket, char* access_host, char* client_
 	return;
 }
 /////////////////////////////////////////////////////////////////////////////////
-
 /// <summary>
 /// 各種indexファイルのアクセス
 /// html,htm,php,jssの順
@@ -415,7 +344,6 @@ int HTTP_RECV_INFO::http_header_receive (SOCKET accept_socket)
 	for (i = 0;; i++) {
 		// 1行受信 実行。
 		auto recv_len = line.line_receive (accept_socket);
-		//strcpy( line_buf,line.c_str());
 		// 受信した内容をチェック。
 		if (recv_len == 0) { // 空行検知。ヘッダ受信終了。
 			break;
@@ -432,19 +360,19 @@ int HTTP_RECV_INFO::http_header_receive (SOCKET accept_socket)
 			//debug_log_output("%d:URI Check start.'%s'\n", accept_socket, line.c_str());
 			// GETある？
 			if (line.find ("GET") != wString::npos) {
-				isGet = QUERY_METHOD::GET;
+				method = QUERY_METHOD::GET;
 			}
 			else if (line.find ("HEAD") != wString::npos) {
-				isGet = QUERY_METHOD::HEAD;
+				method = QUERY_METHOD::HEAD;
 			}
 			else if (line.find ("POST") != wString::npos) {
-				isGet = QUERY_METHOD::POST;
+				method = QUERY_METHOD::POST;
 			}
 			else if (line.find ("PUT") != wString::npos) {
-				isGet = QUERY_METHOD::PUT;
+				method = QUERY_METHOD::PUT;
 			}
 			else if (line.find ("DELETE") != wString::npos) {
-				isGet = QUERY_METHOD::DEL;
+				method = QUERY_METHOD::DEL;
 			}
 			else {
 				debug_log_output ("'GET' not found. error.%d", accept_socket);
@@ -648,15 +576,10 @@ FILETYPES HTTP_RECV_INFO::http_file_check (void)
 		// 拡張子から、mime_typeを導く。
 		MIME_LIST_T::check_file_extension_to_mime_type (file_extension, mime_type, sizeof (mime_type));
 		// 実体ファイルで分岐
-		if ((strcasecmp (file_extension, "plw") == 0) ||
-			(strcasecmp (file_extension, "m3u") == 0) ||
-			(strcasecmp (file_extension, "upl") == 0)) {
-			return (FILETYPES::_PLW);	// plw/upl ファイル
-		}
-		else if (strcasecmp (file_extension, "cgi") == 0 ||
-				 strcasecmp (file_extension, "jss") == 0 ||
-				 strcasecmp (file_extension, "php") == 0 ||
-				 strcasecmp (file_extension, "exe") == 0) {
+		if (strcasecmp (file_extension, "cgi") == 0 ||
+			strcasecmp (file_extension, "jss") == 0 ||
+			strcasecmp (file_extension, "php") == 0 ||
+			strcasecmp (file_extension, "exe") == 0) {
 			// CGIの実行が不許可なら、Not Found.
 			return (global_param.flag_execute_cgi ? FILETYPES::_CGI : FILETYPES::_NOTFOUND);  // cgiファイル
 		}

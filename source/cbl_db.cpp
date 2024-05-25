@@ -2270,7 +2270,7 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 			"DESC table_name;\n"
 			"CREATE DATABASE database_name;\n"
 			"CREATE TABLE table_name(column_name1 number/string,...);\n"
-			"USE database_nameE;\n"
+			"USE database_name;\n"
 			"DROP database_name;\n"
 			"DROP table_name;\n"
 			"ALTER TABLE TABLENAME ADD (COLUMN1 definition1,COLUMN2 definition2..);\n"

@@ -44,16 +44,23 @@
    var root = _SERVER.DOCUMENT_ROOT;
    if( _POST != undefined ){
      s = Object.keys(_POST);  
-     for( var i=0 ; i<s.length ; i++ ){
-         print( "["+s[i]+"] =>"+_POST[s[i]]+"<br>\n" );
-     }
-     if( !root.endsWith("/",0)){
+     //for( var i=0 ; i<s.length ; i++ ){
+     //    print( "["+s[i]+"] =>"+_POST[s[i]]+"<br>\n" );
+     //}
+     if( !root.endsWith("/")){
          root += "/";
      }
      if( _POST.upload != undefined)
      {
-       var file = btoa(_POST.upload.filebody);
-       saveToFile(root+_POST.upload.filename,file);
+        var file = btoa(_POST.upload.filebody).nkfconv("w");
+        saveToFile(root+_POST.upload.filename,file);
+        
+        // filenameからDB名をしゅとくすること
+        database = DBConnect(databases[db_id]);
+        orgstr = database.SQL("create table temp from "+root+_POST.upload.filename);
+        result = eval(orgstr);
+        database.DBDisConnect();
+        unlink(root+_POST.upload.filename);
      }
    }
 ?>
