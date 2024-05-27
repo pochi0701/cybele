@@ -32,7 +32,6 @@ if( sf == ""){
         html, body {
             height: 100%;
         }
-
         #editArea {
             position: relative;
             //border: 1px solid lightgray;
@@ -55,6 +54,7 @@ if( sf == ""){
         const extractFileExt = str => str.slice(str.lastIndexOf("."));
         const extractFileName = str => str.slice(str.lastIndexOf("/") + 1);
         const extractFilePath = str => str.substring(0, str.lastIndexOf("/"));
+        const document_root = "<?print(_SERVER.DOCUMENT_ROOT);?>";
         var editor;
         var filepath;
         var root = "<? print( root ); ?>";
@@ -79,7 +79,6 @@ if( sf == ""){
                     saveCode();
                 }
             }
-            document_root = "<? print(_SERVER.DOCUMENT_ROOT); ?>";
             if (path.endsWith('md')) {
                 path = "http://<?print(_SERVER.HTTP_HOST);?>" + path.substring(document_root.length, path.length) + "?action=MarkDown.jss";
             } else {
@@ -101,6 +100,7 @@ if( sf == ""){
                     console.log(error);
                 });
         }
+
         // save code to file.
         function saveCode() {
             if (editor == undefined) {
@@ -136,7 +136,7 @@ if( sf == ""){
         // get file type for ACE editor.
         function getFileType(path) {
             //ファイルタイプ生成
-            var ext = extractFileExt(path);
+            let ext = extractFileExt(path);
             fileType = "";
             if (ext == ".js") {
                 fileType = "ace/mode/javascript";

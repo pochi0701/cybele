@@ -136,7 +136,7 @@ if( sf == ""){
             }
             return false;
         }
-
+        // display result of rendering code.
         function viewCode(path) {
             if(path == undefined){
                 return;
@@ -442,7 +442,7 @@ if( sf == ""){
         // get file type for ACE editor.
         function getFileType(path) {
             //ファイルタイプ生成
-            ext = extractFileExt(path);
+            let ext = extractFileExt(path);
             fileType = "";
             if (ext == ".js") {
                 fileType = "ace/mode/javascript";
