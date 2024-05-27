@@ -18,7 +18,7 @@ using namespace std;
 
 // ------------------------------------------------------------
 // match 事前コンパイル・インスタンス不要版
-int dregex::match(const wString text, const wString pattern)
+int dregex::match(const wString& text, const wString& pattern)
 {
 	//std::regex_constants::match_flag_type cflags = std::regex_constants::match_default;
 	wString tmp = pattern;

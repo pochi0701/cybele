@@ -29,7 +29,6 @@ enum class FILETYPES {
     _NOTFOUND = -1,
     _FILE = 0,
     _DIR = 1,
-    _TMP = 2,
     _CGI = 3,
 };
 enum class QUERY_METHOD

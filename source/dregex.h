@@ -23,7 +23,7 @@ public:
     ~dregex(void){
     //    regfree(&re);
     }
-    static int match(const wString text, const wString pattern);
+    static int match(const wString& text, const wString& pattern);
     static int replace(wString* result, const wString text, const vector<wString> pattern, const vector<wString> replacement);
     //static int split(vector<wString>* result, const wString text, const wString pattern, const bool global);
 };

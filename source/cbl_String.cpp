@@ -961,6 +961,44 @@ void wString::rtrim_chr (char* sentence, unsigned char cut_char)
 	}
 	return;
 }
+///---------------------------------------------------------------------------
+/// <summary>
+/// 文字列の行末に、cut_charがあったとき、削除
+/// </summary>
+/// <param name="cut_char">対象文字列</param>
+/// <returns>削除文字列</returns>
+wString wString::rtrim_chr (unsigned char cut_char)
+{
+	wString temp (*this);
+	if (temp.len) {
+		//末尾の空白等を抜く
+		while (temp.len && reinterpret_cast<unsigned char*>(temp.String)[temp.len - 1] == cut_char) {
+			temp.String[--temp.len] = 0;
+		}
+	}
+	return temp;
+}
+/// <summary>
+/// 
+/// </summary>
+/// <param name=""></param>
+/// <returns></returns>
+wString wString::ltrim_chr (unsigned char cut_char)
+{
+	wString temp (*this);
+	if (temp.len) {
+		//先頭の空白等を抜く
+		while (temp.len && *reinterpret_cast<unsigned char*>(temp.String) == cut_char) {
+			char* src = temp.String;
+			char* dst = src + 1;
+			while (*src) {
+				*src++ = *dst++;
+			}
+			temp.len--;
+		}
+	}
+	return temp;
+}
 //---------------------------------------------------------------------------
 // トリム
 //---------------------------------------------------------------------------
@@ -1258,9 +1296,9 @@ int wString::delete_file(const wString& str)
 #ifdef linux
 	flag = (unlink(str.String) == 0);
 #else
-	char work[2048];
 	wString str2 = str;
 	if (file_exists(str2)) {
+		char work[2048];
 		// MS932に変換して実行
 		strcpy(work, str2.nkfcnv("Ws").c_str());
 		windows_file_name(work);
@@ -1281,10 +1319,10 @@ int wString::delete_folder(const wString& str)
 #ifdef linux
 	flag = (rmdir(str.String) == 0);
 #else
-	char work[2048];
 	wString str2 = str;
 	// str2はUTF-8
 	if (directory_exists(str2)) {
+		char work[2048];
 		// MS932に変換して実行
 		strcpy(work, str2.nkfcnv("Ws").c_str());
 		windows_file_name(work);
@@ -3131,7 +3169,6 @@ wString wString::base64 (void)
 	work.String[len + 2] = 0;
 
 	unsigned char* instr = reinterpret_cast<unsigned char*>(work.String);
-	unsigned char ch = 0;
 	int count = 0;
 	/*
 	ABC -> 414243 -> 0100 0001  0100 0010  0100 0011
@@ -3140,7 +3177,7 @@ wString wString::base64 (void)
 	*/
 	/// 文字数*8ビットから1回あたり６ビットとる。残りビットがある間処理を行う
 	for (int i = len * 8; i > 0; i -= 6) {
-		ch = 0;
+		unsigned char ch = 0;
 		switch (count) {
 		case 0:
 			ch = (unsigned char)((*instr >> 2) & 0x3f);
@@ -3191,17 +3228,16 @@ wString wString::unbase64 (void)
 	10 14 09 03
 	*/
 	int ll = len;
-	char ch;
 	while (ll > 0) {
 		int s1 = FromBase64tbl[*instr++];
 		int s2 = FromBase64tbl[*instr++];
-		int s3 = FromBase64tbl[*instr++];
-		int s4 = FromBase64tbl[*instr++];
-		ch = (char)((s1 << 2) | (s2 >> 4));
+		char ch = (char)((s1 << 2) | (s2 >> 4));
 		if (ch) {
+			int s3 = FromBase64tbl[*instr++];
 			tmpout += ch;
 			ch = (char)(((s2 & 0x0f) << 4) | (s3 >> 2));
 			if (ch) {
+				int s4 = FromBase64tbl[*instr++];
 				tmpout += ch;
 				ch = (char)(((s3 & 0x03) << 6) | s4);
 				if (ch) {

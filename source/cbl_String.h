@@ -87,7 +87,9 @@ public:
 	wString         trim(void);
 	wString         rtrim(void);
 	wString         ltrim(void);
-	static void     rtrim_chr(char* sentence, const unsigned char cut_char = ' ');
+	wString         rtrim_chr (const unsigned char cut_char);
+	wString         ltrim_chr (const unsigned char cut_char);
+	static void     rtrim_chr (char* sentence, const unsigned char cut_char = ' ');
 	int             sprintf(const char* format, ...);
 	int             cat_sprintf(const char* format, ...);
 	int             last_delimiter(const char* delim) const;

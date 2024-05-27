@@ -262,8 +262,6 @@ void server_http_process (SOCKET accept_socket, char* access_host, char* client_
 /// <returns></returns>
 FILETYPES HTTP_RECV_INFO::http_index (void)
 {
-	//char       document_path[FILENAME_MAX];
-	//char       read_filename[FILENAME_MAX];
 	char       file_extension[16];
 
 	wString read_filename;
@@ -520,12 +518,11 @@ int HTTP_RECV_INFO::http_header_receive (SOCKET accept_socket)
 /// <summary>
 /// リクエストされたURIのファイルをチェック
 /// aliasでの置き換え、documet_rootチェック、なければskin置き場チェックを行う。
+///          -2:_OPENDIR
+///          -1:_NOTFOUND
 /// 		 0:実体
 /// 		 1:ディレクトリ
-/// 		 3:plw/uplファイル
-/// 		 4:tsvファイル
-/// 		 5:VOBファイル
-/// 		 6:CGIファイル
+/// 		 2:CGIファイル
 /// </summary>
 /// <returns>チェックしたファイルタイプ</returns>
 FILETYPES HTTP_RECV_INFO::http_file_check (void)

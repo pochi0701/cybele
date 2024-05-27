@@ -45,7 +45,7 @@
 
 int  http_file_send(SOCKET accept_socket, char* filename, unsigned int content_length, unsigned int range_start_pos);
 //int  next_file(int *in_fd_p, JOINT_FILE_INFO_T *joint_file_info_p);
-long FileSize(char* file_name);
+long FileSize(const char* file_name);
 //static  int warifu = 0;
 //static  unsigned char warifu_p[5000];
 
@@ -361,7 +361,7 @@ int copy_body(int in_fd, int out_fd, unsigned int content_length, unsigned int r
 /// </summary>
 /// <param name="file_name">対象フルファイル名</param>
 /// <returns>ファイルサイズ。エラー時-1</returns>
-long FileSize(char* file_name)
+long FileSize(const char* file_name)
 {
 	long flen;
 	int  handle = myopen(wString(file_name), O_RDONLY | O_BINARY, S_IREAD);
