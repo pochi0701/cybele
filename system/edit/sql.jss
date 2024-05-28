@@ -55,12 +55,14 @@
         var file = btoa(_POST.upload.filebody).nkfconv("w");
         saveToFile(root+_POST.upload.filename,file);
         
-        // filenameからDB名をしゅとくすること
+        // filenameからDB名を取得すること
         database = DBConnect(databases[db_id]);
-        orgstr = database.SQL("create table temp from "+root+_POST.upload.filename);
+        csv = basename(_POST.upload.filename);
+        base = csv.substring(0,csv.indexOf("."));
+        orgstr = database.SQL("create table " + base + " from " + root + csv);
         result = eval(orgstr);
         database.DBDisConnect();
-        unlink(root+_POST.upload.filename);
+        unlink(root + csv);
      }
    }
 ?>
@@ -189,6 +191,7 @@
               <div class="input-group">
                 <input class="form-control" type="file" id="formFile" name="upload" accept="text/csv">
                 <input class="btn btn-primary" type="submit" value="upload">
+                <input type="hidden" id="db_id" name="db_id" value="<?print(db_id);?>">
               </div>
             </form>
         </div>
