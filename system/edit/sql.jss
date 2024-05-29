@@ -29,21 +29,18 @@
     if( sql2.length > 0 ){
         database = DBConnect(databases[db_id]);
         orgstr = database.SQL(sql2);
-        result = eval(orgstr);
-        database.DBDisConnect();
-    }
-
-    for( var i = 0 ; i < databases.length ; i++){
-        database = DBConnect(databases[i]);
-        text = database.SQL("show tables");
-        tables[i] = eval(text);
+        if(orgstr.substring(0,1) == "[" ){
+            result = eval(orgstr);
+        }else{
+            result = undefined;
+        }
         database.DBDisConnect();
     }
 
    // UPLOAD
    var root = _SERVER.DOCUMENT_ROOT;
    if( _POST != undefined ){
-     s = Object.keys(_POST);  
+     //s = Object.keys(_POST);  
      //for( var i=0 ; i<s.length ; i++ ){
      //    print( "["+s[i]+"] =>"+_POST[s[i]]+"<br>\n" );
      //}
@@ -65,12 +62,19 @@
         unlink(root + csv);
      }
    }
+   
+    for( var i = 0 ; i < databases.length ; i++){
+        database = DBConnect(databases[i]);
+        text = database.SQL("show tables");
+        tables[i] = eval(text);
+        database.DBDisConnect();
+    }
 ?>
 <!doctype html>
 <html lang="ja">
 <head>
     <meta charset="utf-8">
-    <title>DB-Browser</title>
+    <title>SQL Browser</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
@@ -90,7 +94,9 @@
         var selected = <?print(db_id);?>;
         function selectChange(event) {
             var num = document.getElementById("database").value;
-            document.getElementById("db_id").value = num
+            document.getElementById("db_id").value = num;
+            document.getElementById("db_id2").value = num;
+            document.getElementById("sql").value = "";
             selectDatabase(num);
         }
         function selectDatabase(num){
@@ -141,28 +147,27 @@
                 document.forms[0].appendChild(q);
             }
         }
-        hpt  = 'databaseを選択してテーブルをクリックするとテーブル一部表示のSQLが入力欄に設定されます。<br>';
-        hpt += 'Execute SQLを押すとSQLが実行されます。';
-        hpt += 'CSV to TableでCSV(タイトル付。文字コードはUTF8)を選択するとCSVをテーブルに変換するSQLが入力欄に設定されます。<br>';
-        hpt += 'ファイルパスを正しく取得できないので、手動でパスを正しく変更しExecute SQLを押してください。<br>';
-        hpt += 'ファイル名がテーブル名に、CSVの1行目の項目がカラム名に、最初の項目の内容により文字列か数値かが決まり入力されます。<br>';
-        hpt += '<table class="table table-striped table-bordered">';
-        hpt += '<thead><tr><th>効果</th><th>コマンド</th></tr></thead><tbody>';
-        hpt += '<tr><td>データベース一覧</td><td>SHOW DATABASES;</td></tr>';
-        hpt += '<tr><td>テーブル一覧</td><td>SHOW TABLES;</td></tr>';
-        hpt += '<tr><td>テーブル構造表示</td><td>DESC table_name;</td></tr>';
-        hpt += '<tr><td>データベース作成</td><td>CREATE DATABASE database_name;</td></tr>';
-        hpt += '<tr><td>テーブル作成</td><td>CREATE TABLE table_name(column_name1 number/string,...);</td></tr>';
-        hpt += '<tr><td>テーブル作成(CSVから)</td><td>CREATE TABLE table_name FROM FILE_PATH;</td></tr>';
-        hpt += '<tr><td>データベース使用</td><td>USE database_name;</td></tr>';
-        hpt += '<tr><td>データベース削除</td><td>DROP DATABASE database_name;</td></tr>';
-        hpt += '<tr><td>テーブル削除</td><td>DROP TABLE table_name;</td></tr>';
-        hpt += '<tr><td>テーブル項目追加</td><td>ALTER TABLE TABLENAME ADD (COLUMN1 definition1,COLUMN2 definition2..);</td></tr>';
-        hpt += '<tr><td>テーブル名変更</td><td>ALTER TABLE TABLENAME MODIFY (COLUMN1 definition1,COLUMN2 definition2..);</td></tr>';
-        hpt += '<tr><td>テーブル項目削除</td><td>ALTER TABLE TABLENAME DROP (COLUMN1, COLUMN2..);</td></tr>';
-        hpt += '<tr><td>テーブル名変更</td><td>ALTER TABLE TABLENAME RENAME TO NEWTABLENAME;</td></tr>';
-        hpt += '<tr><td>テーブル項目名変更</td><td>ALTER TABLE TABLENAME RENAME COLUMN OLDCOLUMN TO NEWCOLUMN;</td></tr>';
-        hpt += '</tbody></table>';
+        hpt  = `
+        databaseを選択してテーブルをクリックするとテーブル一部表示のSQLが入力欄に設定されます。<br>
+        Execute SQLを押すとSQLが実行されます。<br>
+        CSV to TableでCSV(タイトル付。文字コードはUTF8)を選択するとCSVをテーブルに変換するSQLが入力欄に設定されます。<br>
+        <table class="table table-striped table-bordered">
+        <thead><tr><th>効果</th><th>コマンド</th></tr></thead><tbody>
+        <tr><td>データベース一覧</td><td>SHOW DATABASES;</td></tr>
+        <tr><td>テーブル一覧</td><td>SHOW TABLES;</td></tr>
+        <tr><td>テーブル構造表示</td><td>DESC table_name;</td></tr>
+        <tr><td>データベース作成</td><td>CREATE DATABASE database_name;</td></tr>
+        <tr><td>テーブル作成</td><td>CREATE TABLE table_name(column_name1 number/string,...);</td></tr>
+        <tr><td>テーブル作成(CSVから)</td><td>CREATE TABLE table_name FROM FILE_PATH;</td></tr>
+        <tr><td>データベース使用</td><td>USE database_name;</td></tr>
+        <tr><td>データベース削除</td><td>DROP DATABASE database_name;</td></tr>
+        <tr><td>テーブル削除</td><td>DROP TABLE table_name;</td></tr>
+        <tr><td>テーブル項目追加</td><td>ALTER TABLE TABLENAME ADD (COLUMN1 definition1,COLUMN2 definition2..);</td></tr>
+        <tr><td>テーブル名変更</td><td>ALTER TABLE TABLENAME MODIFY (COLUMN1 definition1,COLUMN2 definition2..);</td></tr>
+        <tr><td>テーブル項目削除</td><td>ALTER TABLE TABLENAME DROP (COLUMN1, COLUMN2..);</td></tr>
+        <tr><td>テーブル名変更</td><td>ALTER TABLE TABLENAME RENAME TO NEWTABLENAME;</td></tr>
+        <tr><td>テーブル項目名変更</td><td>ALTER TABLE TABLENAME RENAME COLUMN OLDCOLUMN TO NEWCOLUMN;</td></tr>
+        </tbody></table>`;
         function loadFinished(){
             selectDatabase(selected);
         }
@@ -173,7 +178,7 @@
     <!-- 1.ナビゲーションバーの設定 -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/" target="_top">DBBrowser</a>
+            <a class="navbar-brand" href="/" target="_top">SQL Browser</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -191,13 +196,13 @@
               <div class="input-group">
                 <input class="form-control" type="file" id="formFile" name="upload" accept="text/csv">
                 <input class="btn btn-primary" type="submit" value="upload">
-                <input type="hidden" id="db_id" name="db_id" value="<?print(db_id);?>">
+                <input type="hidden" id="db_id2" name="db_id" value="<?print(db_id);?>">
               </div>
             </form>
         </div>
         <div class="row">
             <div class="col-md-2">
-                Databases<br />
+                Databases<br>
                 <select id="database" class="form-select" aria-label="databases" onchange="selectChange(event);">
                     <?
                     for( var i = 0 ; i < databases.length ; i++ ){
@@ -210,12 +215,11 @@
                 <p id="selected"></p>
             </div>
             <div class="col-md-10">
-                <h3>SQL Browser</h3>
                 <form name="SQL" method="post">
                     <!-- SQL入力エリア -->
                     <div class="form-group">
                         <label>Input SQL</label>
-                        <textarea class="form-control" rows="6" id="sql" name="sql"><?print( sql2 );?></textarea>
+                        <textarea class="form-control" id="sql" rows="6" id="sql" name="sql"><?print( sql2 );?></textarea>
                     </div>
                     <input type="hidden" id="db_id" name="db_id" value="<?print(db_id);?>">
                     <!-- 送信ボタン -->

@@ -38,13 +38,22 @@ using namespace std;
 //#endif
 //#define CMDLINE
 /////////////////////////////////////////////////////////////////////////////
-void err(const char* msg)
+char* err(const char* msg)
 {
+	static char backup[1024] = {};
 #if 0
 	//perror( msg );
 	//omsg = msg;
 #else
-	debug_log_output(msg);
+	if (*msg) {
+		debug_log_output(msg);
+		strcpy(backup, msg);
+		return NULL;
+	}
+	else
+	{
+		return backup;
+	}
 #endif
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -2616,12 +2625,29 @@ wString _DBSQL(const wString& key, wString& sql)
 		wString retStr;
 		Database* db = (*connects)[key];
 		int ret = db->SQL(sql, retStr);
+		char* msg = NULL;
 		switch (ret) {
 		case -1:
-			//return "ERROR:" + sql;
-			return "ERROR";
+			msg = err("");
+			if (*msg) {
+				retStr = msg;
+				return retStr;
+			}
+			else
+			{
+				//return "ERROR:" + sql;
+				return "ERROR";
+			}
 		case 0:
-			return "OK";
+			msg = err("");
+			if (*msg) {
+				retStr = msg;
+				return retStr;
+			}
+			else
+			{
+				return "OK";
+			}
 		default:
 			return retStr;
 		}
