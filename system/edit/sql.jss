@@ -80,6 +80,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     <script>
         var databases=[<?for(i=1;i<databases.length;i++){print((i>1)?',':'');print('"'+databases[i]+'"');}?>];
+        var cmd = "<?print((_GET.cmd==undefined)?"":_GET.cmd);?>";
         var tables=[<?
                     for(i=1;i<databases.length;i++){
                         print((i>1)?',':'');
@@ -228,7 +229,7 @@
                 <div>
                     <?
                     //2次元テーブルの時
-                    if( result !== undefined ){
+                    if( result !== undefined && result.length > 0 ){
                         var rset = Object.keys(result[0]);
                         print( '<table class="table table-striped table-bordered">\n');
                         if( rset.length > 0 ){
@@ -259,7 +260,7 @@
                         print( '</tbody>\n');
                         print( '</table>\n');
                     }else{
-                        print( "RESULT:"+orgstr );
+                        print((orgstr!==undefined)?"RESULT:"+orgstr:"" );
                     }
                     ?>
                 </div>
@@ -272,6 +273,13 @@
             </div>
         </div>
     </div>
+    <script>
+        // command injection
+        if(cmd != undefined && cmd.length > 0 ){
+            document.getElementById("sql").value = cmd;
+            cmd = "";
+        }
+    </script>
 </body>
 </html>
 

@@ -40,6 +40,7 @@ using namespace std;
 /////////////////////////////////////////////////////////////////////////////
 char* err(const char* msg)
 {
+	static char current[1024] = {};
 	static char backup[1024] = {};
 #if 0
 	//perror( msg );
@@ -47,11 +48,14 @@ char* err(const char* msg)
 #else
 	if (*msg) {
 		debug_log_output(msg);
-		strcpy(backup, msg);
+		strcpy(current,msg);
 		return NULL;
 	}
 	else
 	{
+		// 読みだしたので消す
+		strcpy(backup,current);
+		*current = 0;
 		return backup;
 	}
 #endif

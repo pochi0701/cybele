@@ -13,11 +13,22 @@ function createZip(addr,file)
     return filepath;
 }
 addr = _GET.path;
-if( addr[addr.length-1] == '/' )
-{
-    addr = addr.substr(0,addr.length-1);
+if( addr[addr.length-1] == '/' ){
+    addr = addr.substring(0,addr.length-1);
 }
-if( addr.length > 0 ){
+var addrLength = addr.length;
+if( addrLength > 0 ){
+    // カレントフォルダの取得
+    var temp = addrLength - 1;
+    var folder = "";
+    while( temp >= 0){
+        if( addr[temp] == '/' || addr[temp] == '\\' ){
+           folder = addr.substring(temp,addrLength-temp);
+           break;
+        }
+    }
+
+
     tempname=Math.randInt(1000000,9999999);
     //md5(uniqid(rand(), true));
     //tempname .= '.zip';

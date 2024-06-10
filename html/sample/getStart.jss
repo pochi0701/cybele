@@ -1,10 +1,20 @@
 <?
-    email = _POST.email;
-    passwd = _POST.password;
+    var email = _POST.email;
+    var passwd = _POST.password;
+    var script = _SERVER.SCRIPT_FILENAME;
     if(email != undefined && passwd != undefined )
     {
+        base = script;
+        baseptr = base.length-1;
+        while( baseptr >= 0 && base.substring(baseptr,baseptr+1) != '/' ){
+            baseptr -= 1;
+        }
+        baseptr++;
+        base = base.substring(0,baseptr);
         var dat = loadFromFile("http://neon.cx/market/download.php?email="+email+"&password="+passwd);
-        saveToFile("./lesson2.tgz",dat);
+        saveToFile(base+"lesson2.tgz",dat);
+        command("tar zxvf "+base+"lesson2.tgz");
+        unlink( base+"lesson2.tgz");
     }
 ?>
 <!DOCTYPE html>

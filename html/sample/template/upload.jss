@@ -12,18 +12,25 @@
 </head>
 <body>
 <?
-   s = Object.keys(_POST);  
-   for( var i=0 ; i<s.length ; i++ ){
-         print( "["+s[i]+"] =>"+_POST[s[i]]+"<br>\n" );
-   }
-   if( _POST.upload != undefined )
-   {
-       print( "<br>\nファイル名：" );
-       print( _POST.upload.filename);
-       print( "<br>\nファイル長さ：" );
-       print( _POST.upload.length);
-       print( "<br>\nファイル内容：" );
-       print( btoa(_POST.upload.filebody));
+   var root = _SERVER.DOCUMENT_ROOT;
+   print( root+"<br>\n" );
+   if( _POST != undefined ){
+       s = Object.keys(_POST);
+       for( var i=0 ; i<s.length ; i++ ){
+           print( "["+s[i]+"] =>"+_POST[s[i]]+"<br>\n" );
+       }
+       if( !root.endsWith("/",0)){
+           root += "/";
+       }
+       if( _POST.upload != undefined){
+           print( "<br>\nファイル名：" );
+           print( _POST.upload.filename);
+           print( "<br>\nファイル長さ：" );
+           print( _POST.upload.length);
+           print( "<br>\nファイル内容：" );
+           print( btoa(_POST.upload.filebody));
+           saveToFile(root+_POST.upload.filename,btoa(_POST.upload.filebody).nkfcnv("W"));
+       }
    }
 ?>
 <div>
