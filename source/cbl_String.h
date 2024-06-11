@@ -101,6 +101,7 @@ public:
 	int             rfind(const wString& str, int index = 0) const;
 	int             rfind(const char* str, int index = 0) const;
 	int             rfind(char ch, int index = 0) const;
+	int             strlen_utf8(char* str);
 	//URL and encode
 	static char* linux_file_name(char* FileName);
 	static char* windows_file_name(char* FileName);

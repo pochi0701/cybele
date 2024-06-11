@@ -3318,12 +3318,36 @@ int wString::line_receive (SOCKET accept_socket)
 	}
 	return len;
 }
-/// <summary>
-/// sentence文字列の、cut_charが最初に出てきた所から前を削除
-/// もし、cut_charがsentence文字列に入っていなかった場合、文字列全部削除
-/// </summary>
-/// <param name="cut_char"></param>
 
+/// <summary>
+/// 0xxx xxxx 1
+/// 110x xxxx 2
+/// 1110 xxxx 3
+/// 1111 xxxx 4
+/// 
+/// 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+/// 1 1 1 1 1 1 1 1 0 0  0  0  2  2  3  4
+/// utf8文字列の長さ
+/// </summary>
+/// <param name="str">utf-8文字列</param>
+/// <returns>文字数</returns>
+int wString::strlen_utf8(char* str)
+{
+	static int  val[16] = { 1 ,1, 1, 1, 1, 1, 1, 1, 0, 0,  0,  0,  2,  2,  3,  4 };
+	int cnt = 0;
+	while (*str) {
+		auto current_len = val[*((unsigned*)str) >> 4];
+		if (current_len) {
+			cnt += 1;
+			str += current_len;
+		}
+		else {
+			// error ここにはこない予定
+			str++;
+		}
+	}
+	return cnt;
+}
 
 /// <summary>
 /// sentence文字列の、cut_charが最初に出てきた所から前を削除
