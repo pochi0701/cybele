@@ -1,0 +1,30 @@
+[
+  {
+    "url": "/system/edit/wiki.jss?page=HomePage",
+    "image": "<img src=\"/images/wiki.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "https://www.birdland.co.jp/chat/",
+    "image": "<img src=\"/images/bbs.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "https://www.birdland.co.jp/market/",
+    "image": "<img src=\"/images/market.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "/ip.jss",
+    "image": "<img src=\"/images/ip.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "/shutdown.jss",
+    "image": "<img src=\"/images/shutdown.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "/system/edit/sql.jss",
+    "image": "<img src=\"/images/sql.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "/system/edit/ascii_code.html",
+    "image": "<img src=\"/images/ascii.png\" width=\"96\" height=\"96\" border=\"0\">"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "url": "/system/edit/wiki.jss?page=HomePage",
+    "image": "<img src=\"/images/wiki.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "http://neon.cx/bbs/",
+    "image": "<img src=\"/images/bbs.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "http://neon.cx/market/",
+    "image": "<img src=\"/images/market.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "/ip.jss",
+    "image": "<img src=\"/images/ip.png\" width=\"96\" height=\"96\" border=\"0\">"
+  },
+  {
+    "url": "/shutdown.jss",
+    "image": "<img src=\"/images/shutdown.png\" width=\"96\" height=\"96\" border=\"0\">"
+  }
+]
