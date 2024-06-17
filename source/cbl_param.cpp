@@ -395,7 +395,7 @@ void GLOBAL_PARAM_T::config_file_read(void)
 	// アクセスできた時
 	if (tmp.length() > 0)
 	{
-		if (tmp[tmp.length() - 1] == '\n')
+		if (tmp.ends_with("\n"))
 		{
 			tmp = tmp.substr(0, tmp.length() - 1);
 		}

@@ -61,6 +61,7 @@ public:
 	void     operator+=(const wString& str);
 	void     operator+=(const char* str);
 	char     operator[](int index) const;
+	char&    operator[](int index);
 	//STRING FUNCTION
 	bool            starts_with(const char* str, int pos = -1) const;
 	bool            ends_with(const char* str, int end_len = -1) const;

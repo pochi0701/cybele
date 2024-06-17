@@ -447,6 +447,16 @@ char wString::operator[](int index) const
 		return 0;
 	}
 }
+
+/// <summary>
+/// 文字列の配列アクセス左辺値
+/// </summary>
+/// <param name="index">参照する添え字</param>
+/// <returns>参照した1バイトの実体</returns>
+char& wString::operator[](int index) {
+	return String[index];
+}
+
 ///---------------------------------------------------------------------------
 /// <summary>
 /// 文字列の位置指定アクセス
@@ -3320,31 +3330,29 @@ int wString::line_receive (SOCKET accept_socket)
 }
 
 /// <summary>
-/// 0xxx xxxx 1
-/// 110x xxxx 2
-/// 1110 xxxx 3
-/// 1111 xxxx 4
-/// 
-/// 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
-/// 1 1 1 1 1 1 1 1 0 0  0  0  2  2  3  4
 /// utf8文字列の長さ
+/// range       8bit       5bit    bytes
+/// 0xxx - xxxx:00 - 7f -> 00 - 0f 1
+/// 110x - xxxx:c0 - df -> 18 - 1b 2
+/// 1110 - xxxx:e0 - ef -> 1c - 1d 3
+/// 1111 - 0xxx:f0 - f7 -> 1e - 1f 4
 /// </summary>
 /// <param name="str">utf-8文字列</param>
 /// <returns>文字数</returns>
 int wString::strlen_utf8(char* str)
 {
-	static int  val[16] = { 1 ,1, 1, 1, 1, 1, 1, 1, 0, 0,  0,  0,  2,  2,  3,  4 };
+	const static int hb[32] = {
+		//0 1 2 3 4 5 6 7 8 9 A B C D E F
+		  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,//0x00
+		  1,1,1,1,1,1,1,1,2,2,2,2,3,3,4,1,//0x00
+	};
+		
 	int cnt = 0;
 	while (*str) {
-		auto current_len = val[*((unsigned*)str) >> 4];
-		if (current_len) {
-			cnt += 1;
-			str += current_len;
-		}
-		else {
-			// error ここにはこない予定
-			str++;
-		}
+		auto target = *(reinterpret_cast<unsigned char*>(str));
+		auto current_len = hb[target >> 3];
+		str += current_len;
+		cnt++;
 	}
 	return cnt;
 }
