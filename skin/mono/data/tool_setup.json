@@ -1,30 +1,30 @@
 [
   {
     "url": "/system/edit/wiki.jss?page=HomePage",
-    "image": "<img src=\"/images/wiki.png\" width=\"96\" height=\"96\" border=\"0\">"
+    "image": "<img src=\"/images/wiki.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"Information of system.\" data-bs-placement=\"top\">"
   },
   {
     "url": "https://www.birdland.co.jp/chat/",
-    "image": "<img src=\"/images/bbs.png\" width=\"96\" height=\"96\" border=\"0\">"
+    "image": "<img src=\"/images/bbs.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"chat with company.\" data-bs-placement=\"top\">"
   },
   {
     "url": "https://www.birdland.co.jp/market/",
-    "image": "<img src=\"/images/market.png\" width=\"96\" height=\"96\" border=\"0\">"
+    "image": "<img src=\"/images/market.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"start onlin lesson.\" data-bs-placement=\"top\">"
   },
   {
     "url": "/ip.jss",
-    "image": "<img src=\"/images/ip.png\" width=\"96\" height=\"96\" border=\"0\">"
+    "image": "<img src=\"/images/ip.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"view local/global ip address.\" data-bs-placement=\"top\">"
   },
   {
     "url": "/shutdown.jss",
-    "image": "<img src=\"/images/shutdown.png\" width=\"96\" height=\"96\" border=\"0\">"
+    "image": "<img src=\"/images/shutdown.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"Shutdown system.\" data-bs-placement=\"top\">"
   },
   {
     "url": "/system/edit/sql.jss",
-    "image": "<img src=\"/images/sql.png\" width=\"96\" height=\"96\" border=\"0\">"
+    "image": "<img src=\"/images/sql.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"Launch SQL Browser.\" data-bs-placement=\"top\">"
   },
   {
     "url": "/system/edit/ascii_code.html",
-    "image": "<img src=\"/images/ascii.png\" width=\"96\" height=\"96\" border=\"0\">"
+    "image": "<img src=\"/images/ascii.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"View ascii codes.\" data-bs-placement=\"top\">"
   }
 ]

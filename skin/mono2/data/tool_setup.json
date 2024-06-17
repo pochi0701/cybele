@@ -1,22 +1,22 @@
 [
   {
     "url": "/system/edit/wiki.jss?page=HomePage",
-    "image": "<img src=\"/images/wiki.png\" width=\"96\" height=\"96\" border=\"0\">"
+    "image": "<img src=\"/images/wiki.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"Information of system.\" data-bs-placement=\"top\">"
   },
   {
     "url": "http://neon.cx/bbs/",
-    "image": "<img src=\"/images/bbs.png\" width=\"96\" height=\"96\" border=\"0\">"
+    "image": "<img src=\"/images/bbs.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"chat with company.\" data-bs-placement=\"top\">"
   },
   {
     "url": "http://neon.cx/market/",
-    "image": "<img src=\"/images/market.png\" width=\"96\" height=\"96\" border=\"0\">"
+    "image": "<img src=\"/images/market.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"start onlin lesson.\" data-bs-placement=\"top\">"data-bs-toggle=\"tooltip\" title=\"view local/global ip address.\" data-bs-placement=\"top\">"
   },
   {
     "url": "/ip.jss",
-    "image": "<img src=\"/images/ip.png\" width=\"96\" height=\"96\" border=\"0\">"
+    "image": "<img src=\"/images/ip.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"view local/global ip address.\" data-bs-placement=\"top\">"
   },
   {
     "url": "/shutdown.jss",
-    "image": "<img src=\"/images/shutdown.png\" width=\"96\" height=\"96\" border=\"0\">"
+    "image": "<img src=\"/images/shutdown.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"Shutdown system.\" data-bs-placement=\"top\">"
   }
 ]
