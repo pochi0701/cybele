@@ -409,7 +409,7 @@ void scIntegerToDateString (CScriptVar* c, void* userdata)
 	wString format = c->getParameter ("format")->getString ();
 	char s[128] = {};
 	time_t time = atol (times.c_str ());
-	struct tm* timeptr;
+	const struct tm* timeptr;
 	timeptr = localtime (&time);
 	strftime (s, 128, format.c_str (), timeptr);
 	c->getReturnVar ()->setString (s);

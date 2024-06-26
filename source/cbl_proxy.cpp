@@ -142,7 +142,7 @@ int HTTP_RECV_INFO::http_proxy_response (SOCKET accept_socket)
 			*   面倒なのでたいした置換はしていない
 			*/
 			auto ptr = wb.c_str ();
-			char* new_ptr;
+			const char* new_ptr;
 			while (1) {
 				ptr = strcasestr (ptr, " href");
 				if (ptr == NULL) break;
@@ -367,7 +367,7 @@ int getHeader (SOCKET sock, wString& lines, int& content_is_html, int& t_content
 			return -1;
 		}
 		else if (len > 0 && line == 0) {
-			char* sptr = strstr (wb.c_str (), " ");
+			const char* sptr = strstr (wb.c_str (), " ");
 			if (sptr == NULL) {
 				return -1;
 			}
