@@ -958,7 +958,7 @@ void scRandomUUID(CScriptVar* c, void* userdata)
 	IGNORE_PARAMETER(userdata);
 	wString data;
 	data = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
-	for (auto ptr = 0; ptr < data.length(); ptr++) {
+	for (auto ptr = 0U; ptr < data.length(); ptr++) {
 
 	}
 	c->getReturnVar()->setString(data);

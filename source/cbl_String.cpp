@@ -2341,7 +2341,7 @@ int wString::header (const char* str, int flag, int status)
 /********************************************************************************/
 wString wString::nkfcnv (const wString& option)
 {
-	auto ptr2 = 0;
+	auto ptr2 = 0U;
 	auto kanji = false;
 	while (ptr2 < len) {
 		if (String[ptr2++] & 0x80) {
