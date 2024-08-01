@@ -162,10 +162,10 @@ struct tm* localtime_r(const time_t* timer, struct tm* tmbuf) {
 /// </summary>
 /// <param name="tm">変換する時間を表す構造体</param>
 /// <returns>変換した文字列</returns>
-wString asctimew(const struct tm* tm) {
-	wString buf;
-	buf.resize(ASCBUFSIZE);
-	strftime(buf.c_str(), ASCBUFSIZE, "%c\n", tm);
+wString* asctimew(const struct tm* tm) {
+	wString* buf = new wString();
+	buf->resize(ASCBUFSIZE);
+	strftime(buf->c_str(), ASCBUFSIZE, "%c\n", tm);
 	return buf;
 }
 
@@ -174,10 +174,11 @@ wString asctimew(const struct tm* tm) {
 /// </summary>
 /// <param name="timer">変換する時間</param>
 /// <returns>変換した文字列</returns>
-wString ctimew(const time_t* timer) {
-	struct tm tmbuf;
+wString* ctimew(const time_t* timer) {
+	struct tm tmbuf = {};
 	localtime_r(timer, &tmbuf);
-	return asctimew(&tmbuf);
+	wString* buf = asctimew(&tmbuf);
+	return buf;
 }
 
 //char *_strdate(char *s) {

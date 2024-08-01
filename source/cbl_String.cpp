@@ -443,8 +443,9 @@ char wString::operator[](int index) const
 		return String[index];
 	}
 	else {
+		throw new CScriptException("Out bound.Operator[].");
 		//perror("out bound");
-		return 0;
+		//return 0;
 	}
 }
 
@@ -469,8 +470,9 @@ char wString::at (unsigned int index) const
 		return String[index];
 	}
 	else {
-		perror ("out bound");
-		return -1;
+		throw new CScriptException("Out bound.at().");
+		//perror ("out bound");
+		//return -1;
 	}
 }
 //---------------------------------------------------------------------------
@@ -1048,7 +1050,9 @@ wString wString::file_stats (const char* str, int mode)
 #ifdef linux
 			buf.sprintf ("{\"permission\":\"%o\",\"size\":%d,\"date\":\"%s\"}", stat_buf.st_mode, stat_buf.st_size, ctime (&stat_buf.st_mtime));
 #else
-			buf.sprintf ("{\"permission\":\"%o\",\"size\":%d,\"date\":\"%s\"}", stat_buf.st_mode, stat_buf.st_size, ctimew (&stat_buf.st_mtime).c_str ());
+			wString* time_data = ctimew(&stat_buf.st_mtime);
+			buf.sprintf ("{\"permission\":\"%o\",\"size\":%d,\"date\":\"%s\"}", stat_buf.st_mode, stat_buf.st_size, time_data->c_str ());
+			delete time_data;
 #endif
 			//printf("デバイスID : %d\n",stat_buf.st_dev);
 			//printf("inode番号 : %d\n",stat_buf.st_ino);
@@ -1451,8 +1455,9 @@ wString wString::enum_folder_json (const wString& Path)
 		free (namelist);
 	}
 	else {
-		perror ("ディレクトリのオープンエラー");
-		exit (1);
+		throw new CScriptException("Directory Open Error.[" + Path2 + "]");
+		//perror ("ディレクトリのオープンエラー");
+		//exit (1);
 	}
 	return temp;
 #else
@@ -1492,8 +1497,9 @@ wString wString::enum_folder_json (const wString& Path)
 		temp += "]";
 	}
 	else {
-		perror ("ディレクトリのオープンエラー");
-		exit (1);
+		throw new CScriptException("Directory Open Error.Full Path Required.["+ Path2 +"]");
+		//perror ("ディレクトリのオープンエラー");
+		//exit (1);
 	}
 	wString temp2 = temp.nkfcnv ("Sw");
 	return temp2;
@@ -1505,7 +1511,8 @@ wString wString::get_current_dir()
 	char cwd[FILENAME_MAX];
 	if (getcwd(cwd, sizeof(cwd)) == NULL) {
 		debug_log_output("get_current_dir: error %s", strerror(errno));
-		exit(-1);
+		throw new CScriptException("get_current_dir");
+		//exit(-1);
 	}
 #ifdef linux
 	return wString(cwd);
@@ -1581,8 +1588,9 @@ wString wString::enum_folder (const wString& Path)
 		}
 	}
 	else {
-		perror ("ディレクトリのオープンエラー");
-		exit (1);
+		throw new CScriptException("Directory Open Error.[" + Path2 + "]");
+		//perror ("ディレクトリのオープンエラー");
+		//exit (1);
 	}
 #endif
 	wString temp2 = temp.nkfcnv ("Sw");
@@ -2050,8 +2058,11 @@ wString wString::strsplit (const char* delimstr)
 void wString::resize (const int newsize)
 {
 	if (len >= capa) {
-		printf ("not good %u %u", len, capa);
-		exit (1);
+		wString temp;
+		temp.sprintf("Over capacity.[len:%u capa:%u]", len, capa);
+		throw new CScriptException(temp);
+		//printf ("not good %u %u", len, capa);
+		//exit (1);
 	}
 	if ((int)capa <= newsize) {
 		// すこし大き目に TODO
@@ -3045,7 +3056,9 @@ wString wString::get_local_address (void)
 	//ホスト名を取得する
 	char hostname[256];
 	if (gethostname (hostname, sizeof (hostname)) != 0) {
-		return "";
+		throw new CScriptException("get_local_address:GetHostName error.");
+		//perror ("ディレクトリのオープンエラー");
+		//return "";
 	}
 	//puts(hostname);
 
@@ -3055,7 +3068,8 @@ wString wString::get_local_address (void)
 	PMIB_IPFORWARDROW pBestRoute = (PMIB_IPFORWARDROW)malloc (sizeof (MIB_IPFORWARDROW));
 	if (pBestRoute == NULL) {
 		// TODO:Throwする
-		exit (1);
+		throw new CScriptException("get_local_address:memory access error.");
+		//exit (1);
 	}
 	DWORD dwRetVal = GetBestRoute (dwDestAddr, 0, pBestRoute);
 	if (dwRetVal == NO_ERROR) {

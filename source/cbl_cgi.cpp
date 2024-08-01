@@ -37,7 +37,7 @@
 #include "TinyJS_Functions.h"
 #include "TinyJS_MathFunctions.h"
 #include "define.h"
-
+#include "TinyJS.h"
 //multipart
 vector<multipart*> mp;
 bool split(const char* cut_char, wString& split1, wString& split2);
@@ -353,6 +353,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 	}
 	catch (CScriptException* e)
 	{
+		headerCheckPrint(accept_socket, &javaScriptThread.printed, javaScriptThread.headerBuf, 1);
 		debug_log_output("SCRIPT ERROR: %s\n", e->text.c_str());
 		wString tmp;
 		tmp.sprintf("SCRIPT ERROR: %s\n", e->text.c_str());
