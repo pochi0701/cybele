@@ -570,7 +570,7 @@ LEX_TYPES CScriptLex::getNextCh ()
 void CScriptLex::getNextToken ()
 {
 	// octal digits
-	char buf[4] = "???";
+
 	tk = LEX_TYPES::LEX_EOF;
 	tkStr.clear ();
 	//非実行ブロック
@@ -717,6 +717,7 @@ void CScriptLex::getNextToken ()
 		getNextCh ();
 		while (currCh != LEX_TYPES::LEX_EOF && currCh != LEX_TYPES::LEX_S_QUOTE) {
 			if (currCh == LEX_TYPES::LEX_ESC) {
+				char buf[4] = "???";
 				getNextCh ();
 				switch (currCh) {
 				case LEX_TYPES::LEX_n: tkStr += '\n'; break;
@@ -2035,7 +2036,7 @@ CScriptVarLink* CTinyJS::factor (bool& execute)
 		/* The parent if we're executing a method call */
 		CScriptVar* parent = 0;
 
-		void* alone = NULL;
+		const void* alone = NULL;
 		if (execute && !a) {
 			/* Variable doesn't exist! JavaScript says we should create it
 			* (we won't add it here. This is done in the assignment operator)*/

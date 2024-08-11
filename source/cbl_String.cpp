@@ -443,7 +443,7 @@ char wString::operator[](int index) const
 		return String[index];
 	}
 	else {
-		throw new CScriptException("Out bound.Operator[].");
+		throw new CScriptException ("Out bound.Operator[].");
 		//perror("out bound");
 		//return 0;
 	}
@@ -454,7 +454,8 @@ char wString::operator[](int index) const
 /// </summary>
 /// <param name="index">参照する添え字</param>
 /// <returns>参照した1バイトの実体</returns>
-char& wString::operator[](int index) {
+char& wString::operator[](int index)
+{
 	return String[index];
 }
 
@@ -470,7 +471,7 @@ char wString::at (unsigned int index) const
 		return String[index];
 	}
 	else {
-		throw new CScriptException("Out bound.at().");
+		throw new CScriptException ("Out bound.at().");
 		//perror ("out bound");
 		//return -1;
 	}
@@ -765,7 +766,7 @@ int wString::load_from_file (const wString& FileName)
 		handle = myopen (FileName, O_RDONLY | O_BINARY, S_IREAD);
 #endif
 		if (handle < 0) {
-			debug_log_output("%s(%d):load_from_file(%s) Error.", __FILE__, __LINE__, FileName.c_str());
+			debug_log_output ("%s(%d):load_from_file(%s) Error.", __FILE__, __LINE__, FileName.c_str ());
 			return -1;
 		}
 		flen = lseek (handle, 0, SEEK_END);
@@ -794,7 +795,7 @@ void wString::load_from_csv (const char* str)
 /// </summary>
 /// <param name="str"></param>
 /// <returns></returns>
-int is_number (char* str)
+int wString::is_number (const char* str)
 {
 	for (auto i = static_cast<int>(strlen (str)) - 1; i >= 0; i--) {
 		auto ch = static_cast<unsigned char>(str[i]);
@@ -818,7 +819,7 @@ void wString::load_from_csv (const wString& FileName)
 	int first = 1;
 	fd = myopen (FileName, O_RDONLY | O_BINARY, S_IREAD);
 	if (fd < 0) {
-		debug_log_output("%s(%d):load_from_csv(%s) Error.", __FILE__, __LINE__, FileName.c_str());
+		debug_log_output ("%s(%d):load_from_csv(%s) Error.", __FILE__, __LINE__, FileName.c_str ());
 		return;
 	}
 
@@ -879,7 +880,7 @@ int wString::save_to_file (const wString& FileName)
 	int handle = myopen (FileName, O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IREAD | S_IWRITE);
 #endif
 	if (handle < 0) {
-		debug_log_output("%s(%d):save_to_file(%s) Error.", __FILE__, __LINE__, FileName.c_str());
+		debug_log_output ("%s(%d):save_to_file(%s) Error.", __FILE__, __LINE__, FileName.c_str ());
 		return handle;
 	}
 	write (handle, String, len);
@@ -1043,14 +1044,14 @@ wString wString::file_stats (const char* str, int mode)
 	struct stat      stat_buf;
 	wString buf = "undefined";
 	wString path = str;
-	if (stat (path.nkfcnv("Ws").c_str(), &stat_buf) == 0) {
+	if (stat (path.nkfcnv ("Ws").c_str (), &stat_buf) == 0) {
 		if (mode == 0) {
 			/* ファイル情報を表示 */
 
 #ifdef linux
 			buf.sprintf ("{\"permission\":\"%o\",\"size\":%d,\"date\":\"%s\"}", stat_buf.st_mode, stat_buf.st_size, ctime (&stat_buf.st_mtime));
 #else
-			wString* time_data = ctimew(&stat_buf.st_mtime);
+			wString* time_data = ctimew (&stat_buf.st_mtime);
 			buf.sprintf ("{\"permission\":\"%o\",\"size\":%d,\"date\":\"%s\"}", stat_buf.st_mode, stat_buf.st_size, time_data->c_str ());
 			delete time_data;
 #endif
@@ -1081,9 +1082,8 @@ wString wString::file_stats (const char* str, int mode)
 			}
 		}
 	}
-	else
-	{
-		debug_log_output("%s(%d):file_stats(%s) Error.", __FILE__, __LINE__, str);
+	else {
+		debug_log_output ("%s(%d):file_stats(%s) Error.", __FILE__, __LINE__, str);
 	}
 	return buf;
 }
@@ -1118,7 +1118,7 @@ int wString::file_exists (const char* str)
 	}
 #endif
 	//debug_log_output("%s(%d):file_exists(%s) Error.", __FILE__, __LINE__, tmp.c_str());
-    return 0;
+	return 0;
 }
 //---------------------------------------------------------------------------
 int wString::file_exists (const wString& str)
@@ -1155,13 +1155,12 @@ bool wString::create_dir (const wString& str)
 	//0x777ではちゃんとフォルダできない
 	flag = (mkdir (str.String, 0777) != -1);
 #else
-	wString str2(str);
+	wString str2 (str);
 
 	if (!directory_exists (str2)) {
-		flag = (mkdir (str2.nkfcnv("Ws").windows_file_name().c_str()) != -1);
-		if (!flag)
-		{
-			debug_log_output("%s(%d):create_dir(%s) Error.", __FILE__, __LINE__, str2.c_str());
+		flag = (mkdir (str2.nkfcnv ("Ws").windows_file_name ().c_str ()) != -1);
+		if (!flag) {
+			debug_log_output ("%s(%d):create_dir(%s) Error.", __FILE__, __LINE__, str2.c_str ());
 		}
 	}
 #endif
@@ -1218,8 +1217,7 @@ bool wString::rename_file (const wString& src, const wString& dst)
 	if (rename (src2.c_str (), dst2.c_str ()) >= 0) {
 		return true;
 	}
-	else
-	{
+	else {
 		//debug_log_output("%s(%d):rename_file(%s,%s) Error.", __FILE__, __LINE__, src.c_str(),dst.c_str());
 		return false;
 	}
@@ -1233,7 +1231,7 @@ unsigned long wString::file_size_by_name (char* str)
 	handle = open (str, 0);
 #else
 	wString temp = str;
-	handle = open (temp.nkfcnv("Ws").c_str(), O_BINARY);
+	handle = open (temp.nkfcnv ("Ws").c_str (), O_BINARY);
 #endif
 	pos = lseek (handle, 0, SEEK_END);
 	close (handle);
@@ -1304,48 +1302,48 @@ wString wString::change_file_ext (const wString& str, const char* ext)
 	return str.substr (0, pos + 1) + ext;
 }
 //---------------------------------------------------------------------------
-int wString::delete_file(const wString& str)
+int wString::delete_file (const wString& str)
 {
 	int flag = 0;
 #ifdef linux
-	flag = (unlink(str.String) == 0);
+	flag = (unlink (str.String) == 0);
 #else
 	wString str2 = str;
-	if (file_exists(str2)) {
+	if (file_exists (str2)) {
 		char work[2048];
 		// MS932に変換して実行
-		strcpy(work, str2.nkfcnv("Ws").c_str());
-		windows_file_name(work);
-		if (unlink(work) == 0) {
+		strcpy (work, str2.nkfcnv ("Ws").c_str ());
+		windows_file_name (work);
+		if (unlink (work) == 0) {
 			flag = 1;
 		}
 	}
 #endif
 	if (flag == 0) {
-		debug_log_output("%s(%d):delete_file(%s) Error.", __FILE__, __LINE__, str2.c_str());
+		debug_log_output ("%s(%d):delete_file(%s) Error.", __FILE__, __LINE__, str2.c_str ());
 	}
 	return flag;
 }
 //---------------------------------------------------------------------------
-int wString::delete_folder(const wString& str)
+int wString::delete_folder (const wString& str)
 {
 	int flag = 0;
 #ifdef linux
-	flag = (rmdir(str.String) == 0);
+	flag = (rmdir (str.String) == 0);
 #else
 	wString str2 = str;
 	// str2はUTF-8
-	if (directory_exists(str2)) {
+	if (directory_exists (str2)) {
 		char work[2048];
 		// MS932に変換して実行
-		strcpy(work, str2.nkfcnv("Ws").c_str());
-		windows_file_name(work);
-		if (rmdir(work) == 0) {
+		strcpy (work, str2.nkfcnv ("Ws").c_str ());
+		windows_file_name (work);
+		if (rmdir (work) == 0) {
 			flag = 1;
 		}
 	}
 #endif
-	debug_log_output("%s(%d):delete_file(%s) Error.", __FILE__, __LINE__, str2.c_str());
+	debug_log_output ("%s(%d):delete_file(%s) Error.", __FILE__, __LINE__, str2.c_str ());
 	return flag;
 }
 //---------------------------------------------------------------------------
@@ -1455,7 +1453,7 @@ wString wString::enum_folder_json (const wString& Path)
 		free (namelist);
 	}
 	else {
-		throw new CScriptException("Directory Open Error.[" + Path2 + "]");
+		throw new CScriptException ("Directory Open Error.[" + Path2 + "]");
 		//perror ("ディレクトリのオープンエラー");
 		//exit (1);
 	}
@@ -1497,7 +1495,7 @@ wString wString::enum_folder_json (const wString& Path)
 		temp += "]";
 	}
 	else {
-		throw new CScriptException("Directory Open Error.Full Path Required.["+ Path2 +"]");
+		throw new CScriptException ("Directory Open Error.Full Path Required.[" + Path2 + "]");
 		//perror ("ディレクトリのオープンエラー");
 		//exit (1);
 	}
@@ -1506,20 +1504,20 @@ wString wString::enum_folder_json (const wString& Path)
 #endif
 }
 
-wString wString::get_current_dir()
+wString wString::get_current_dir ()
 {
 	char cwd[FILENAME_MAX];
-	if (getcwd(cwd, sizeof(cwd)) == NULL) {
-		debug_log_output("get_current_dir: error %s", strerror(errno));
-		throw new CScriptException("get_current_dir");
+	if (getcwd (cwd, sizeof (cwd)) == NULL) {
+		debug_log_output ("get_current_dir: error %s", strerror (errno));
+		throw new CScriptException ("get_current_dir");
 		//exit(-1);
 	}
 #ifdef linux
-	return wString(cwd);
+	return wString (cwd);
 #else
-	return wString(cwd).nkfcnv("Sw");
+	return wString (cwd).nkfcnv ("Sw");
 #endif
-	}
+}
 
 ///---------------------------------------------------------------------------
 /// <summary>
@@ -1561,7 +1559,7 @@ wString wString::enum_folder (const wString& Path)
 	wString              temp;
 	wString              Path2;
 	Path2 = Path;
-	Path2 = Path2.nkfcnv("Ws");
+	Path2 = Path2.nkfcnv ("Ws");
 	//Directoryオープン
 	if ((dir = opendir (Path2.String)) != NULL) {
 		struct dirent* ent;
@@ -1588,7 +1586,7 @@ wString wString::enum_folder (const wString& Path)
 		}
 	}
 	else {
-		throw new CScriptException("Directory Open Error.[" + Path2 + "]");
+		throw new CScriptException ("Directory Open Error.[" + Path2 + "]");
 		//perror ("ディレクトリのオープンエラー");
 		//exit (1);
 	}
@@ -2059,8 +2057,8 @@ void wString::resize (const int newsize)
 {
 	if (len >= capa) {
 		wString temp;
-		temp.sprintf("Over capacity.[len:%u capa:%u]", len, capa);
-		throw new CScriptException(temp);
+		temp.sprintf ("Over capacity.[len:%u capa:%u]", len, capa);
+		throw new CScriptException (temp);
 		//printf ("not good %u %u", len, capa);
 		//exit (1);
 	}
@@ -2602,7 +2600,7 @@ wString wString::http_get (const wString& url, off_t offset)
 			hostPos = ptr.Pos (HTTP_DELIMITER) + 4;//sizeof( HTTP_DELIMITER );//実体の先頭
 			recv_len -= hostPos;
 			buf = ptr.substr (hostPos, recv_len);
-			wString work(8000);
+			wString work (8000);
 			//転送する
 			while (loop_flag) {
 				recv_len = recv (server_socket, work.String, work.capacity (), 0);
@@ -2804,7 +2802,7 @@ SOCKET wString::sock_connect (const char* host, const int port)
 	//ＩＰＶ４アドレスファミリを設定
 	sockadd.sin_family = AF_INET;
 	//接続
-	if (SERROR (connect (sock, (struct sockaddr*)&sockadd, sizeof (sockadd)))) {
+	if (SERROR (connect (sock, reinterpret_cast<struct sockaddr*>(&sockadd), sizeof (sockadd)))) {
 		sClose (sock);
 		return INVALID_SOCKET;
 	}
@@ -2982,15 +2980,14 @@ char* wString::windows_file_name (char* FileName)
 /// </summary>
 /// <param name="FileName">変換するパス名</param>
 /// <returns>変換した文字列</returns>
-wString wString::windows_file_name()
+wString wString::windows_file_name ()
 {
 #ifdef linux
 	return *this;
 #else
 
 	//char* work = FileName;
-	for (auto i = 0U; i < len; i++)
-	{
+	for (auto i = 0U; i < len; i++) {
 		if (String[i] == '/') {
 			String[i] = '\\';
 		}
@@ -3056,7 +3053,7 @@ wString wString::get_local_address (void)
 	//ホスト名を取得する
 	char hostname[256];
 	if (gethostname (hostname, sizeof (hostname)) != 0) {
-		throw new CScriptException("get_local_address:GetHostName error.");
+		throw new CScriptException ("get_local_address:GetHostName error.");
 		//perror ("ディレクトリのオープンエラー");
 		//return "";
 	}
@@ -3068,7 +3065,7 @@ wString wString::get_local_address (void)
 	PMIB_IPFORWARDROW pBestRoute = (PMIB_IPFORWARDROW)malloc (sizeof (MIB_IPFORWARDROW));
 	if (pBestRoute == NULL) {
 		// TODO:Throwする
-		throw new CScriptException("get_local_address:memory access error.");
+		throw new CScriptException ("get_local_address:memory access error.");
 		//exit (1);
 	}
 	DWORD dwRetVal = GetBestRoute (dwDestAddr, 0, pBestRoute);
@@ -3092,8 +3089,7 @@ wString wString::get_local_address (void)
 	// もし全てのインターフェースが外に出られる場合はGetBestRouteが選択したルートとする。
 	////for (auto i = 0; i < hostend->h_length; i++) {
 	auto i = 0;
-	while( hostend->h_addr_list[i] != NULL)
-	{
+	while (hostend->h_addr_list[i] != NULL) {
 		//DWORD aaa = (Dhostend->h_addr_list[i];
 		// TODO:３バイト比較。厳密にすべき。
 		if (memcmp (static_cast<void*>(hostend->h_addr_list[i]), static_cast<void*>(&dwDestAddr), 3) == 0) {
@@ -3103,7 +3099,7 @@ wString wString::get_local_address (void)
 			inaddr.S_un.S_un_b.s_b4 = hostend->h_addr_list[i][3];
 			break;
 		}
-	    i += 1;
+		i += 1;
 	}
 	//ip.resize(256);
 	//static char ip[256];
@@ -3187,7 +3183,7 @@ wString wString::base64 (void)
 {
 	wString tmpout;
 	wString work (len + 3);
-	memcpy ((void*)work.String, String, len);
+	memcpy (reinterpret_cast<void*>(work.String), String, len);
 	work.String[len] = 0;
 	work.String[len + 1] = 0;
 	work.String[len + 2] = 0;
@@ -3236,7 +3232,7 @@ wString wString::base64 (void)
 /// <returns>デコードされた文字列</returns>
 wString wString::unbase64 (void)
 {
-	unsigned char* instr = reinterpret_cast<unsigned char*>(String);
+	const unsigned char* instr = reinterpret_cast<unsigned char*>(String);
 
 	char FromBase64tbl[256] = {};
 	wString tmpout;
@@ -3353,14 +3349,14 @@ int wString::line_receive (SOCKET accept_socket)
 /// </summary>
 /// <param name="str">utf-8文字列</param>
 /// <returns>文字数</returns>
-int wString::strlen_utf8(char* str)
+int wString::strlen_utf8 (char* str)
 {
 	const static int hb[32] = {
 		//0 1 2 3 4 5 6 7 8 9 A B C D E F
 		  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,//0x00
 		  1,1,1,1,1,1,1,1,2,2,2,2,3,3,4,1,//0x00
 	};
-		
+
 	int cnt = 0;
 	while (*str) {
 		auto target = *(reinterpret_cast<unsigned char*>(str));

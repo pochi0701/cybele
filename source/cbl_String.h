@@ -156,6 +156,7 @@ public:
 	static wString  png_size(const wString& png_filename);
 	static wString  gif_size(const wString& gif_filename);
 	static wString  jpeg_size(const wString& jpeg_filename);
+	int             is_number (const char* str);
 	int             load_from_file(const char* str);
 	int             load_from_file(const wString& FileName);
 	void            load_from_csv(const wString& FileName);

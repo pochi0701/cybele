@@ -427,7 +427,7 @@ int HTTP_RECV_INFO::http_header_receive (SOCKET accept_socket)
 			strncpy (recv_uri, line.c_str (), sizeof (recv_uri) - 1);
 			//httpから始まってる場合には、http://以降の最初の'/'の前でカット
 			if (strncmp (recv_uri, "http://", 7) == 0) {
-				char* ptr = strstr (recv_uri + 7, "/");
+				const char* ptr = strstr (recv_uri + 7, "/");
 				if (ptr) {
 					strcpy (recv_uri, ptr);
 				}
