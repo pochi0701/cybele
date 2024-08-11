@@ -1492,8 +1492,9 @@ wString wString::enum_folder_json (const wString& Path)
 		temp += "]";
 	}
 	else {
-		perror ("ディレクトリのオープンエラー");
-		exit (1);
+		throw new CScriptException ("path error. full path only allowed.");
+		//perror ("ディレクトリのオープンエラー");
+		//exit (1);
 	}
 	wString temp2 = temp.nkfcnv ("Sw");
 	return temp2;
