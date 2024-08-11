@@ -747,7 +747,7 @@ void scUnlink (CScriptVar* c, void* userdata)
 #else
 #endif
 	int res = wString::delete_file(path);
-	int ret = (res == 0) ? true : false;
+	int ret = (res == 0) ? false : true;
 	c->getReturnVar ()->setInt (ret);
 }
 //ファイル作成
@@ -791,7 +791,7 @@ void scRmdir (CScriptVar* c, void* userdata)
 #else
 #endif
 	int res = wString::delete_folder (path);
-	int ret = (res == 0) ? true : false;
+	int ret = (res == 0) ? false : true;
 	c->getReturnVar ()->setInt (ret);
 }
 //ファイル保存

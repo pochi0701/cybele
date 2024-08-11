@@ -425,4 +425,8 @@ private:
 	/// Look up in any parent classes of the given object
 	CScriptVarLink* findInParentClasses (CScriptVar* object, const wString& name);
 };
+//#ifdef web
+//グローバルで申し訳ないが最初に文字を出力する際にheaderを先に出す
+void headerCheckPrint(SOCKET socket, int* printed, wString* headerBuf, int flag);
+//#endif
 #endif
