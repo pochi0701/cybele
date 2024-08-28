@@ -270,7 +270,7 @@ void HTTP_RECV_INFO::jss(SOCKET accept_socket, char* script_filename, char* quer
 				char* start = script3.c_str();
 				script4.clear();
 				int total = script3.length();
-				char* end = script3.c_str() + total;
+				const char* end = script3.c_str() + total;
 				// 一覧の先頭と個数を取得
 				while (true)
 				{

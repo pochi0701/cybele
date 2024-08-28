@@ -1227,7 +1227,7 @@ SOCKET sock_connect(char* host, int port)
 	//ＩＰＶ４アドレスファミリを設定
 	sockadd.sin_family = AF_INET;
 	//接続
-	if (SERROR(connect(sock, (struct sockaddr*)&sockadd, sizeof(sockadd)))) {
+	if (SERROR(connect(sock, reinterpret_cast<struct sockaddr*>(& sockadd), sizeof (sockadd)))) {
 		debug_log_output("connect: error Content=%s\n", host);
 		sClose(sock);
 		return INVALID_SOCKET;

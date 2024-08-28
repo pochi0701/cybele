@@ -273,7 +273,7 @@ int copy_body(int in_fd, int out_fd, unsigned int content_length, unsigned int r
 			//debug_log_output("%s(%d) in_fd",__FILE__,__LINE__);
 			close(in_fd);
 			//debug_log_output("%s(%d) out_fd",__FILE__,__LINE__);
-			sClose((SOCKET&)out_fd);
+			sClose(reinterpret_cast<SOCKET&>(out_fd));
 			delete[] send_buf_p;
 			send_buf_p = 0;
 			return 0;
@@ -283,7 +283,7 @@ int copy_body(int in_fd, int out_fd, unsigned int content_length, unsigned int r
 			//debug_log_output("%s(%d) in_fd",__FILE__,__LINE__);
 			close(in_fd);
 			//debug_log_output("%s(%d) out_fd",__FILE__,__LINE__);
-			sClose((SOCKET&)out_fd);
+			sClose(reinterpret_cast<SOCKET&>(out_fd));
 			delete[] send_buf_p;
 			debug_log_output("read error error=%s\n", strerror(errno));
 			return (-1);
@@ -319,7 +319,7 @@ int copy_body(int in_fd, int out_fd, unsigned int content_length, unsigned int r
 			debug_log_output("%s(%d) in_fd", __FILE__, __LINE__);
 			close(in_fd);   // File Close
 			debug_log_output("%s(%d) out_fd", __FILE__, __LINE__);
-			sClose((SOCKET&)out_fd);
+			sClose(reinterpret_cast<SOCKET&>(out_fd));
 			return (-1);
 		}
 		//書き込み更新

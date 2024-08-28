@@ -144,7 +144,7 @@ int ssdp_client(wString& str, int loops)
 				return -1;
 			}
 			//ssize_t recvfrom(int, void*, size_t, int, sockaddr*, socklen_t*)
-			Ret = recvfrom(sock, rcvdbuff, sizeof(rcvdbuff), 0, (struct sockaddr*)&their_addr, &len);
+			Ret = recvfrom(sock, rcvdbuff, sizeof(rcvdbuff), 0, reinterpret_cast<struct sockaddr*>(& their_addr), &len);
 			if (Ret < 0) {
 				//printf("Error in Receiving=%d",Ret);
 				break;

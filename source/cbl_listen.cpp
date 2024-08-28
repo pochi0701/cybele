@@ -34,7 +34,7 @@
 #include "cbl.h"
 #include "cbl_tools.h"
 //int volatile child_count = 0;
-void    thread_process(ACCESS_INFO& ac_in);
+void    thread_process(const ACCESS_INFO& ac_in);
 #ifdef linux
 void* accessloop(void* arg);
 #else
@@ -181,7 +181,7 @@ unsigned int __stdcall accessloop(void* arg)
 /////////////////////////////////////////////////////////////////////////
 // 複数アクセス対応
 /////////////////////////////////////////////////////////////////////////
-void thread_process(ACCESS_INFO& ac_in)
+void thread_process(const ACCESS_INFO& ac_in)
 {
 	int        access_check_ok;
 	char       client_addr_str[32] = {};
