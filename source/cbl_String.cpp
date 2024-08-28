@@ -3229,6 +3229,7 @@ wString wString::base64 (void)
 	//tmpout += '\0';
 	return tmpout;
 }
+// TODO range chack
 /// <summary>
 /// BASE64デコード
 /// </summary>

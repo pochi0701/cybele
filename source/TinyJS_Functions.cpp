@@ -952,14 +952,32 @@ void scRestful (CScriptVar* c, void* userdata)
 	data = wString::http_rest (method, url, send);
 	c->getReturnVar ()->setString (data);
 }
+char randhex()
+{
+	auto value = rand() % 16;
+	if (value < 10) {
+		return value + '0';
+	}else{
+		return value + 'a' -10;
+	}
+}
 //ファイル内容取得
 void scRandomUUID(CScriptVar* c, void* userdata)
 {
 	IGNORE_PARAMETER(userdata);
 	wString data;
+	char no1 = '8';
+	char no2 = '9';
+	
 	data = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
 	for (auto ptr = 0U; ptr < data.length(); ptr++) {
-
+		if (data[ptr] == 'x') {
+			data[ptr] = randhex();
+		}
+		else if (data[ptr] == 'y')
+		{
+			data[ptr] = no2;
+		}
 	}
 	c->getReturnVar()->setString(data);
 }
@@ -1021,7 +1039,7 @@ void registerFunctions (CTinyJS* tinyJS)
 	tinyJS->addNative ("function Array.contains(obj)", scArrayContains, 0);
 	tinyJS->addNative ("function Array.remove(obj)", scArrayRemove, 0);
 	tinyJS->addNative ("function Array.join(separator)", scArrayJoin, 0);
-	tinyJS->addNative ("function encodeURI(url)", scEncodeURI, 0);
+	//tinyJS->addNative ("function encodeURI(url)", scEncodeURI, 0);
 	tinyJS->addNative ("function String.trim()", scTrim, 0);
 	tinyJS->addNative ("function String.rtrim()", scRTrim, 0);
 	tinyJS->addNative ("function String.ltrim()", scLTrim, 0);
