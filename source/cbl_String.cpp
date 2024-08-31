@@ -2063,8 +2063,8 @@ void wString::resize (const int newsize)
 		//exit (1);
 	}
 	if ((int)capa <= newsize) {
-		// すこし大き目に TODO
-		capa = newsize + 1;
+		// capaは古いサイズ＋新しいサイズ。フィボナッチと同じ
+		capa += newsize;
 		char* tmp = new char[capa];
 		memcpy (tmp, String, len);
 		tmp[len] = 0;
