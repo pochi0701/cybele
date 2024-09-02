@@ -40,7 +40,7 @@
  //#include "unit1.h"
 using namespace std;
 void headerCheckPrint (SOCKET mysocket, int* printed, wString* headerBuf, int flag);
-wString _DBConnect (wString& database);
+wString _DBConnect (const wString& database);
 int     _DBDisConnect (wString& key);
 wString _DBSQL (const wString& key, wString& sql);
 

@@ -2590,7 +2590,7 @@ DBCatalog::DBCatalog(void)
 	}
 }
 
-wString _DBConnect(wString& database)
+wString _DBConnect(const wString& database)
 {
 	const static char material[] = "abcdefghijklmnopqrstuvwxyz0123456789";
 	Database* db;
