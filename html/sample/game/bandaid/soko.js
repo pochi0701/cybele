@@ -18,7 +18,7 @@ var Cood = function(xx, yy) {
     this.x = xx;
     this.y = yy;
 };
-var ctx;
+const ctx;
 var GoalCHK=0;
 var change=0;
 
@@ -120,6 +120,10 @@ function checkStatus(){
         draw();
         if(ctx){
             setInterval(main,500); //コンテキストが取得できたならmain()関数を 繰り返し実行する
+        }
+    }else{
+        if(xmlHttp.status > 0 && xmlHttp.status != 200){
+            alert("reload. this shuould be rewrite use axios."+xmlHttp.status);
         }
     }
 }

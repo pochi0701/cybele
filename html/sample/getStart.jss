@@ -2,6 +2,7 @@
     var email = _POST.email;
     var passwd = _POST.password;
     var script = _SERVER.SCRIPT_FILENAME;
+    var errmsg = "";
     if(email != undefined && passwd != undefined )
     {
         base = script;
@@ -10,11 +11,15 @@
             baseptr -= 1;
         }
         baseptr++;
-        base = base.substring(0,baseptr);
+        var base = base.substring(0,baseptr);
         var dat = loadFromFile("http://neon.cx/market/download.php?email="+email+"&password="+passwd);
-        saveToFile(base+"lesson2.tgz",dat);
-        command("tar zxvf "+base+"lesson2.tgz");
-        unlink( base+"lesson2.tgz");
+        if( dat != "none" ){
+          saveToFile(base+"lesson2.tgz",dat);
+          command("tar zxvf "+base+"lesson2.tgz");
+          unlink( base+"lesson2.tgz");
+        }else{
+          errmsg = "メールアドレスまたはパスワードが正しくありません。";
+        }
     }
 ?>
 <!DOCTYPE html>
@@ -29,7 +34,9 @@
 </head>
 <body>
 <div class="container mt-5">
+    <input type="button" class="btn btn-primary" value="戻る" onClick="history.back();">
     <h2>レッスン教材ダウンロード</h2>
+    <p id="error" class="text-danger"></p>
     <form method="post">
         <div class="row">
             <div class="mb-3 col-md-4">
@@ -48,5 +55,12 @@
 </div>
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+       var errmsg = "<?print(errmsg);?>";
+       if( errmsg.length > 0 ){
+           const err = document.getElementById("error");
+           err.innerText = errmsg;
+       }
+    </script>
 </body>
 </html>

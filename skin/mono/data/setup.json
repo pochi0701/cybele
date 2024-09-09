@@ -36,7 +36,7 @@
     "image": "<img src=\"images/menu.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"File explorer.\" data-bs-placement=\"top\">"
   },
   {
-    "url": "sample/school/",
+    "url": "sample/",
     "image": "<img src=\"images/lesson.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"Start online programming lesson(Code Forest).\" data-bs-placement=\"top\">"
   },
   {
