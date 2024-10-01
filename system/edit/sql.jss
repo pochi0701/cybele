@@ -81,7 +81,7 @@
     <script>
         var databases=[<?for(i=1;i<databases.length;i++){print((i>1)?',':'');print('"'+databases[i]+'"');}?>];
         var cmd = "<?print((_GET.cmd==undefined)?"":_GET.cmd);?>";
-        var tables=[<?
+        var tables=[[],<?
                     for(i=1;i<databases.length;i++){
                         print((i>1)?',':'');
                         print('[');
@@ -103,8 +103,9 @@
         function selectDatabase(num){
             selected = num;
             var contents = '<ul class="list-group">';
-            for( j = 0 ; j < tables[num-1].length ; j++){
-                contents += '<li class="list-group-item" onclick="listTable('+(num-1)+','+j+');">'+tables[num-1][j]+'</li>';
+            
+            for( j = 0 ; j < tables[num].length ; j++){
+                contents += '<li class="list-group-item" onclick="listTable('+(num)+','+j+');">'+tables[num][j]+'</li>';
             }
             contents += '</ul>';
             document.getElementById("selected").innerHTML = contents;
@@ -206,10 +207,10 @@
                 Databases<br>
                 <select id="database" class="form-select" aria-label="databases" onchange="selectChange(event);">
                     <?
-                    for( var i = 0 ; i < databases.length ; i++ ){
-                        if( tables[i].length > 0){
+                    for( var i = 1 ; i < databases.length ; i++ ){
+                        //if( tables[i].length > 0){
                             print( '<option value="'+i+'"'+((i==db_id)?' selected':'')+'>'+databases[i]+'</option>\n' );
-                        }
+                        //}
                     }
                     ?>
                 </select>

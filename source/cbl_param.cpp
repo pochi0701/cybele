@@ -47,6 +47,7 @@ MIME_LIST_T     mime_list[] = {
 	{(char*)"image/jpeg"		,(char*)"jpg"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_IMAGE      },
 	{(char*)"image/png"			,(char*)"png"    ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_IMAGE      },
 	{(char*)"image/tiff"		,(char*)"tiff"   ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_IMAGE      },
+	{(char*)"image/svg+xml"		,(char*)"svg"	 ,STREAM_TYPE::TYPE_NO_STREAM  ,   MIME_TYPE::TYPE_IMAGE      },
 	{(char*)"video/mpeg"		,(char*)"mpeg"   ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
 	{(char*)"video/mpeg"		,(char*)"mpg"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
 	{(char*)"video/mpeg"		,(char*)"m2p"    ,STREAM_TYPE::TYPE_STREAM     ,   MIME_TYPE::TYPE_MOVIE      },
