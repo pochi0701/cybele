@@ -1320,7 +1320,7 @@ int wString::delete_file (const wString& str)
 	}
 #endif
 	if (flag == 0) {
-		debug_log_output ("%s(%d):delete_file(%s) Error.", __FILE__, __LINE__, str2.c_str ());
+		debug_log_output ("%s(%d):delete_file(%s) Error.", __FILE__, __LINE__, str.c_str ());
 	}
 	return flag;
 }
@@ -1343,7 +1343,7 @@ int wString::delete_folder (const wString& str)
 		}
 	}
 #endif
-	debug_log_output ("%s(%d):delete_file(%s) Error.", __FILE__, __LINE__, str2.c_str ());
+	debug_log_output ("%s(%d):delete_file(%s) Error.", __FILE__, __LINE__, str.c_str ());
 	return flag;
 }
 //---------------------------------------------------------------------------

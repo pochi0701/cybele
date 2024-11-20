@@ -118,7 +118,7 @@ void GLOBAL_PARAM_T::global_param_init(void)
 	wString cwd = wString::get_current_dir();
 	debug_log_filename.sprintf("%s%s%s", cwd.c_str(), DELIMITER, DEFAULT_DEBUG_LOG_FILENAME);
 #else
-	debug_log_filename = DEFAULT_DEBUG_LOG_FILENAME
+	debug_log_filename = DEFAULT_DEBUG_LOG_FILENAME;
 	//strncpy(debug_log_filename, DEFAULT_DEBUG_LOG_FILENAME, sizeof(debug_log_filename)-1);
 #endif    
 	// スキン情報使用フラグ
@@ -262,7 +262,8 @@ void GLOBAL_PARAM_T::config_file_read(void)
 					//strncpy(document_org, value, sizeof(document_org));
 #ifdef linux
 					strncpy(document_root, value, sizeof(document_root)-1);
-					strncpy(server_root, cut_after_last_character(value, '/'),sizeof(server_root)-1)
+					cut_after_last_character(value, '/');
+					strncpy(server_root, value ,sizeof(server_root)-1)
 					//printf("%s\n", value );
 #else
 					// server_root新設
