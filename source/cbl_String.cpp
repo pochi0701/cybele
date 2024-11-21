@@ -1320,7 +1320,7 @@ int wString::delete_file (const wString& str)
 	}
 #endif
 	if (flag == 0) {
-		debug_log_output ("%s(%d):delete_file(%s) Error.", __FILE__, __LINE__, str2.c_str ());
+		debug_log_output ("%s(%d):delete_file(%s) Error.", __FILE__, __LINE__, str.c_str ());
 	}
 	return flag;
 }
@@ -1343,7 +1343,7 @@ int wString::delete_folder (const wString& str)
 		}
 	}
 #endif
-	debug_log_output ("%s(%d):delete_file(%s) Error.", __FILE__, __LINE__, str2.c_str ());
+	debug_log_output ("%s(%d):delete_file(%s) Error.", __FILE__, __LINE__, str.c_str ());
 	return flag;
 }
 //---------------------------------------------------------------------------
@@ -3481,6 +3481,7 @@ wString wString::gif_size (const wString& gif_filename)
 	tmp.sprintf ("{\"x\":%d,\"y\":%d}", x, y);
 	return tmp;
 }
+
 /// <summary>
 ///  JPEGフォーマットファイルから、画像サイズを得る。
 /// </summary>
@@ -3562,6 +3563,119 @@ wString wString::jpeg_size (const wString& jpeg_filename)
 	close (fd);
 	wString tmp;
 	tmp.sprintf ("{\"x\":%d,\"y\":%d}", x, y);
+	return tmp;
+}
+
+/// <summary>
+/// Get BIOS UUID in a 16 byte array.
+/// </summary>
+/// <returns>Return BIOS UUID string</returns>
+wString wString::bios_uuid()
+{
+	wString tmp;
+	unsigned char uuid[16] = {};
+	int cnt = 0;
+	/// <summary>
+    /// SMBIOS Structure header as described at
+    /// https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.3.0.pdf 
+    /// (para 6.1.2)
+    /// </summary>
+	struct dmi_header
+	{
+		BYTE type;
+		BYTE length;
+		WORD handle;
+		BYTE data[1];
+	};
+
+	/// <summary>
+    /// Structure needed to get the SMBIOS table using GetSystemFirmwareTable API.
+    /// see https ://docs.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsystemfirmwaretable
+    /// </summary>
+	struct RawSMBIOSData {
+		BYTE  _Used20CallingMethod;
+		BYTE  _SMBIOSMajorVersion;
+		BYTE  _SMBIOSMinorVersion;
+		BYTE  _DmiRevision;
+		DWORD  Length;
+		BYTE  SMBIOSTableData[1];
+	};
+
+	bool result = false;
+
+	RawSMBIOSData* smb = nullptr;
+	BYTE* data;
+
+	DWORD size = 0;
+
+	// Get size of BIOS table
+	size = GetSystemFirmwareTable('RSMB', 0, smb, size);
+	smb = static_cast<RawSMBIOSData*>(malloc(size));
+
+	// Get BIOS table
+	GetSystemFirmwareTable('RSMB', 0, smb, size);
+
+	// Go through BIOS structures
+	data = smb->SMBIOSTableData;
+	while (data < smb->SMBIOSTableData + smb->Length)
+	{
+		BYTE* next;
+		const dmi_header* h = reinterpret_cast<dmi_header*>(data);
+
+		if (h->length < 4) {
+			break;
+		}
+
+		//Search for System Information structure with type 0x01 (see para 7.2)
+		if (h->type == 0x01 && h->length >= 0x19)
+		{
+			data += 0x08; //UUID is at offset 0x08
+
+			// check if there is a valid UUID (not all 0x00 or all 0xff)
+			bool all_zero = true, all_one = true;
+			for (int i = 0; i < 16 && (all_zero || all_one); i++)
+			{
+				if (data[i] != 0x00) all_zero = false;
+				if (data[i] != 0xFF) all_one = false;
+			}
+			if (!all_zero && !all_one)
+			{
+				/* As off version 2.6 of the SMBIOS specification, the first 3 fields
+				of the UUID are supposed to be encoded on little-endian. (para 7.2.1) */
+				uuid[cnt++] = data[3];
+				uuid[cnt++] = data[2];
+				uuid[cnt++] = data[1];
+				uuid[cnt++] = data[0];
+				uuid[cnt++] = data[5];
+				uuid[cnt++] = data[4];
+				uuid[cnt++] = data[7];
+				uuid[cnt++] = data[6];
+				for (int i = 8; i < 16; i++) {
+					uuid[cnt++] = data[i];
+				}
+
+				result = true;
+			}
+			break;
+		}
+
+		//skip over formatted area
+		next = data + h->length;
+
+		//skip over unformatted area of the structure (marker is 0000h)
+		while (next < smb->SMBIOSTableData + smb->Length && (next[0] != 0 || next[1] != 0)) {
+			next++;
+		}
+		next += 2;
+
+		data = next;
+	}
+	free(smb);
+
+
+	tmp.sprintf("%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+		uuid[0], uuid[1], uuid[2], uuid[3], uuid[4], uuid[5], uuid[6], uuid[7],
+		uuid[8], uuid[9], uuid[10], uuid[11], uuid[12], uuid[13], uuid[14], uuid[15]);
 	return tmp;
 }
 

@@ -59,8 +59,7 @@ wString    current_dir;
 // SESSION用MAP
 // ********************************
 std::map<wString, wString>* session;
-
-
+#include "dregex.h"
 
 // **************************************************************************
 // * Main Program
@@ -90,20 +89,20 @@ int Cybelemain(void* arg)
 	// 各種初期化
 	// =============================================
 	Initialize();
-
-	global_param.global_param_init();
+	//int res1 = dregex::match("いじのもとのいみのさん", "/あ.*ん/");
 	//wString aaa = wString::jpeg_size("c:\\0001.jpg");
-	//wString str = "abcdefg";
-	//int res1 = dregex::match("あじのもとのあみのさん", "/あ.*ん/");
-	//wString ret = "";
-	//vector<wString> pat;
-	//vector<wString> rep;
+	wString str = "abcdefg";
+	wString ret = "";
+	vector<wString> pat;
+	vector<wString> rep;
 	//pat.push_back("/\\[\\[([^\\[]*)\\]\\]/");
 	//rep.push_back("\"+webpagelink( \"$1\" )+\"");
 	//pat.push_back("/{{([^{]*)}}/");
-	//pat.push_back("/\\{\\{([^{]*)\\}\\}/");
-	//rep.push_back("\"+image( \"$1\" )+\"");
-	//int res2 = dregex::replace(&ret, "{{test.jpg|aaaa}}",pat,rep);
+	pat.push_back("/\\{\\{([^{]*)\\}\\}/");
+	rep.push_back("\"+image( \"$1\" )+\"");
+	int res2 = dregex::replace(&ret, "{{test.jpg|aaaa}}",pat,rep);
+	global_param.global_param_init();
+
 	// =============================================
 	// オプションチェック
 	// =============================================

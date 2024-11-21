@@ -961,7 +961,12 @@ char randhex()
 		return value + 'a' -10;
 	}
 }
-//ファイル内容取得
+
+/// <summary>
+/// UUID 取得
+/// </summary>
+/// <param name="c"></param>
+/// <param name="userdata"></param>
 void scRandomUUID(CScriptVar* c, void* userdata)
 {
 	IGNORE_PARAMETER(userdata);
@@ -979,6 +984,19 @@ void scRandomUUID(CScriptVar* c, void* userdata)
 			data[ptr] = no2;
 		}
 	}
+	c->getReturnVar()->setString(data);
+}
+
+/// <summary>
+/// BIOS UUID
+/// </summary>
+/// <param name="c"></param>
+/// <param name="userdata"></param>
+void scBiosUUID(CScriptVar* c, void* userdata)
+{
+	IGNORE_PARAMETER(userdata);
+	wString data;
+	data = data.bios_uuid();
 	c->getReturnVar()->setString(data);
 }
 
@@ -1065,4 +1083,5 @@ void registerFunctions (CTinyJS* tinyJS)
 	tinyJS->addNative ("function ssdp()", scSSDP, 0);
 	tinyJS->addNative ("function restful(method,url,send)", scRestful, 0);
 	tinyJS->addNative ("function randomUUID()", scRandomUUID, 0);
+	tinyJS->addNative ("function biosUUID()", scBiosUUID, 0);
 }
