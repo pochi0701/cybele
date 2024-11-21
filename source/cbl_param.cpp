@@ -263,7 +263,7 @@ void GLOBAL_PARAM_T::config_file_read(void)
 #ifdef linux
 					strncpy(document_root, value, sizeof(document_root)-1);
 					cut_after_last_character(value, '/');
-                    strncpy(server_root, value,sizeof(server_root)-1);
+					strncpy(server_root, value, sizeof(server_root) - 1);
 					//printf("%s\n", value );
 #else
 					// server_root新設

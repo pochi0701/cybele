@@ -252,7 +252,12 @@ bool wString::starts_with (const char* needle, int pos) const
 			return false;
 		}
 	}
-	return strstr (String + pos, needle) == String;
+	if (pos > 0) {
+		return strncmp(String + pos, needle, nlen) == 0;
+	}
+	else {
+		return strncmp(String, needle, nlen) == 0;
+	}
 }
 //---------------------------------------------------------------------------
 /// <summary>
@@ -263,6 +268,7 @@ bool wString::starts_with (const char* needle, int pos) const
 /// <returns>先頭と一致すればtrue</returns>
 bool wString::ends_with (const char* needle, int end_len) const
 {
+	/// TODO:end_lenは無意味
 	int temp_len = len;
 	if (end_len >= 0) {
 		if (end_len == 0 || end_len > temp_len) {
@@ -274,7 +280,7 @@ bool wString::ends_with (const char* needle, int end_len) const
 	if (nlen == 0 || nlen > len) {
 		return false;
 	}
-	return strcmp (String + len - nlen, needle) == 0;
+	return strcmp(String + len - nlen, needle) == 0;
 }
 ///---------------------------------------------------------------------------
 /// <summary>

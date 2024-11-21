@@ -23,22 +23,22 @@ RM=rm
 # プログラム名とオブジェクトファイル名
 program = cybele
 objs = cbl_main.o   \
-       cbl_param.o  \
-       cbl_listen.o \
-       cbl_http.o   \
-       cbl_send_file.o      \
-       cbl_proxy.o  \
-       cbl_cgi.o    \
-       cbl_tools.o  \
-       cbl_script.o \
-       cbl_String.o \
-       ssdp.o	\
-       TinyJS.o      \
-       TinyJS_Functions.o    \
-       TinyJS_MathFunctions.o        \
-       cbl_db.o       \
-       utf8tbl.o     \
-       dregex.o
+	cbl_param.o  \
+	cbl_listen.o \
+	cbl_http.o   \
+	cbl_send_file.o      \
+	cbl_proxy.o  \
+	cbl_cgi.o    \
+	cbl_tools.o  \
+	cbl_script.o \
+	cbl_String.o \
+	ssdp.o	\
+	TinyJS.o      \
+	TinyJS_Functions.o    \
+	TinyJS_MathFunctions.o        \
+	cbl_db.o       \
+	utf8tbl.o     \
+	dregex.o
 
 # 定義d済マクロの再定義
 #CC = gcc
