@@ -778,17 +778,18 @@ int wString::load_from_file (const wString& FileName)
 		set_length (flen + 1);
 		len = read (handle, String, flen);
 		close (handle);
-		// BOM?
-		// 「BOM」は「バイトオーダーマーク」の略で、
-		// テキストファイルの文字コードが「UTF - 8」であることを示すものです。
-		// UTF - 8の場合、テキストデータの先頭に「0xEF 0xBB 0xBF」が付きます。
-		if (len >= 3) {
-			if (this->starts_with ("\xef\xbb\xbf")) {
-				// 先頭3バイトを削る
-				len -= 3;
-				memmove (String, String + 3, len);
-			}
-		}
+		// アプリケーションレベルでやるべき
+		//// BOM?
+		//// 「BOM」は「バイトオーダーマーク」の略で、
+		//// テキストファイルの文字コードが「UTF - 8」であることを示すものです。
+		//// UTF - 8の場合、テキストデータの先頭に「0xEF 0xBB 0xBF」が付きます。
+		//if (len >= 3) {
+		//	if (this->starts_with ("\xef\xbb\xbf")) {
+		//		// 先頭3バイトを削る
+		//		len -= 3;
+		//		memmove (String, String + 3, len);
+		//	}
+		//}
 		String[len] = 0;
 		//\0がある場合を考えればstrlenとってはいけない
 		//len = strlen(String);
