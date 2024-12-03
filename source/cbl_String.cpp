@@ -3589,6 +3589,7 @@ wString wString::jpeg_size (const wString& jpeg_filename)
 wString wString::bios_uuid()
 {
 	wString tmp;
+#ifndef linux
 	unsigned char uuid[16] = {};
 	int cnt = 0;
 	/// <summary>
@@ -3692,6 +3693,20 @@ wString wString::bios_uuid()
 	tmp.sprintf("%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
 		uuid[0], uuid[1], uuid[2], uuid[3], uuid[4], uuid[5], uuid[6], uuid[7],
 		uuid[8], uuid[9], uuid[10], uuid[11], uuid[12], uuid[13], uuid[14], uuid[15]);
+#else
+    const char* cmd = "sudo dmidecode -t system|grep UUID";
+	char buffer[1024] = {};
+	FILE* pipe = popen(cmd, "r");
+	if (pipe) {
+		while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+			tmp += buffer;
+			memset(buffer, 0, sizeof(buffer));
+		}
+		// 頭をカット
+		if (tmp.starts_with("UUID: ")) {
+			tmp = tmp.substr(6);
+		}
+	}
+#endif
 	return tmp;
 }
-
