@@ -19,7 +19,7 @@
        for( var i=0 ; i<s.length ; i++ ){
            print( "["+s[i]+"] =>"+_POST[s[i]]+"<br>\n" );
        }
-       if( !root.endsWith("/",0)){
+       if( !root.endsWith("/")){
            root += "/";
        }
        if( _POST.upload != undefined){

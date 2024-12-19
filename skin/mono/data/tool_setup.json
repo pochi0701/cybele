@@ -18,13 +18,5 @@
   {
     "url": "/shutdown.jss",
     "image": "<img src=\"/images/shutdown.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"Shutdown system.\" data-bs-placement=\"top\">"
-  },
-  {
-    "url": "/system/edit/sql.jss",
-    "image": "<img src=\"/images/sql.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"Launch SQL Browser.\" data-bs-placement=\"top\">"
-  },
-  {
-    "url": "/system/edit/ascii_code.html",
-    "image": "<img src=\"/images/ascii.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"View ascii codes.\" data-bs-placement=\"top\">"
   }
 ]
