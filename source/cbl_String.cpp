@@ -821,13 +821,105 @@ int wString::is_number (const char* str)
 	}
 	return 1;
 }
+
+/// <summary>
+/// 。"から"をエスケープ
+/// </summary>
+/// <param name="str">検査するASCIIZ文字列。破壊検査</param>
+/// <returns></returns>
+
+
+/// <summary>
+/// CSV用のstrtok
+/// </summary>
+/// <param name="str"></param>
+/// <param name="ptr"></param>
+/// <returns></returns>
+//char* strtokp (char* str, int& ptr)
+//{
+//	int start = ptr;
+//	char* token = str + start;	
+//	bool quoted = false;
+//	// 区切り文字または\0まで
+//	while (str[ptr]) {
+//		if (quoted) {
+//			if (str[ptr] == '\"') {
+//				if (str[ptr + 1] == '\"') {
+//					ptr++;
+//				}
+//				else {
+//					quoted = false;
+//				}
+//			}
+//		}
+//		else {
+//			if (str[ptr] == '\"') {
+//				// 文字列処理に突入
+//				quoted = true;
+//			}
+//			else if (str[ptr] == ',' || str[ptr] == '\r' || str[ptr] == '\n') {
+//				// 区切り文字、改行コード処理
+//				str[ptr++] = '\0';
+//				if (str[ptr] < ' ') {
+//					str[ptr++] = '\0';
+//				}
+//				break;
+//			}
+//		}
+//		// 1文字増加
+//		ptr++;
+//	}
+//	return token;
+//}
+
+/// <summary>
+/// fdから、１行(CRLFか、LF単独が現れるまで)受信
+/// CRLFは削除する。
+/// CSV用にダブルクォーテーションをエスケープする
+/// 受信したサイズをreturnする。
+/// </summary>
+/// <param name="fd">ファイルディスクリプタ</param>
+/// <param name="line_buf_p">ラインバッファ</param>
+/// <param name="line_max">最大文字数</param>
+/// <returns></returns>
+int wString::readLine (int fd, char* line_buf_p, int line_max)
+{
+	char byte_buf;
+	int  line_len = 0;
+	// １行受信実行
+	while (1) {
+		auto recv_len = read (fd, &byte_buf, 1);
+		if (recv_len != 1) { // 受信失敗チェック
+			return (-1);
+		}
+		// CR/LFチェック
+		if (byte_buf == '\r') {
+			continue;
+		}
+		else if (byte_buf == '\n') {
+			*line_buf_p = 0;
+			break;
+		}
+		// バッファにセット
+		*line_buf_p++ = byte_buf;
+		// 受信バッファサイズチェック
+		if (++line_len >= line_max) {
+			// バッファオーバーフロー検知
+			return (-1);
+		}
+	}
+	return line_len;
+}
+
+
+
 /// <summary>
 /// CSVファイル読み込み
 /// 文字コードはファイル依存
 /// 1行目はタイトル行固定
 /// </summary>
 /// <param name="FileName">CSVファイル名</param>
-void wString::load_from_csv (const wString& FileName)
+bool wString::load_from_csv (const wString& FileName)
 {
 	int  fd;
 	char s[1024] = {};
@@ -836,7 +928,7 @@ void wString::load_from_csv (const wString& FileName)
 	fd = myopen (FileName, O_RDONLY | O_BINARY, S_IREAD);
 	if (fd < 0) {
 		debug_log_output ("%s(%d):load_from_csv(%s) Error.", __FILE__, __LINE__, FileName.c_str ());
-		return;
+		return false;
 	}
 
 	wString work;
@@ -876,7 +968,7 @@ void wString::load_from_csv (const wString& FileName)
 	work += "]";
 	*this = work;
 	close (fd);
-	return;
+	return true;
 }
 //---------------------------------------------------------------------------
 // ファイル書き込み
