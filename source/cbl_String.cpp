@@ -823,69 +823,55 @@ int wString::is_number (const char* str)
 }
 
 /// <summary>
-/// 。"から"をエスケープ
-/// </summary>
-/// <param name="str">検査するASCIIZ文字列。破壊検査</param>
-/// <returns></returns>
-
-
-/// <summary>
 /// CSV用のstrtok
 /// </summary>
-/// <param name="str"></param>
-/// <param name="ptr"></param>
-/// <returns></returns>
-//char* strtokp (char* str, int& ptr)
-//{
-//	int start = ptr;
-//	char* token = str + start;	
-//	bool quoted = false;
-//	// 区切り文字または\0まで
-//	while (str[ptr]) {
-//		if (quoted) {
-//			if (str[ptr] == '\"') {
-//				if (str[ptr + 1] == '\"') {
-//					ptr++;
-//				}
-//				else {
-//					quoted = false;
-//				}
-//			}
-//		}
-//		else {
-//			if (str[ptr] == '\"') {
-//				// 文字列処理に突入
-//				quoted = true;
-//			}
-//			else if (str[ptr] == ',' || str[ptr] == '\r' || str[ptr] == '\n') {
-//				// 区切り文字、改行コード処理
-//				str[ptr++] = '\0';
-//				if (str[ptr] < ' ') {
-//					str[ptr++] = '\0';
-//				}
-//				break;
-//			}
-//		}
-//		// 1文字増加
-//		ptr++;
-//	}
-//	return token;
-//}
+/// <param name="str">対象文字列</param>
+/// <param name="ptr">切り出しポインター</param>
+/// <returns>切り出し文字列</returns>
+char* wString::strtok_csv (char* str, int& ptr)
+{
+	int start = ptr;
+	char* token = str + start;
+	int quoted = 0;
+	if (ptr && str[ptr] == 0) {
+		return NULL;
+	}
+	// 区切り文字または\0まで
+	while (str[ptr]) {
+		if (str[ptr] == '\"') {
+			quoted++;
+		}else if ((quoted % 2) == 0 && str[ptr] == ',') {
+			break;
+		}
+		// 1文字増加
+		ptr++;
+	}
+
+	str[ptr++] = 0;
+	//先頭と末尾の"を除去
+	if (token[0] == '\"' && token[ptr - start-2] == '\"') {
+		token[ptr - start-2] = '\0';
+		token++;
+	}
+	return token;
+}
 
 /// <summary>
 /// fdから、１行(CRLFか、LF単独が現れるまで)受信
 /// CRLFは削除する。
 /// CSV用にダブルクォーテーションをエスケープする
 /// 受信したサイズをreturnする。
+/// \rは無視する
 /// </summary>
 /// <param name="fd">ファイルディスクリプタ</param>
 /// <param name="line_buf_p">ラインバッファ</param>
 /// <param name="line_max">最大文字数</param>
 /// <returns></returns>
-int wString::readLine (int fd, char* line_buf_p, int line_max)
+int wString::readLineCSV (int fd, char* line_buf_p, int line_max)
 {
 	char byte_buf;
 	int  line_len = 0;
+	int  quoted = 0;
 	// １行受信実行
 	while (1) {
 		auto recv_len = read (fd, &byte_buf, 1);
@@ -893,13 +879,18 @@ int wString::readLine (int fd, char* line_buf_p, int line_max)
 			return (-1);
 		}
 		// CR/LFチェック
-		if (byte_buf == '\r') {
-			continue;
+		if (byte_buf == '\"') {
+			quoted++;
+		}else if ((quoted % 2) == 0) {
+			if (byte_buf == '\r') {
+				continue;
+			}
+			else if (byte_buf == '\n') {
+				*line_buf_p = 0;
+				break;
+			}
 		}
-		else if (byte_buf == '\n') {
-			*line_buf_p = 0;
-			break;
-		}
+
 		// バッファにセット
 		*line_buf_p++ = byte_buf;
 		// 受信バッファサイズチェック
@@ -936,26 +927,24 @@ bool wString::load_from_csv (const wString& FileName)
 	work = "[";
 	//１行目はタイトル
 	while (true) {
-		auto ret = readLine (fd, s, sizeof (s));
+		auto ret = readLineCSV (fd, s, sizeof (s));
 		if (ret < 0) break;
 		//分解する
-		char* p = strtok (s, ",");
 		int ptr = 0;
-		if (p) {
+		int ptr2 = 0;
+		char* p;
+		char* comma = "";
+		while ((p = strtok_csv (s, ptr2)) != 0) {
 			if (is_number (p)) {
-				ptr += ::sprintf (t + ptr, "%s", p);
+				ptr += ::sprintf (t + ptr, "%s%s", comma, p);
 			}
 			else {
-				ptr += ::sprintf (t + ptr, "\"%s\"", p);
+				// ""->\"
+				// cr ->なし
+				// lf ->"\n"
+				ptr += ::sprintf (t + ptr, "%s\"%s\"", comma, p);
 			}
-		}
-		while ((p = strtok (NULL, ",")) != 0) {
-			if (is_number (p)) {
-				ptr += ::sprintf (t + ptr, ",%s", p);
-			}
-			else {
-				ptr += ::sprintf (t + ptr, ",\"%s\"", p);
-			}
+			comma = ",";
 		}
 		if (first) {
 			first = 0;

@@ -55,6 +55,7 @@
             _POST.upload.filebody = _POST.upload.filebody.substr(3,_POST.upload.length-3);
         }
         var file = btoa(_POST.upload.filebody).nkfconv("w");
+        // UTF-8で保存
         saveToFile(root+_POST.upload.filename,file);
         
         // filenameからDB名を取得すること

@@ -65,6 +65,7 @@ enum class CMDS {
 	TXDESC = 27,
 	TXPS = 28,
 	TXPE = 29,
+	/// <summary>COMMA</summary>
 	TXCM = 30,
 	TXED = 31,
 	TXOP = 32,
@@ -76,6 +77,7 @@ enum class CMDS {
 	TXRENAME = 38,
 	TXCOLUMN = 39,
 	TXARG = 99,
+	/// <summary>プリミティブ</summary>
 	TXPRM = 98,
 	TXNONE = -1,
 	TXOTHER = -2

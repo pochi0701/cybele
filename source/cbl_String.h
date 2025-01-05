@@ -170,7 +170,8 @@ public:
 	bool            cut_after_character(const char cut_char);
 	wString         insert(int pos, const wString& fill);
 	//
-	int				readLine (int fd, char* line_buf_p, int line_max);
+	int				readLineCSV (int fd, char* line_buf_p, int line_max);
+	char*			strtok_csv (char* str, int& ptr);
 	//HTTP接続用
 	static int      http_size(const wString& url);
 	static SOCKET   sock_connect(const wString& host, const int port);
