@@ -1389,39 +1389,7 @@ int sClose(SOCKET& socket)
 //    return;
 //}
 //#endif
-// **************************************************************************
-// fdから、１行(CRLFか、LF単独が現れるまで)受信
-// CRLFは削除する。
-// 受信したサイズをreturnする。
-// **************************************************************************
-int readLine(int fd, char* line_buf_p, int line_max)
-{
-	char byte_buf;
-	int  line_len = 0;
-	// １行受信実行
-	while (1) {
-		auto recv_len = read(fd, &byte_buf, 1);
-		if (recv_len != 1) { // 受信失敗チェック
-			return (-1);
-		}
-		// CR/LFチェック
-		if (byte_buf == '\r') {
-			continue;
-		}
-		else if (byte_buf == '\n') {
-			*line_buf_p = 0;
-			break;
-		}
-		// バッファにセット
-		*line_buf_p++ = byte_buf;
-		// 受信バッファサイズチェック
-		if (++line_len >= line_max) {
-			// バッファオーバーフロー検知
-			return (-1);
-		}
-	}
-	return line_len;
-}
+
 
 /////////////////////////////////////////////////////////////////////////////
 //mp3

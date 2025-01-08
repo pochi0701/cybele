@@ -160,7 +160,7 @@ public:
 	int             is_number (const char* str);
 	int             load_from_file(const char* str);
 	int             load_from_file(const wString& FileName);
-	void            load_from_csv(const wString& FileName);
+	bool            load_from_csv(const wString& FileName);
 	void            load_from_csv(const char* str);
 	int             save_to_file(const char* FileName);
 	int             save_to_file(const wString& str);
@@ -169,6 +169,9 @@ public:
 	bool            cut_before_character(const char cut_char);
 	bool            cut_after_character(const char cut_char);
 	wString         insert(int pos, const wString& fill);
+	//
+	int				readLineCSV (int fd, char* line_buf_p, int line_max);
+	char*			strtok_csv (char* str, int& ptr);
 	//HTTP接続用
 	static int      http_size(const wString& url);
 	static SOCKET   sock_connect(const wString& host, const int port);
