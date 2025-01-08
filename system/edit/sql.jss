@@ -62,7 +62,8 @@
         csv = basename(_POST.upload.filename);
         base = csv.substring(0,csv.indexOf("."));
         orgstr = database.SQL("create table " + base + " from " + root + csv);
-        result = eval(orgstr);
+        //print("["+orgstr+"]");
+        //result = eval("abcdefg");
         database.DBDisConnect();
         unlink(root + csv);
      }
@@ -84,11 +85,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     <script>
-        var databases=[<?for(i=1;i<databases.length;i++){print((i>1)?',':'');print('"'+databases[i]+'"');}?>];
+        var databases=[<?for(i=0;i<databases.length;i++){print((i>0)?',':'');print('"'+databases[i]+'"');}?>];
         var cmd = "<?print((_GET.cmd==undefined)?"":_GET.cmd);?>";
-        var tables=[[],<?
-                    for(i=1;i<databases.length;i++){
-                        print((i>1)?',':'');
+        var tables=[<?
+                    for(i=0;i<databases.length;i++){
+                        print((i>0)?',':'');
                         print('[');
                         for(j=0;j<tables[i].length;j++){
                             print((j>0)?',':'');
@@ -212,7 +213,7 @@
                 Databases<br>
                 <select id="database" class="form-select" aria-label="databases" onchange="selectChange(event);">
                     <?
-                    for( var i = 1 ; i < databases.length ; i++ ){
+                    for( var i = 0 ; i < databases.length ; i++ ){
                         //if( tables[i].length > 0){
                             print( '<option value="'+i+'"'+((i==db_id)?' selected':'')+'>'+databases[i]+'</option>\n' );
                         //}
