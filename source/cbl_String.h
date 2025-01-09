@@ -156,6 +156,7 @@ public:
 	static wString  png_size(const wString& png_filename);
 	static wString  gif_size(const wString& gif_filename);
 	static wString  jpeg_size(const wString& jpeg_filename);
+	static int		readLineCSV (int fd, char* line_buf_p, int line_max);
 	wString  bios_uuid(void);
 	int             is_number (const char* str);
 	int             load_from_file(const char* str);
@@ -170,7 +171,6 @@ public:
 	bool            cut_after_character(const char cut_char);
 	wString         insert(int pos, const wString& fill);
 	//
-	int				readLineCSV (int fd, char* line_buf_p, int line_max);
 	char*			strtok_csv (char* str, int& ptr);
 	//HTTP接続用
 	static int      http_size(const wString& url);

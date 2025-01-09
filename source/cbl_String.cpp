@@ -840,7 +840,7 @@ char* wString::strtok_csv (char* str, int& ptr)
 	while (str[ptr]) {
 		if (str[ptr] == '\"') {
 			quoted++;
-		}else if ((quoted % 2) == 0 && str[ptr] == ',') {
+		}else if ((quoted & 1) == 0 && str[ptr] == ',') {
 			break;
 		}
 		// 1文字増加
@@ -881,7 +881,7 @@ int wString::readLineCSV (int fd, char* line_buf_p, int line_max)
 		// CR/LFチェック
 		if (byte_buf == '\"') {
 			quoted++;
-		}else if ((quoted % 2) == 0) {
+		}else if ((quoted & 1) == 0) {
 			if (byte_buf == '\r') {
 				continue;
 			}

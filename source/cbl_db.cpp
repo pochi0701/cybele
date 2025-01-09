@@ -894,57 +894,46 @@ CMDS getToken(unsigned char* sql, unsigned char* token)
 	return ret;
 }
 ////////////////////////////////////////////////////////////////////////////
+
+
+/// <summary>
+/// CSVからのトークン取得
+/// </summary>
+/// <param name="data">入力データ</param>
+/// <param name="token">出力トークン</param>
+/// <returns>トークン種類</returns>
 CMDS getData(unsigned char* data, unsigned char* token)
 {
 	unsigned char* p = data;
 	unsigned char* q = token;
-	unsigned char  ch;
-	CMDS ret;
+	//unsigned char  ch;
+	int quoted = 0;
+	//token
+	CMDS ret = CMDS::TXPRM;
 	//TRIM
 	while (*p && *p <= ' ') p++;
-	//token
-	ret = CMDS::TXPRM;
+
 	switch (*p) {
 	case 0:
 		*q = *p;
 		return CMDS::TXNONE;
 	case '\"':
-	case '\'':
-		ch = *p++;
-		//バッククオート以外は文字列を指定しているとする
-		while (*p && *p != ch) {
-#ifdef SJIS
-			if (ISKANJI1(*p)) {
-				*q++ = *p++;
-				if (ISKANJI2(*p)) {
-					*q++ = *p++;
-				}
-				else {
-					err("INVALID KANJI");
+		// ""の内部は"""",","を指定可能
+		//auto ch = *p++;
+		p++;
+		while (*p) {
+			if (*p == '\"') {
+				quoted++;
+				if ((quoted & 1) == 0 && p[1]==',') {
 					break;
 				}
 			}
-			else if (*p == '\\') {
-				p++;
-				*q++ = *p++;
-			}
-			else {
-				*q++ = *p++;
-			}
-#else
-			if (*p == '\\') {
-				*p++;
-				*q++ = *p++;
-			}
-			else {
-				*q++ = *p++;
-			}
-#endif
+			*q++ = *p++;
 		}
-		if (*p++ == 0) {
-			err("Invalid quote");
-			ret = CMDS::TXNONE;
-		}
+		//if (*p++ == 0) {
+		//	err("Invalid quote");
+		//	ret = CMDS::TXNONE;
+		//}
 		break;
 	case ',':
 		*q++ = *p++;
@@ -1835,16 +1824,29 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 				if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("No file assigned");            return -1; }
 
 				// 名前はSJIS。今後変化する可能性がある。
-				FILE* rs = fopen(wString(reinterpret_cast<char*>(token)).nkfcnv("Ws").c_str(), "r");
-				if (rs) {
-					char work[4096];
-					fgets(work, 4096, rs);
+				// FILE* rs = fopen(wString(reinterpret_cast<char*>(token)).nkfcnv("Ws").c_str(), "r");
+				int fd = myopen (wString (reinterpret_cast<char*>(token)).nkfcnv ("Ws").c_str (), O_RDONLY | O_BINARY, S_IREAD);
+				if (fd < 0) {
+					//debug_log_output ("%s(%d):CREATE TABLE FROM (%s) Error.", __FILE__, __LINE__, token);
+					//return false;
+					err ("No file assigned");
+					return -1;
+				}
+
+
+				//if (rs) {
+					char work[8192];
+					auto ret = wString::readLineCSV (fd, work, sizeof (work));
+					if (ret < 0) break;
+					//fgets(work, 4096, rs);
 					while (*work && work[strlen(work) - 1] < ' ') work[strlen(work) - 1] = 0;
 					Table* ntbl = new Table(tables[0].c_str(), work);
 					//int num = 0;
-					while (!feof(rs)) {
+					while (1) {
 						memset(work, 0, sizeof(work));
-						fgets(work, 4096, rs);
+						//fgets(work, 4096, rs);
+						auto ret = wString::readLineCSV (fd, work, sizeof (work));
+						if (ret < 0) break;
 						while (*work && work[strlen(work) - 1] < ' ') work[strlen(work) - 1] = 0;
 						if (strlen(work) == 0) break;
 						ntbl->Insert(reinterpret_cast<char*>(work));
@@ -1852,14 +1854,15 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 						//	printf("%d\n", num);
 						//}
 					}
-					fclose(rs);
+					close (fd);
+					// fclose(rs);
 					tblList[tables[0]] = ntbl;
-				}
-				else
-				{
-					err("No file assigned");
-					return -1;
-				}
+				//}
+				//else
+				//{
+				//	err("No file assigned");
+				//	return -1;
+				//}
 			}
 			break;
 		}
