@@ -17,7 +17,7 @@ else
     {
         var eq = true;
         for( var j = 0 ; j < s.length ; j++ ){
-            if(s[j].startsWith("_",0)<=0){
+            if(s[j].startsWith("_")<=0){
                if( jsona[i][s[j]] != _GET[s[j]]){
                    eq = false;
                    break;

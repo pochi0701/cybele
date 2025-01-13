@@ -38,7 +38,7 @@ using namespace std;
 //#endif
 //#define CMDLINE
 /////////////////////////////////////////////////////////////////////////////
-char* err(const char* msg)
+char* err (const char* msg)
 {
 	static char current[1024] = {};
 	static char backup[1024] = {};
@@ -47,15 +47,16 @@ char* err(const char* msg)
 	//omsg = msg;
 #else
 	if (*msg) {
-		debug_log_output(msg);
-		strcpy(current,msg);
+		debug_log_output (msg);
+		strcpy (current, msg);
+		//throw(current);
 		return NULL;
 	}
-	else
-	{
+	else {
 		// 読みだしたので消す
-		strcpy(backup,current);
+		strcpy (backup, current);
 		*current = 0;
+		//throw(backup);
 		return backup;
 	}
 #endif
@@ -86,7 +87,7 @@ CMDS   cmds[] = { CMDS::TXSELECT,CMDS::TXCREATE,  CMDS::TXINSERT,  CMDS::TXUPDAT
 /// <summary>
 /// コマンド数
 /// </summary>
-const unsigned int cmdNum = sizeof(cmds) / sizeof(cmds[0]);
+const unsigned int cmdNum = sizeof (cmds) / sizeof (cmds[0]);
 /////////////////////////////////////////////////////////////////////////////
 //比較
 map<wString, Database*>* connects;
@@ -95,7 +96,8 @@ map<wString, Database*>* connects;
 DBCatalog* catalog;
 /////////////////////////////////////////////////////////////////////////////
 //比較
-int compare(const wString& arg1, const wString& op, const wString& arg2, const dataType& type1, const dataType& type2) {
+int compare (const wString& arg1, const wString& op, const wString& arg2, const dataType& type1, const dataType& type2)
+{
 	if (type1 == dataType::STRING && type2 == dataType::STRING) {
 		if (op == "=") return arg1 == arg2;
 		else if (op == ">") return arg1 > arg2;
@@ -106,28 +108,26 @@ int compare(const wString& arg1, const wString& op, const wString& arg2, const d
 			//部分一致または後方一致
 			if (arg2[0] == '%') {
 				//部分一致
-				if (arg2[arg2.length() - 1] == '%') {
-					int res = arg1.find(arg2.substr(1, arg2.length() - 2));
+				if (arg2[arg2.length () - 1] == '%') {
+					int res = arg1.find (arg2.substr (1, arg2.length () - 2));
 					return res != wString::npos;
 				}
 				//後方一致
-				else
-				{
+				else {
 					//resが所定位置である検算が飛鳥
-					int res = arg1.find(arg2.substr(1, arg2.length() - 1));
+					int res = arg1.find (arg2.substr (1, arg2.length () - 1));
 					return res != wString::npos;
 				}
 				//前方一致または後方一致
 			}
 			else {
 				//前方一致
-				if (arg2[arg2.length() - 1] == '%') {
-					int res = arg1.find(arg2.substr(1, arg2.length() - 1));
+				if (arg2[arg2.length () - 1] == '%') {
+					int res = arg1.find (arg2.substr (1, arg2.length () - 1));
 					return (res == 0);
 				}
 				//ワイルドカードなし
-				else
-				{
+				else {
 					//とりあえず
 					return arg1 == arg2;
 				}
@@ -135,8 +135,8 @@ int compare(const wString& arg1, const wString& op, const wString& arg2, const d
 		}
 	}
 	else if (type1 == dataType::NUMBER && type2 == dataType::NUMBER) {
-		int iarg1 = atoi(arg1.c_str());
-		int iarg2 = atoi(arg2.c_str());
+		int iarg1 = atoi (arg1.c_str ());
+		int iarg2 = atoi (arg2.c_str ());
 		if (op == "=") return iarg1 == iarg2;
 		else if (op == ">") return iarg1 > iarg2;
 		else if (op == ">=") return iarg1 >= iarg2;
@@ -146,8 +146,8 @@ int compare(const wString& arg1, const wString& op, const wString& arg2, const d
 	else {
 		wString targ1 = arg1;
 		wString targ2 = arg2;
-		if (type1 == dataType::NUMBER) targ1 = atoi(targ1.c_str());
-		if (type2 == dataType::NUMBER) targ2 = atoi(targ2.c_str());
+		if (type1 == dataType::NUMBER) targ1 = atoi (targ1.c_str ());
+		if (type2 == dataType::NUMBER) targ2 = atoi (targ2.c_str ());
 		if (op == "=") return targ1 == targ2;
 		else if (op == ">") return targ1 > targ2;
 		else if (op == ">=") return targ1 >= targ2;
@@ -160,7 +160,8 @@ int compare(const wString& arg1, const wString& op, const wString& arg2, const d
 /// <summary>
 /// SQL実行部。個別のSQLコマンド実行
 /// </summary>
-class view {
+class view
+{
 private:
 	vector<Table*>         Tables;
 	vector<int>            RowNum;//テーブル毎のノード数(行数)
@@ -171,44 +172,46 @@ public:
 	int                    flag;
 	condition              cond;
 	//コンストラクタ
-	view(condition& _cond) {
+	view (condition& _cond)
+	{
 		flag = 0;
-		cond.copy(_cond);
+		cond.copy (_cond);
 	}
 	//デストラクタ。クリティカルセクション抜ける
-	~view(void) {
-		for (unsigned int i = 0; i < Tables.size(); i++) {
-			Tables[i]->readEnd();
+	~view (void)
+	{
+		for (unsigned int i = 0; i < Tables.size (); i++) {
+			Tables[i]->readEnd ();
 		}
 	}
 	//テーブル参照を記録
-	int Copy(Table* tbl)
+	int Copy (Table* tbl)
 	{
 		//テーブル設定
-		Tables.clear();
-		Column.clear();
-		Node.clear();
-		tbl->readStart();
-		Tables.push_back(tbl);
+		Tables.clear ();
+		Column.clear ();
+		Node.clear ();
+		tbl->readStart ();
+		Tables.push_back (tbl);
 
-		int idx = (int)Tables.size() - 1;
+		int idx = (int)Tables.size () - 1;
 		//カラムコピー
-		Column.clear();
-		for (unsigned int i = 0; i < tbl->column.size(); i++) {
+		Column.clear ();
+		for (unsigned int i = 0; i < tbl->column.size (); i++) {
 			pair<int, int> clm;
 			clm.first = i;
 			clm.second = idx;
-			Column.push_back(clm);
+			Column.push_back (clm);
 		}
-		RowNum.push_back(tbl->node[0]->size());
+		RowNum.push_back (tbl->node[0]->size ());
 		//条件を取得
 		vector<char> mat;
-		tbl->condition_mat(cond, mat);
+		tbl->condition_mat (cond, mat);
 		//ノードコピー
-		if (tbl->node.size()) {
-			for (unsigned int i = 0; i < tbl->node[0]->size(); i++) {
+		if (tbl->node.size ()) {
+			for (unsigned int i = 0; i < tbl->node[0]->size (); i++) {
 				if (mat[i]) {
-					Node.push_back(i);
+					Node.push_back (i);
 				}
 			}
 		}
@@ -216,7 +219,7 @@ public:
 	}
 	/////////////////////////////////////////////////////////////////////////////
 	//条件配列生成
-	int conditionMatTables(Table* tbl, vector<char>& mat)
+	int conditionMatTables (Table* tbl, vector<char>& mat)
 	{
 		//wString arg1;
 		//wString arg2;
@@ -232,24 +235,24 @@ public:
 		dataType dtyp1 = dataType::STRING;
 		dataType dtyp2 = dataType::STRING;
 		//新テーブルひな形
-		if (cond.cond.size() % 4 != 0) {
-			err("SELECT:Illigal condition setting");
+		if (cond.cond.size () % 4 != 0) {
+			err ("SELECT:Illigal condition setting");
 			return -1;
 		}
 		vector<char> mat2;
 		//！！ここで使った条件はなくなる
-		tbl->condition_mat(cond, mat2);
+		tbl->condition_mat (cond, mat2);
 		//連結行の分1を設定
-		mat.clear();
-		mat.resize(Node.size() * tbl->node[0]->size());
+		mat.clear ();
+		mat.resize (Node.size () * tbl->node[0]->size ());
 		int cnt = 0;
-		for (unsigned int i = 0; i < Node.size(); i++) {
-			for (unsigned int j = 0; j < tbl->node[0]->size(); j++) {
+		for (unsigned int i = 0; i < Node.size (); i++) {
+			for (unsigned int j = 0; j < tbl->node[0]->size (); j++) {
 				mat[cnt++] = mat2[j];
 			}
 		}
 		//各条件についてAND,a,>,4等
-		for (unsigned int ptr = 0; ptr < cond.cond.size(); ) {
+		for (unsigned int ptr = 0; ptr < cond.cond.size (); ) {
 			CMDS lop;
 			auto col1 = -1;
 			auto col2 = -1;
@@ -257,7 +260,7 @@ public:
 				lop = cond.type[ptr];
 			}
 			else {
-				err("SELECT:Logical Operation Error");
+				err ("SELECT:Logical Operation Error");
 				return -1;
 			}
 			//条件のコピー
@@ -267,19 +270,19 @@ public:
 			auto arg2 = cond.cond[ptr + 3];
 			auto typ2 = cond.type[ptr + 3];
 			//自テーブルカラムチェック
-			for (unsigned int i = 0; i < Column.size(); i++) {
+			for (unsigned int i = 0; i < Column.size (); i++) {
 				int    idx = Column[i].first;
 				int    tno = Column[i].second;
 				Table* mytbl = Tables[tno];
-				if (mytbl->column[idx]->Compare(arg1, cond.clmalias, cond.tblalias)) {
-					if (col1 >= 0) { err("Column name arg1 is ambigous"); return -1; }
+				if (mytbl->column[idx]->Compare (arg1, cond.clmalias, cond.tblalias)) {
+					if (col1 >= 0) { err ("Column name arg1 is ambigous"); return -1; }
 					col1 = idx;
 					Tblno1 = tno;
 					colTbl1 = mytbl;
 					dtyp1 = mytbl->column[idx]->type;
 				}
-				if (mytbl->column[idx]->Compare(arg2, cond.clmalias, cond.tblalias)) {
-					if (col2 >= 0) { err("Column name arg1 is ambigous"); return -1; }
+				if (mytbl->column[idx]->Compare (arg2, cond.clmalias, cond.tblalias)) {
+					if (col2 >= 0) { err ("Column name arg1 is ambigous"); return -1; }
 					col2 = idx;
 					Tblno2 = tno;
 					colTbl2 = mytbl;
@@ -287,16 +290,16 @@ public:
 				}
 			}
 			//参照テーブルカラムチェック
-			for (unsigned int i = 0; i < tbl->column.size(); i++) {
-				if (tbl->column[i]->Compare(arg1, cond.clmalias, cond.tblalias)) {
-					if (col1 >= 0) { err("Column name arg1 is ambigous."); return -1; }
+			for (unsigned int i = 0; i < tbl->column.size (); i++) {
+				if (tbl->column[i]->Compare (arg1, cond.clmalias, cond.tblalias)) {
+					if (col1 >= 0) { err ("Column name arg1 is ambigous."); return -1; }
 					col1 = i;
 					Tblno1 = -1;
 					colTbl1 = tbl;
 					dtyp1 = tbl->column[i]->type;
 				}
-				if (tbl->column[i]->Compare(arg2, cond.clmalias, cond.tblalias)) {
-					if (col2 >= 0) { err("Column name arg2 is ambigous."); return -1; }
+				if (tbl->column[i]->Compare (arg2, cond.clmalias, cond.tblalias)) {
+					if (col2 >= 0) { err ("Column name arg2 is ambigous."); return -1; }
 					col2 = i;
 					Tblno2 = -1;
 					colTbl2 = tbl;
@@ -314,26 +317,26 @@ public:
 			//自テーブル全行について
 			int ncnt = 0;
 			wString work;
-			for (unsigned int i = 0; i < Node.size(); i++) {
+			for (unsigned int i = 0; i < Node.size (); i++) {
 				//ノードの番号でなくて捕まえている値
 				int ii = Node[i];
-				if (Tblno1 >= 0 && col1 >= 0) rarg1 = colTbl1->node[col1]->getNodeNative(getno(ii, Tblno1));
-				if (Tblno2 >= 0 && col2 >= 0) rarg2 = colTbl2->node[col2]->getNodeNative(getno(ii, Tblno2));
+				if (Tblno1 >= 0 && col1 >= 0) rarg1 = colTbl1->node[col1]->getNodeNative (getno (ii, Tblno1));
+				if (Tblno2 >= 0 && col2 >= 0) rarg2 = colTbl2->node[col2]->getNodeNative (getno (ii, Tblno2));
 				//参照テーブル全行について
-				for (unsigned int j = 0; j < tbl->node[0]->size(); j++) {
-					if (Tblno1 < 0 && col1 >= 0) rarg1 = tbl->node[col1]->getNodeNative(j);
-					if (Tblno2 < 0 && col2 >= 0) rarg2 = tbl->node[col2]->getNodeNative(j);
+				for (unsigned int j = 0; j < tbl->node[0]->size (); j++) {
+					if (Tblno1 < 0 && col1 >= 0) rarg1 = tbl->node[col1]->getNodeNative (j);
+					if (Tblno2 < 0 && col2 >= 0) rarg2 = tbl->node[col2]->getNodeNative (j);
 					//条件が合致するなら
 					if (lop == CMDS::TXOR) {//OR
 						if (mat[ncnt] == 0) {
-							if (compare(rarg1, op, rarg2, dtyp1, dtyp2)) {
+							if (compare (rarg1, op, rarg2, dtyp1, dtyp2)) {
 								mat[ncnt] = 1;
 							}
 						}
 					}
 					else {        //AND
 						if (mat[ncnt] == 1) {
-							if (!compare(rarg1, op, rarg2, dtyp1, dtyp2)) {
+							if (!compare (rarg1, op, rarg2, dtyp1, dtyp2)) {
 								mat[ncnt] = 0;
 							}
 						}
@@ -342,97 +345,97 @@ public:
 				}
 			}
 			//４つ分消す
-			cond.cond.erase(cond.cond.begin() + ptr, cond.cond.begin() + ptr + 4);
-			cond.type.erase(cond.type.begin() + ptr, cond.type.begin() + ptr + 4);
+			cond.cond.erase (cond.cond.begin () + ptr, cond.cond.begin () + ptr + 4);
+			cond.type.erase (cond.type.begin () + ptr, cond.type.begin () + ptr + 4);
 		}
 		return 0;
 	}
 	/////////////////////////////////////////////////////////////////////////////
 	//テーブルintersection&条件により絞込
-	int Add(Table* tbl)
+	int Add (Table* tbl)
 	{
 		vector<char> mat;
-		tbl->readStart();
-		conditionMatTables(tbl, mat);
+		tbl->readStart ();
+		conditionMatTables (tbl, mat);
 		//ノード追加
 		vector<int> node;
 		int cnt = 0;
-		for (unsigned int i = 0; i < Node.size(); i++) {
-			for (unsigned int j = 0; j < tbl->node[0]->size(); j++) {
+		for (unsigned int i = 0; i < Node.size (); i++) {
+			for (unsigned int j = 0; j < tbl->node[0]->size (); j++) {
 				if (mat[cnt++]) {
-					node.push_back(makeno(Node[i], j, tbl->node[0]->size()));
+					node.push_back (makeno (Node[i], j, tbl->node[0]->size ()));
 				}
 			}
 		}
 		//ベクターコピー
-		Node.resize(node.size());
-		copy(node.begin(), node.end(), Node.begin());
+		Node.resize (node.size ());
+		copy (node.begin (), node.end (), Node.begin ());
 
 		//テーブル追加
-		Tables.push_back(tbl);
-		int idx = (int)Tables.size() - 1;
-		RowNum.push_back(tbl->node[0]->size());
+		Tables.push_back (tbl);
+		int idx = (int)Tables.size () - 1;
+		RowNum.push_back (tbl->node[0]->size ());
 		//カラム追加
-		for (unsigned int i = 0; i < tbl->column.size(); i++) {
+		for (unsigned int i = 0; i < tbl->column.size (); i++) {
 			pair<int, int> clm;
 			clm.first = i;
 			clm.second = idx;
-			Column.push_back(clm);
+			Column.push_back (clm);
 		}
 		return 0;
 	}
 #if 0
 	/////////////////////////////////////////////////////////////////////////////
 	//テーブル絞込条件(他でやってるのでここではやることなさそう）
-	void Where(condition& cond)
+	void Where (condition& cond)
 	{
 		vector<char> mat;
 		//条件配列生成
-		if (conditionMatTables(cond, mat)) return;
+		if (conditionMatTables (cond, mat)) return;
 		//転記ベクターに従って転記
 		vector<int> node;
-		for (unsigned int j = 0; j < Node.size(); j++) {
+		for (unsigned int j = 0; j < Node.size (); j++) {
 			if (mat[j]) {
-				node.push_back(Node[i]);
+				node.push_back (Node[i]);
 			}
 		}
 		//ベクターコピー
-		Node.resize(node.size());
-		copy(node.begin(), node.end(), Node.begin());
+		Node.resize (node.size ());
+		copy (node.begin (), node.end (), Node.begin ());
 	}
 #endif
 	/////////////////////////////////////////////////////////////////////////////
 	//選択
-	void Select(const vector<wString>& Clm)
+	void Select (const vector<wString>& Clm)
 	{
 		//vector<int>    select;
 		vector<pair<int, int> > tmpclm;
-		for (auto i = 0U; i < (unsigned int)Clm.size(); i++) {
-			for (int j = static_cast<int>(Column.size()) - 1; j >= 0; j--) {
+		for (auto i = 0U; i < (unsigned int)Clm.size (); i++) {
+			for (int j = static_cast<int>(Column.size ()) - 1; j >= 0; j--) {
 				int tblno = Column[j].second;
 				Table* tbl = Tables[tblno];
 				unsigned int k = Column[j].first;
-				if (tbl->column[k]->Compare(Clm[i], cond.clmalias, cond.tblalias)) {
-					tmpclm.push_back(Column[j]);
+				if (tbl->column[k]->Compare (Clm[i], cond.clmalias, cond.tblalias)) {
+					tmpclm.push_back (Column[j]);
 					break;
 				}
 			}
 		}
 		//ベクターコピー
-		Column.resize(tmpclm.size());
-		copy(tmpclm.begin(), tmpclm.end(), Column.begin());
+		Column.resize (tmpclm.size ());
+		copy (tmpclm.begin (), tmpclm.end (), Column.begin ());
 	}
 	/////////////////////////////////////////////////////////////////////////////
 	//リミット
-	void Limit(const vector<int>& limit)
+	void Limit (const vector<int>& limit)
 	{
 		unsigned int st = 0;
 		unsigned int cnt;
 		//設定
-		if (limit.size() == 0) {
+		if (limit.size () == 0) {
 			return;
 		}
-		else if (limit.size() > 1) {
+		else if (limit.size () > 1) {
 			st = limit[0];
 			cnt = limit[1];
 		}
@@ -440,62 +443,64 @@ public:
 			cnt = limit[0];
 		}
 		//Nodeを設定
-		if (Node.size() > st + cnt) {
-			Node.resize(st + cnt);
+		if (Node.size () > st + cnt) {
+			Node.resize (st + cnt);
 		}
 		if (st > 0) {
-			Node.erase(Node.begin(), Node.begin() + st - 1);
+			Node.erase (Node.begin (), Node.begin () + st - 1);
 		}
 		return;
 	}
 	/////////////////////////////////////////////////////////////////////////////
 	//並べ替え
-	void OrderBy(const wString& targetColumn, orderType type) {
+	void OrderBy (const wString& targetColumn, orderType type)
+	{
 		//Nodeから順列を抽出し、indexを作り反映する
-		for (unsigned int i = 0; i < Column.size(); i++) {
+		for (unsigned int i = 0; i < Column.size (); i++) {
 			int tblno = Column[i].second;
 			Table* tbl = Tables[tblno];
 			unsigned int j = Column[i].first;
 
 			//合致するカラム
-			if (tbl->column[j]->Compare(targetColumn, cond.clmalias, cond.tblalias)) {
+			if (tbl->column[j]->Compare (targetColumn, cond.clmalias, cond.tblalias)) {
 				vector<int> indexdt;
 				vector<int> indexno;
 				vector<int> node;
 				//番号を取得
-				for (unsigned int k = 0; k < Node.size(); k++) {
-					indexdt.push_back(getno(Node[k], tblno));
-					indexno.push_back(k);
+				for (unsigned int k = 0; k < Node.size (); k++) {
+					indexdt.push_back (getno (Node[k], tblno));
+					indexno.push_back (k);
 				}
-				tbl->node[j]->sort(indexdt, indexno, type);
+				tbl->node[j]->sort (indexdt, indexno, type);
 				//番号に沿ってNodeを入れ替え
-				node.resize(Node.size());
-				for (unsigned int k = 0; k < indexno.size(); k++) {
+				node.resize (Node.size ());
+				for (unsigned int k = 0; k < indexno.size (); k++) {
 					node[k] = Node[indexno[k]];
 				}
-				copy(node.begin(), node.end(), Node.begin());
+				copy (node.begin (), node.end (), Node.begin ());
 				break;
 			}
 		}
 	}
 	//
-	int makeno(int base, int add, int radix)
+	int makeno (int base, int add, int radix)
 	{
 		return base * radix + add;
 	}
-	int getno(int num, int idx)
+	int getno (int num, int idx)
 	{
-		for (auto i = (int)RowNum.size() - 1; i > idx; i--) {
+		for (auto i = (int)RowNum.size () - 1; i > idx; i--) {
 			num /= RowNum[i];
 		}
 		return num % RowNum[idx];
 	}
 #if 0
 	//結合join(inner,left,right)
-	int Join(Table* jtbl) {
-		jtbl->readStart();
+	int Join (Table* jtbl)
+	{
+		jtbl->readStart ();
 		vector<char> mat;
-		conditionMatTables(tbl, cond, mat);
+		conditionMatTables (tbl, cond, mat);
 
 
 		//ノード追加
@@ -503,11 +508,11 @@ public:
 		int cnt = 0;
 		int flag;
 		if (LEFTJOIN) {
-			for (unsigned int i = 0; i < Node.size(); i++) {
+			for (unsigned int i = 0; i < Node.size (); i++) {
 				flag = 1;
-				for (unsigned int j = 0; j < tbl->node[0]->size(); j++) {
+				for (unsigned int j = 0; j < tbl->node[0]->size (); j++) {
 					if (mat[cnt++]) {
-						node.push_back(makeno(i, j, tbl->node[0]->size()));
+						node.push_back (makeno (i, j, tbl->node[0]->size ()));
 						flag = 0;
 					}
 				}
@@ -518,11 +523,11 @@ public:
 		}
 		else if (RIGHTJOIN) {
 			//マトリックスの参照具合が違う
-			for (unsigned int j = 0; j < tbl->node[0]->size(); j++) {
+			for (unsigned int j = 0; j < tbl->node[0]->size (); j++) {
 				flag = 1;
-				for (unsigned int i = 0; i < Node.size(); i++) {
+				for (unsigned int i = 0; i < Node.size (); i++) {
 					if (mat[cnt++]) {
-						node.push_back(makeno(i, j, tbl->node[0]->size()));
+						node.push_back (makeno (i, j, tbl->node[0]->size ()));
 						flag = 0;
 					}
 				}
@@ -534,30 +539,30 @@ public:
 			//ADDと同じ
 		}
 		else if (INNERJOIN) {
-			for (unsigned int i = 0; i < Node.size(); i++) {
+			for (unsigned int i = 0; i < Node.size (); i++) {
 				flag = 1;
-				for (unsigned int j = 0; j < tbl->node[0]->size(); j++) {
+				for (unsigned int j = 0; j < tbl->node[0]->size (); j++) {
 					if (mat[cnt++]) {
-						node.push_back(makeno(i, j, tbl->node[0]->size()));
+						node.push_back (makeno (i, j, tbl->node[0]->size ()));
 						flag = 0;
 					}
 				}
 			}
 		}
 		//ベクターコピー
-		Node.resize(node.size());
-		copy(node.begin(), node.end(), Node.begin());
+		Node.resize (node.size ());
+		copy (node.begin (), node.end (), Node.begin ());
 
 		//テーブル追加
-		Tables.push_back(jtbl);
-		int idx = Tables.size() - 1;
-		RowNum.push_back(jtbl->node[0]->size());
+		Tables.push_back (jtbl);
+		int idx = Tables.size () - 1;
+		RowNum.push_back (jtbl->node[0]->size ());
 		//カラム追加
-		for (unsigned int i = 0; i < jtbl->column.size(); i++) {
+		for (unsigned int i = 0; i < jtbl->column.size (); i++) {
 			pair<int, int> clm;
 			clm.first = i;
 			clm.second = idx;
-			Column.push_back(clm);
+			Column.push_back (clm);
 		}
 		return 0;
 	}
@@ -567,14 +572,14 @@ public:
 	/// ノードサイズ
 	/// </summary>
 	/// <returns>ノードのサイズ</returns>
-	int size(void)
+	int size (void)
 	{
-		return (int)Node.size();
+		return (int)Node.size ();
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
 #ifdef CMDLINE
-	wString toJSON(int row = -2)
+	wString toJSON (int row = -2)
 	{
 		wString temp;
 		wString alias;
@@ -582,48 +587,48 @@ public:
 		if (row == -2) {
 			//count(*)でないとき
 			if (flag == 0) {
-				temp.resize(Column.size() * Node.size() * 8);
+				temp.resize (Column.size () * Node.size () * 8);
 				//復数DBの場合はtblも表示
-				if (Tables.size() > 1) {
-					for (auto i = 0LU; i < Column.size(); i++) {
+				if (Tables.size () > 1) {
+					for (auto i = 0LU; i < Column.size (); i++) {
 						Table* tbl = Tables[Column[i].second];
 						auto j = Column[i].first;
-						if (tbl->column[j]->GetAlias(cond.clmalias, cond.tblalias, alias)) {
-							temp.cat_sprintf("%s%s", (i ? "|" : ""), alias.c_str());
+						if (tbl->column[j]->GetAlias (cond.clmalias, cond.tblalias, alias)) {
+							temp.cat_sprintf ("%s%s", (i ? "|" : ""), alias.c_str ());
 						}
 						else {
-							temp.cat_sprintf("%s%s.%s", (i ? "|" : ""), tbl->column[j]->table.c_str(), tbl->column[j]->name.c_str());
+							temp.cat_sprintf ("%s%s.%s", (i ? "|" : ""), tbl->column[j]->table.c_str (), tbl->column[j]->name.c_str ());
 						}
 					}
 					//単一DBの場合はカラム名のみ
 				}
 				else {
-					for (auto i = 0LU; i < Column.size(); i++) {
+					for (auto i = 0LU; i < Column.size (); i++) {
 						Table* tbl = Tables[Column[i].second];
 						auto j = Column[i].first;
-						if (tbl->column[j]->GetAlias(cond.clmalias, cond.tblalias, alias)) {
-							temp.cat_sprintf("%s%s", (i ? "|" : ""), alias.c_str());
+						if (tbl->column[j]->GetAlias (cond.clmalias, cond.tblalias, alias)) {
+							temp.cat_sprintf ("%s%s", (i ? "|" : ""), alias.c_str ());
 						}
 						else {
-							temp.cat_sprintf("%s%s", (i ? "|" : ""), tbl->column[j]->name.c_str());
+							temp.cat_sprintf ("%s%s", (i ? "|" : ""), tbl->column[j]->name.c_str ());
 						}
 					}
 				}
 				temp += "\n";
 				//ノード表示
-				if (Node.size()) {
+				if (Node.size ()) {
 					//各行
-					for (auto i = 0LU; i < Node.size(); i++) {
+					for (auto i = 0LU; i < Node.size (); i++) {
 						int ii = Node[i];
 						//各カラム
 						int cnt = 0;
-						for (auto j = 0; j < Column.size(); j++) {
+						for (auto j = 0; j < Column.size (); j++) {
 							int    ntbl = Column[j].second;
 							Table* tbl = Tables[ntbl];
 							auto k = Column[j].first;
-							int no = getno(ii, ntbl);
+							int no = getno (ii, ntbl);
 							char work[1024];
-							sprintf(work, "%s%s", (cnt++ ? "\t" : ""), tbl->node[k]->getNode(no).c_str());
+							sprintf (work, "%s%s", (cnt++ ? "\t" : ""), tbl->node[k]->getNode (no).c_str ());
 							temp += work;
 						}
 						temp += "\n";
@@ -633,40 +638,40 @@ public:
 			else {
 				alias = "count";
 				map<wString, wString>::iterator it;
-				for (it = cond.clmalias.begin(); it != cond.clmalias.end(); it++) {
+				for (it = cond.clmalias.begin (); it != cond.clmalias.end (); it++) {
 					wString select = it->second;
 					if (select == "count(*)") {
 						alias = it->first;
 						break;
 					}
 				}
-				temp.sprintf("%s\n%d\n", alias.c_str(), Node.size());
+				temp.sprintf ("%s\n%d\n", alias.c_str (), Node.size ());
 			}
 			return temp;
 			//カラムだけ表示
 		}
 		else if (row == -1) {
-			if (Tables.size() > 1) {
-				for (i = 0; i < Column.size(); i++) {
+			if (Tables.size () > 1) {
+				for (i = 0; i < Column.size (); i++) {
 					Table* tbl = Tables[Column[i].second];
 					j = Column[i].first;
-					if (tbl->column[j]->GetAlias(cond.clmalias, cond.tblalias, alias)) {
-						temp.cat_sprintf("%s%s", (i ? "|" : ""), alias.c_str());
+					if (tbl->column[j]->GetAlias (cond.clmalias, cond.tblalias, alias)) {
+						temp.cat_sprintf ("%s%s", (i ? "|" : ""), alias.c_str ());
 					}
 					else {
-						temp.cat_sprintf("%s%s.%s", (i ? "|" : ""), tbl->column[j]->table.c_str(), tbl->column[j]->name.c_str());
+						temp.cat_sprintf ("%s%s.%s", (i ? "|" : ""), tbl->column[j]->table.c_str (), tbl->column[j]->name.c_str ());
 					}
 				}
 			}
 			else {
-				for (i = 0; i < Column.size(); i++) {
+				for (i = 0; i < Column.size (); i++) {
 					Table* tbl = Tables[Column[i].second];
 					j = Column[i].first;
-					if (tbl->column[j]->GetAlias(cond.clmalias, cond.tblalias, alias)) {
-						temp.cat_sprintf("%s%s", (i ? "|" : ""), alias.c_str());
+					if (tbl->column[j]->GetAlias (cond.clmalias, cond.tblalias, alias)) {
+						temp.cat_sprintf ("%s%s", (i ? "|" : ""), alias.c_str ());
 					}
 					else {
-						temp.cat_sprintf("%s%s", (i ? "|" : ""), tbl->column[j]->name.c_str());
+						temp.cat_sprintf ("%s%s", (i ? "|" : ""), tbl->column[j]->name.c_str ());
 					}
 				}
 			}
@@ -675,17 +680,17 @@ public:
 			//ノードだけ表示
 		}
 		else if (row >= 0) {
-			if (Node.size() > (unsigned int)row) {
+			if (Node.size () > (unsigned int)row) {
 				int ii = Node[row];
 				//各カラム
 				int cnt = 0;
-				for (j = 0; j < Column.size(); j++) {
+				for (j = 0; j < Column.size (); j++) {
 					int    ntbl = Column[j].second;
 					Table* tbl = Tables[ntbl];
 					k = Column[j].first;
-					int no = getno(ii, ntbl);
+					int no = getno (ii, ntbl);
 					//char tmp[1024];
-					sprintf(work, "%s%s", (cnt++ ? "\t" : ""), tbl->node[k]->getNode(no).c_str());
+					sprintf (work, "%s%s", (cnt++ ? "\t" : ""), tbl->node[k]->getNode (no).c_str ());
 					temp += work;
 				}
 				temp += "\n";
@@ -695,57 +700,57 @@ public:
 		return temp;
 	}
 #else
-	wString toJSON(void)
+	wString toJSON (void)
 	{
 		wString temp;
 		wString alias;
 		vector<wString> clm;
 		if (flag == 0) {
 			//復数DBの場合はtblも表示
-			if (Tables.size() > 1) {
-				for (auto i = 0LU; i < Column.size(); i++) {
+			if (Tables.size () > 1) {
+				for (auto i = 0LU; i < Column.size (); i++) {
 					Table* tbl = Tables[Column[i].second];
 					auto j = Column[i].first;
 					//エイリアスあれば、エイリアス表示
-					if (tbl->column[j]->GetAlias(cond.clmalias, cond.tblalias, alias)) {
-						clm.push_back(alias);
+					if (tbl->column[j]->GetAlias (cond.clmalias, cond.tblalias, alias)) {
+						clm.push_back (alias);
 					}
 					else {
-						clm.push_back(tbl->column[j]->table + "." + tbl->column[j]->name);
+						clm.push_back (tbl->column[j]->table + "." + tbl->column[j]->name);
 					}
 				}
 				//単一DBの場合はカラム名のみ
 			}
 			else {
-				for (auto i = 0LU; i < Column.size(); i++) {
+				for (auto i = 0LU; i < Column.size (); i++) {
 					Table* tbl = Tables[Column[i].second];
 					auto j = Column[i].first;
 					//エイリアスあれば、エイリアス表示
-					if (tbl->column[j]->GetAlias(cond.clmalias, cond.tblalias, alias)) {
-						clm.push_back(alias);
+					if (tbl->column[j]->GetAlias (cond.clmalias, cond.tblalias, alias)) {
+						clm.push_back (alias);
 					}
 					else {
-						clm.push_back(tbl->column[j]->name);
+						clm.push_back (tbl->column[j]->name);
 					}
 				}
 			}
 			//データ作る[{"aaa":1,"bbb":2},{"aaa":1,"bbb":2}]
 			//ノード表示
-			temp.resize(static_cast<int>(Column.size()) * static_cast<int>(Node.size()) * 8);
+			temp.resize (static_cast<int>(Column.size ()) * static_cast<int>(Node.size ()) * 8);
 			temp = "[";
-			if (Node.size()) {
+			if (Node.size ()) {
 				//各行
-				for (auto i = 0LU; i < Node.size(); i++) {
-					temp.cat_sprintf("%s{", (i ? "," : ""));
+				for (auto i = 0LU; i < Node.size (); i++) {
+					temp.cat_sprintf ("%s{", (i ? "," : ""));
 					int ii = Node[i];
 					//各カラム
-					for (auto j = 0; j < Column.size(); j++) {
+					for (auto j = 0; j < Column.size (); j++) {
 						int    ntbl = Column[j].second;
 						Table* tbl = Tables[ntbl];
 						auto k = Column[j].first;
-						int no = getno(ii, ntbl);
+						int no = getno (ii, ntbl);
 						char work[1024];
-						sprintf(work, "%s\"%s\":%s", (j ? "," : ""), clm[j].c_str(), tbl->node[k]->getNode(no).c_str());
+						sprintf (work, "%s\"%s\":%s", (j ? "," : ""), clm[j].c_str (), tbl->node[k]->getNode (no).c_str ());
 						temp += work;
 					}
 					temp += "}";
@@ -755,8 +760,7 @@ public:
 		}
 		else {
 			alias = "count";
-			for (auto const& x : cond.clmalias)
-			{
+			for (auto const& x : cond.clmalias) {
 				wString select = x.second;
 				if (select == "count(*)") {
 					alias = x.first;
@@ -771,7 +775,7 @@ public:
 			//		break;
 			//	}
 			//}
-			temp.sprintf("{\"%s\":%d}", alias.c_str(), Node.size());
+			temp.sprintf ("{\"%s\":%d}", alias.c_str (), Node.size ());
 		}
 		return temp;
 	}
@@ -808,7 +812,7 @@ public:
 #endif
 #endif
 ////////////////////////////////////////////////////////////////////////////
-CMDS getToken(unsigned char* sql, unsigned char* token)
+CMDS getToken (unsigned char* sql, unsigned char* token)
 {
 	unsigned char* p = sql;
 	unsigned char* q = token;
@@ -838,7 +842,7 @@ CMDS getToken(unsigned char* sql, unsigned char* token)
 			}
 		}
 		if (*p++ == 0) {
-			err("Invalid quote");
+			err ("Invalid quote");
 			ret = CMDS::TXNONE;
 		}
 		break;
@@ -865,7 +869,7 @@ CMDS getToken(unsigned char* sql, unsigned char* token)
 	case '8':
 	case '9':
 	case '.':
-		while (*p && strchr("0123456789.", *p) != NULL) *q++ = *p++;
+		while (*p && strchr ("0123456789.", *p) != NULL) *q++ = *p++;
 		ret = CMDS::TXPRM;
 		break;
 	case ',':*q++ = *p++; ret = CMDS::TXCM; break;
@@ -873,12 +877,12 @@ CMDS getToken(unsigned char* sql, unsigned char* token)
 	case '(':*q++ = *p++; ret = CMDS::TXPS; break;
 	case ')':*q++ = *p++; ret = CMDS::TXPE; break;
 	default:
-		while (*p && strchr(" ,=><;()", *p) == NULL)    *q++ = *p++;
+		while (*p && strchr (" ,=><;()", *p) == NULL)    *q++ = *p++;
 		*q = 0;
 		//cmd?
 		for (unsigned int i = 0; i < cmdNum; i++) {
-			if (stricmp(reinterpret_cast<char*>(token), ccmd[i]) == 0) {
-				strcpy(reinterpret_cast<char*>(token), ccmd[i]);
+			if (stricmp (reinterpret_cast<char*>(token), ccmd[i]) == 0) {
+				strcpy (reinterpret_cast<char*>(token), ccmd[i]);
 				ret = cmds[i];
 				break;
 			}
@@ -902,12 +906,13 @@ CMDS getToken(unsigned char* sql, unsigned char* token)
 /// <param name="data">入力データ</param>
 /// <param name="token">出力トークン</param>
 /// <returns>トークン種類</returns>
-CMDS getData(unsigned char* data, unsigned char* token)
+CMDS getData (unsigned char* data, unsigned char* token)
 {
 	unsigned char* p = data;
 	unsigned char* q = token;
 	//unsigned char  ch;
 	int quoted = 0;
+	int zatumi = 0;
 	//token
 	CMDS ret = CMDS::TXPRM;
 	//TRIM
@@ -921,12 +926,65 @@ CMDS getData(unsigned char* data, unsigned char* token)
 		// ""の内部は"""",","を指定可能
 		//auto ch = *p++;
 		p++;
+		quoted = 1;
 		while (*p) {
+			// ダブルクォーテーション出現
 			if (*p == '\"') {
 				quoted++;
-				if ((quoted & 1) == 0 && p[1]==',') {
+				// 連続して2つ目
+				if ((quoted & 1) == 0) {
+					if (p[1] == '\"') {
+						quoted++;
+						p++;
+						//*q++ = *p++;
+					}
+					else {
+						unsigned char* r = p + 1;
+						// commaとスペース以外なければＯＫ。それ以外は例外
+						while (*r) {
+							if (*r == ',') {
+								p++;
+								break;
+							}
+							else if (*r != ' ') {
+								err ("no comma");
+							}
+						}
+						if (*r == ',' || *r == 0) {
+							break;
+						}
+						//カンマなしエラー
+						//err("no comma");
+					}
+				}
+				else {
+					unsigned char* r = p + 1;
+					// commaとスペース以外なければＯＫ。それ以外は例外
+					while (*r) {
+						if (*r == ',') {
+							p++;
+							break;
+						}
+						else if (*r != ' ') {
+							err ("no comma");
+						}
+					}
+					if (*r == ',' || *r == 0) {
+						break;
+					}
+					//カンマなしエラー
+					//err("no comma");
+				}
+			}
+			else if (*p == ',') {
+				if ((quoted & 1) == 0) {
+					*q++ = *p++;
 					break;
 				}
+
+			}
+			else {
+				zatumi++;
 			}
 			*q++ = *p++;
 		}
@@ -940,7 +998,9 @@ CMDS getData(unsigned char* data, unsigned char* token)
 		ret = CMDS::TXCM;
 		break;
 	default:
-		while (*p && *p != ' ' && *p != ',')    *q++ = *p++;
+		while (*p && *p != ',') {
+			*q++ = *p++;
+		}
 		break;
 	}
 	*q = 0;
@@ -953,15 +1013,15 @@ CMDS getData(unsigned char* data, unsigned char* token)
 }
 ////////////////////////////////////////////////////////////////////////////
 //CMD Check
-int chkToken(unsigned char* sql, unsigned char* token, CMDS& ret, CMDS cmd1, CMDS cmd2)
+int chkToken (unsigned char* sql, unsigned char* token, CMDS& ret, CMDS cmd1, CMDS cmd2)
 {
-	ret = getToken(sql, token);
+	ret = getToken (sql, token);
 	return (cmd1 != ret && cmd2 != ret);
 }
 /////////////////////////////////////////////////////////////////////////////
 //カラムクラス
 //カラムコンストラクタ
-Column::Column(void)
+Column::Column (void)
 {
 	table = "";//取得元テーブル名
 	name = ""; //カラム名
@@ -969,22 +1029,22 @@ Column::Column(void)
 }
 /////////////////////////////////////////////////////////////////////////////
 //カラムコンストラクタ
-Column::Column(const wString& tbl, const wString& nam, const dataType typ)
+Column::Column (const wString& tbl, const wString& nam, const dataType typ)
 {
-	int cutAt = nam.find(".");
+	int cutAt = nam.find (".");
 	if (cutAt == nam.npos) {
 		table = tbl;
 		name = nam;
 	}
 	else {
-		table = nam.substr(0, cutAt);
-		name = nam.substr(cutAt + 1);
+		table = nam.substr (0, cutAt);
+		name = nam.substr (cutAt + 1);
 	}
 	type = typ;
 }
 /////////////////////////////////////////////////////////////////////////////
 //カラムコンストラクタ
-Column::Column(const Column* clm)
+Column::Column (const Column* clm)
 {
 	table = clm->table;
 	name = clm->name;
@@ -992,33 +1052,32 @@ Column::Column(const Column* clm)
 }
 /////////////////////////////////////////////////////////////////////////////
 //テーブル名有無とエイリアスを考慮した合致選択 select = TableName.ColumnName
-int Column::Compare(wString select, map<wString, wString>& clmalias, map<wString, wString>& tblalias)
+int Column::Compare (wString select, map<wString, wString>& clmalias, map<wString, wString>& tblalias)
 {
 	//全体比較
-	if (clmalias.count(select)) {
+	if (clmalias.count (select)) {
 		select = clmalias[select];
 	}
 	//切り出し
-	int cutAt = select.find(".");
+	int cutAt = select.find (".");
 	if (cutAt == select.npos) {
 		return (select == name);
 	}
 	else {
-		wString ot = select.substr(0, cutAt);
-		wString nm = select.substr(cutAt + 1);
-		if (tblalias.count(ot)) ot = tblalias[ot];
+		wString ot = select.substr (0, cutAt);
+		wString nm = select.substr (cutAt + 1);
+		if (tblalias.count (ot)) ot = tblalias[ot];
 		return (table == ot && nm == name);
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
 //エイリアス名の取得
-int Column::GetAlias(map<wString, wString>& clmalias, map<wString, wString>& tblalias, wString& alias)
+int Column::GetAlias (map<wString, wString>& clmalias, map<wString, wString>& tblalias, wString& alias)
 {
 	//clmaliasからsecondでループ比較
-	for (auto const& x : clmalias)
-	{
+	for (auto const& x : clmalias) {
 		wString select = x.second;
-		if (Compare(select, clmalias, tblalias)) {
+		if (Compare (select, clmalias, tblalias)) {
 			alias = x.first;
 			return true;
 		}
@@ -1035,101 +1094,102 @@ int Column::GetAlias(map<wString, wString>& clmalias, map<wString, wString>& tbl
 }
 /////////////////////////////////////////////////////////////////////////////
 //カラム保存
-void Column::SaveToFile(bufrd* br)
+void Column::SaveToFile (bufrd* br)
 {
 	unsigned char  len;
 	unsigned char  uctp;
 	//取得元テーブル名保存
-	len = (unsigned char)table.length();
-	br->Write(&len, sizeof(unsigned char));
-	br->Write(table.c_str(), len);
+	len = (unsigned char)table.length ();
+	br->Write (&len, sizeof (unsigned char));
+	br->Write (table.c_str (), len);
 	//カラム名保存
-	len = (unsigned char)name.length();
-	br->Write(&len, sizeof(unsigned char));
-	br->Write(name.c_str(), len);
+	len = (unsigned char)name.length ();
+	br->Write (&len, sizeof (unsigned char));
+	br->Write (name.c_str (), len);
 	//タイプ名保存
 	uctp = (unsigned char)type;
-	br->Write(&uctp, sizeof(uctp));
+	br->Write (&uctp, sizeof (uctp));
 }
 /////////////////////////////////////////////////////////////////////////////
 //カラム復帰
-int Column::LoadFromFile(bufrd* br)
+int Column::LoadFromFile (bufrd* br)
 {
 	unsigned char  len;
 	unsigned char  uctp;
 	char           work[256];
 
 	//取得元テーブル名取得
-	if (br->Read(&len, sizeof(unsigned char))) return -1;
-	if (br->Read(work, len)) return -1;
+	if (br->Read (&len, sizeof (unsigned char))) return -1;
+	if (br->Read (work, len)) return -1;
 	work[len] = 0;
 	table = work;
 
 	//カラム名取得
-	if (br->Read(&len, sizeof(unsigned char))) return -1;
-	if (br->Read(work, len)) return -1;
+	if (br->Read (&len, sizeof (unsigned char))) return -1;
+	if (br->Read (work, len)) return -1;
 	work[len] = 0;
 	name = work;
 
 	//タイプ名取得
-	if (br->Read(&uctp, sizeof(uctp))) return -1;
+	if (br->Read (&uctp, sizeof (uctp))) return -1;
 	type = (dataType)uctp;
 	return 0;
 }
 /////////////////////////////////////////////////////////////////////////////
 //コンストラクタ
-Table::Table(void)
+Table::Table (void)
 {
 	ref = 0;
 	changed = false;
 	//クリティカルセクション初期化
 #ifdef linux
 	pthread_mutexattr_t attr;
-	pthread_mutexattr_init(&attr);
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE_NP);
-	pthread_mutex_init(&mutex, &attr);
+	pthread_mutexattr_init (&attr);
+	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE_NP);
+	pthread_mutex_init (&mutex, &attr);
 #else
-	InitializeCriticalSection(&cs);
+	InitializeCriticalSection (&cs);
 #endif
 }
 /////////////////////////////////////////////////////////////////////////////
 //CSVからテーブル作成
-Table::Table(const char* myname, const char* mycolumn) {
+Table::Table (const char* myname, const char* mycolumn)
+{
 	vector<wString> clmns;
 	//クリティカルセクション初期化
 	ref = 0;
 	changed = false;
 #ifdef linux
 	pthread_mutexattr_t attr;
-	pthread_mutexattr_init(&attr);
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE_NP);
-	pthread_mutex_init(&mutex, &attr);
+	pthread_mutexattr_init (&attr);
+	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE_NP);
+	pthread_mutex_init (&mutex, &attr);
 #else
-	InitializeCriticalSection(&cs);
+	InitializeCriticalSection (&cs);
 #endif
-	writeStart();
+	writeStart ();
 	name = myname;
 	//clmnsにCSVインサート
 	unsigned char work[4096] = {};
 	unsigned char token[256];
-	strcpy(reinterpret_cast<char*>(work), mycolumn);
+	strcpy (reinterpret_cast<char*>(work), mycolumn);
 	for (;;) {
-		auto ret = getData(work, token);
+		auto ret = getData (work, token);
 		if (ret != CMDS::TXPRM) {
-			err("INVALID COLUMN NAME");
-			writeEnd();
+			err ("INVALID COLUMN NAME");
+			writeEnd ();
 			return;
 		}
-		clmns.push_back(reinterpret_cast<char*>(token));
-		ret = getData(work, token);
+		clmns.push_back (reinterpret_cast<char*>(token));
+		ret = getData (work, token);
 		if (ret != CMDS::TXCM) break;
 	}
-	for (unsigned int i = 0; i < clmns.size(); i++) {
-		int ptr = clmns[i].find(":");
+	for (unsigned int i = 0; i < clmns.size (); i++) {
+		int ptr = clmns[i].find (":");
 		auto typs = dataType::STRING;
 		if (ptr != wString::npos) {
-			wString tp_ = clmns[i].substr(ptr + 1);
-			clmns[i] = clmns[i].substr(0, ptr);
+			wString tp_ = clmns[i].substr (ptr + 1);
+			clmns[i] = clmns[i].substr (0, ptr);
 			if (tp_ == "string") {
 				typs = dataType::STRING;
 			}
@@ -1137,133 +1197,136 @@ Table::Table(const char* myname, const char* mycolumn) {
 				typs = dataType::NUMBER;
 			}
 		}
-		Column* clm = new Column(name, clmns[i], typs);
-		column.push_back(clm);
-		node.push_back(new Node(typs));
+		Column* clm = new Column (name, clmns[i], typs);
+		column.push_back (clm);
+		node.push_back (new Node (typs));
 	}
-	writeEnd();
+	writeEnd ();
 }
 /////////////////////////////////////////////////////////////////////////////
 //String配列からテーブル作成
-Table::Table(const wString& myname, const vector<wString>& mycolumn) {
+Table::Table (const wString& myname, const vector<wString>& mycolumn)
+{
 	//クリティカルセクション初期化
 	ref = 0;
 	changed = false;
 #ifdef linux
 	pthread_mutexattr_t attr;
-	pthread_mutexattr_init(&attr);
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE_NP);
-	pthread_mutex_init(&mutex, &attr);
+	pthread_mutexattr_init (&attr);
+	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE_NP);
+	pthread_mutex_init (&mutex, &attr);
 #else
-	InitializeCriticalSection(&cs);
+	InitializeCriticalSection (&cs);
 #endif
-	writeStart();
+	writeStart ();
 	//name = myname;
-	for (unsigned int i = 0; i < mycolumn.size(); i++) {
+	for (unsigned int i = 0; i < mycolumn.size (); i++) {
 		//Column* clm = new Column(name, mycolumn[i]);
-		auto clm = new Column(myname, mycolumn[i]);
-		column.push_back(clm);
-		node.push_back(new Node(clm->type));
+		auto clm = new Column (myname, mycolumn[i]);
+		column.push_back (clm);
+		node.push_back (new Node (clm->type));
 	}
-	writeEnd();
+	writeEnd ();
 }
 /////////////////////////////////////////////////////////////////////////////
 //カラム情報からテーブル作成
-Table::Table(const wString& myname, const vector<Column*>& mycolumn) {
+Table::Table (const wString& myname, const vector<Column*>& mycolumn)
+{
 	//クリティカルセクション初期化
 	ref = 0;
 	changed = false;
 #ifdef linux
 	pthread_mutexattr_t attr;
-	pthread_mutexattr_init(&attr);
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE_NP);
-	pthread_mutex_init(&mutex, &attr);
+	pthread_mutexattr_init (&attr);
+	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE_NP);
+	pthread_mutex_init (&mutex, &attr);
 #else
-	InitializeCriticalSection(&cs);
+	InitializeCriticalSection (&cs);
 #endif
-	writeStart();
+	writeStart ();
 	name = myname;
-	for (unsigned int i = 0; i < mycolumn.size(); i++) {
-		Column* clm = new Column(mycolumn[i]);
-		column.push_back(clm);
-		node.push_back(new Node(clm->type));
+	for (unsigned int i = 0; i < mycolumn.size (); i++) {
+		Column* clm = new Column (mycolumn[i]);
+		column.push_back (clm);
+		node.push_back (new Node (clm->type));
 	}
-	writeEnd();
+	writeEnd ();
 }
 /////////////////////////////////////////////////////////////////////////////
 //デストラクタ
-Table::~Table() {
-	for (size_t i = 0; i < column.size(); i++) {
+Table::~Table ()
+{
+	for (size_t i = 0; i < column.size (); i++) {
 		delete column[i];
 	}
-	for (unsigned int i = 0; i < node.size(); i++) {
+	for (unsigned int i = 0; i < node.size (); i++) {
 		delete node[i];
 	}
 #ifdef linux
 #else
 	//クリティカルセクション破棄
-	DeleteCriticalSection(&cs);
+	DeleteCriticalSection (&cs);
 #endif
 }
 /////////////////////////////////////////////////////////////////////////////
-void Table::readStart(void)
+void Table::readStart (void)
 {
 	//書き込みセッションはここで待つ
 #ifdef linux
-	pthread_mutex_lock(&mutex);
+	pthread_mutex_lock (&mutex);
 #else
-	EnterCriticalSection(&cs);
+	EnterCriticalSection (&cs);
 #endif
 	ref++;
 #ifdef linux
-	pthread_mutex_unlock(&mutex);
+	pthread_mutex_unlock (&mutex);
 #else
-	LeaveCriticalSection(&cs);
+	LeaveCriticalSection (&cs);
 #endif
 }
 /////////////////////////////////////////////////////////////////////////////
-void Table::readEnd(void)
+void Table::readEnd (void)
 {
 	ref--;
 }
 /////////////////////////////////////////////////////////////////////////////
-void Table::writeStart(void)
+void Table::writeStart (void)
 {
 	//読み込み終了待ち。
 	//読み込みが半端無く続くようであれば抜けづらいだろうが、まあいいか
-	while (ref) { Sleep(10); }
+	while (ref) { Sleep (10); }
 #ifdef linux
-	pthread_mutex_lock(&mutex);
+	pthread_mutex_lock (&mutex);
 #else
-	EnterCriticalSection(&cs);
+	EnterCriticalSection (&cs);
 #endif
 }
 /////////////////////////////////////////////////////////////////////////////
-void Table::writeEnd(void)
+void Table::writeEnd (void)
 {
 #ifdef linux
-	pthread_mutex_unlock(&mutex);
+	pthread_mutex_unlock (&mutex);
 #else
-	LeaveCriticalSection(&cs);
+	LeaveCriticalSection (&cs);
 #endif
 }
 /////////////////////////////////////////////////////////////////////////////
 //テーブルコピー
-void  Table::copy(Table* tbl)
+void  Table::copy (Table* tbl)
 {
-	tbl->writeStart();
-	writeStart();
+	tbl->writeStart ();
+	writeStart ();
 	name = tbl->name;             //テーブル名
-	column.clear();
-	for (unsigned int i = 0; i < tbl->column.size(); i++) {
-		column.push_back(new Column(tbl->column[i]));
+	column.clear ();
+	for (unsigned int i = 0; i < tbl->column.size (); i++) {
+		column.push_back (new Column (tbl->column[i]));
 	}
-	node.clear();
-	for (unsigned int i = 0; i < tbl->node.size(); i++) {
-		node.push_back(new Node(tbl->node[i]));
+	node.clear ();
+	for (unsigned int i = 0; i < tbl->node.size (); i++) {
+		node.push_back (new Node (tbl->node[i]));
 	}
-	writeEnd();
-	tbl->writeEnd();
+	writeEnd ();
+	tbl->writeEnd ();
 	//vector<int>     index;        //orderby等のフィルタ
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -1273,89 +1336,92 @@ void  Table::copy(Table* tbl)
 /// </summary>
 /// <param name="data"></param>
 /// <returns></returns>
-int Table::Insert(const char* data) {
+int Table::Insert (const char* data)
+{
 	vector<wString> tmp;
 	unsigned char work[4096] = {};
 	unsigned char token[1024];
-	writeStart();
+	writeStart ();
 	//実行開始
-	strcpy(reinterpret_cast<char*>(work), const_cast<char*>(data));
+	strcpy (reinterpret_cast<char*>(work), const_cast<char*>(data));
 	for (;;) {
-		auto ret = getData(work, token);
+		auto ret = getData (work, token);
 		if (ret == CMDS::TXPRM) {
-			tmp.push_back(reinterpret_cast<char*>(token));
+			tmp.push_back (reinterpret_cast<char*>(token));
 		}
 		else if (ret == CMDS::TXCM) {
-			tmp.push_back("");
+			tmp.push_back ("");
 			continue;
 		}
 		else if (ret == CMDS::TXNONE) {
-			tmp.push_back("");
+			tmp.push_back ("");
 			break;
 		}
 		else {
-			err("INVALID DATA");
+			err ("INVALID DATA");
 			break;
 		}
-		ret = getData(work, token);
+		ret = getData (work, token);
 		if (ret != CMDS::TXCM) break;
 	}
-	if (tmp.size() != column.size()) {
-		err("Invalid number of column");
-		writeEnd();
+	if (tmp.size () != column.size ()) {
+		err ("Invalid number of column");
+		writeEnd ();
 		return -1;
 	}
-	Insert(tmp);
-	writeEnd();
+	Insert (tmp);
+	writeEnd ();
 	return 0;
 }
 //テーブルインサート
-int Table::Insert(const vector<wString>& clm, const vector<wString>& data) {
-	if (column.size() != clm.size() || clm.size() != data.size()) {
-		err("Illigal number of data");
+int Table::Insert (const vector<wString>& clm, const vector<wString>& data)
+{
+	if (column.size () != clm.size () || clm.size () != data.size ()) {
+		err ("Illigal number of data");
 		return -1;
 	}
-	writeStart();
+	writeStart ();
 	//TODO:カラムと合致したデータを投入すること
-	for (unsigned int i = 0; i < data.size(); i++) {
-		node[i]->put(data[i].c_str());
+	for (unsigned int i = 0; i < data.size (); i++) {
+		node[i]->put (data[i].c_str ());
 	}
-	writeEnd();
+	writeEnd ();
 	return 0;
 }
 /////////////////////////////////////////////////////////////////////////////
 //テーブルインサート
-int Table::Insert(const vector<wString>& data) {
-	if (column.size() != data.size()) {
-		err("Illigal number of data");
+int Table::Insert (const vector<wString>& data)
+{
+	if (column.size () != data.size ()) {
+		err ("Illigal number of data");
 		return -1;
 	}
-	writeStart();
-	for (unsigned int i = 0; i < data.size(); i++) {
-		node[i]->put(data[i]);
+	writeStart ();
+	for (unsigned int i = 0; i < data.size (); i++) {
+		node[i]->put (data[i]);
 	}
-	writeEnd();
+	writeEnd ();
 	return 0;
 }
 /////////////////////////////////////////////////////////////////////////////
 //条件配列生成
-int Table::condition_mat(condition& cond, vector<char>& mat)
+int Table::condition_mat (condition& cond, vector<char>& mat)
 {
 	dataType dtyp1 = dataType::STRING;
 	dataType dtyp2 = dataType::STRING;
 	//新テーブルひな形
-	if (cond.cond.size() % 4 != 0) {
-		err("SELECT:Illigal condition setting");
+	if (cond.cond.size () % 4 != 0) {
+		err ("SELECT:Illigal condition setting");
 		return -1;
 	}
 	//行の分1を設定
-	mat.clear();
-	mat.resize(node[0]->size());
-	for (unsigned int i = 0; i < node[0]->size(); i++) {
+	mat.clear ();
+	mat.resize (node[0]->size ());
+	for (unsigned int i = 0; i < node[0]->size (); i++) {
 		mat[i] = 1;
 	}
 	//各条件についてAND,a,>,4等
-	for (unsigned int ptr = 0; ptr < cond.cond.size(); ) {
+	for (unsigned int ptr = 0; ptr < cond.cond.size (); ) {
 		CMDS lop;
 		auto col1 = -1;
 		auto col2 = -1;
@@ -1363,7 +1429,7 @@ int Table::condition_mat(condition& cond, vector<char>& mat)
 			lop = cond.type[ptr];
 		}
 		else {
-			err("SELECT:Logical Operation Error");
+			err ("SELECT:Logical Operation Error");
 			return -1;
 		}
 		//条件のコピー
@@ -1373,14 +1439,14 @@ int Table::condition_mat(condition& cond, vector<char>& mat)
 		auto arg2 = cond.cond[ptr + 3];
 		auto typ2 = cond.type[ptr + 3];
 		//カラムチェック
-		for (unsigned int i = 0; i < column.size(); i++) {
-			if (column[i]->Compare(arg1, cond.clmalias, cond.tblalias)) {
-				if (col1 >= 0) { err("Column name arg1 is ambigous"); return -1; }
+		for (unsigned int i = 0; i < column.size (); i++) {
+			if (column[i]->Compare (arg1, cond.clmalias, cond.tblalias)) {
+				if (col1 >= 0) { err ("Column name arg1 is ambigous"); return -1; }
 				col1 = i;
 				dtyp1 = column[i]->type;
 			}
-			if (column[i]->Compare(arg2, cond.clmalias, cond.tblalias)) {
-				if (col2 >= 0) { err("Column name arg2 is ambigous"); return -1; }
+			if (column[i]->Compare (arg2, cond.clmalias, cond.tblalias)) {
+				if (col2 >= 0) { err ("Column name arg2 is ambigous"); return -1; }
 				col2 = i;
 				dtyp2 = column[i]->type;
 			}
@@ -1393,159 +1459,158 @@ int Table::condition_mat(condition& cond, vector<char>& mat)
 		//コンディション計算
 		auto rarg1 = arg1;
 		auto rarg2 = arg2;
-		for (unsigned int i = 0; i < node[0]->size(); i++) {
-			if (col1 >= 0) rarg1 = node[col1]->getNodeNative(i);
-			if (col2 >= 0) rarg2 = node[col2]->getNodeNative(i);
+		for (unsigned int i = 0; i < node[0]->size (); i++) {
+			if (col1 >= 0) rarg1 = node[col1]->getNodeNative (i);
+			if (col2 >= 0) rarg2 = node[col2]->getNodeNative (i);
 			//条件が合致するなら
 			if (lop == CMDS::TXOR) {//OR
 				if (mat[i] == 0) {
-					if (compare(rarg1, op, rarg2, dtyp1, dtyp2)) {
+					if (compare (rarg1, op, rarg2, dtyp1, dtyp2)) {
 						mat[i] = 1;
 					}
 				}
 			}
 			else {        //AND
 				if (mat[i] == 1) {
-					if (!compare(rarg1, op, rarg2, dtyp1, dtyp2)) {
+					if (!compare (rarg1, op, rarg2, dtyp1, dtyp2)) {
 						mat[i] = 0;
 					}
 				}
 			}
 		}
 		//４つ分消す
-		cond.cond.erase(cond.cond.begin() + ptr, cond.cond.begin() + ptr + 4);
-		cond.type.erase(cond.type.begin() + ptr, cond.type.begin() + ptr + 4);
+		cond.cond.erase (cond.cond.begin () + ptr, cond.cond.begin () + ptr + 4);
+		cond.type.erase (cond.type.begin () + ptr, cond.type.begin () + ptr + 4);
 	}
 	return 0;
 }
 /////////////////////////////////////////////////////////////////////////////
 //テーブル更新
-int Table::Update(const vector<wString>& colnams, const vector<wString>& values, condition& cond)
+int Table::Update (const vector<wString>& colnams, const vector<wString>& values, condition& cond)
 {
 	//更新するカラムの番号
 	vector<int> matcol;
-	for (unsigned int i = 0; i < column.size(); i++) {
-		for (unsigned int j = 0; j < colnams.size(); j++) {
-			if (column[i]->Compare(colnams[j], cond.clmalias, cond.tblalias)) {
-				matcol.push_back(i);
+	for (unsigned int i = 0; i < column.size (); i++) {
+		for (unsigned int j = 0; j < colnams.size (); j++) {
+			if (column[i]->Compare (colnams[j], cond.clmalias, cond.tblalias)) {
+				matcol.push_back (i);
 				break;
 			}
 		}
 	}
 	//合致しない更新カラムがあった場合
-	if (matcol.size() != colnams.size()) { err("undefined column name found"); return -1; }
-	writeStart();
+	if (matcol.size () != colnams.size ()) { err ("undefined column name found"); return -1; }
+	writeStart ();
 	//条件配列生成
 	vector<char> mat;
-	if (condition_mat(cond, mat)) return -1;
+	if (condition_mat (cond, mat)) return -1;
 
 	//行更新
-	for (unsigned int i = 0; i < node[0]->size(); i++) {
+	for (unsigned int i = 0; i < node[0]->size (); i++) {
 		if (mat[i] == 1) {
-			for (unsigned int j = 0; j < matcol.size(); j++) {
+			for (unsigned int j = 0; j < matcol.size (); j++) {
 				//番号を指定して更新
-				node[matcol[j]]->put(values[j].c_str(), i);
+				node[matcol[j]]->put (values[j].c_str (), i);
 			}
 		}
 	}
-	writeEnd();
+	writeEnd ();
 	return 0;
 }
 /////////////////////////////////////////////////////////////////////////////
 //テーブル削除
-int Table::Delete(condition& cond)
+int Table::Delete (condition& cond)
 {
 	//条件配列生成
 	vector<char> mat;
-	if (condition_mat(cond, mat)) return -1;
-	writeStart();
+	if (condition_mat (cond, mat)) return -1;
+	writeStart ();
 	//後ろから実行
-	for (int i = node[0]->size() - 1; i >= 0; i--) {
+	for (int i = node[0]->size () - 1; i >= 0; i--) {
 		//条件が合致するなら
 		if (mat[i]) {
-			for (unsigned int j = 0; j < node.size(); j++) {
-				node[j]->Delete(i);//1行削除
+			for (unsigned int j = 0; j < node.size (); j++) {
+				node[j]->Delete (i);//1行削除
 				node[j]->changed = true;
 			}
 		}
 	}
-	writeEnd();
+	writeEnd ();
 	return 0;
 }
 /////////////////////////////////////////////////////////////////////////////
 //復帰
-int Table::LoadFromFile(bufrd* br)
+int Table::LoadFromFile (bufrd* br)
 {
 	unsigned int len;
 	char work[1024];
-	writeStart();
+	writeStart ();
 	//name復帰
 	for (;;) {
-		if (br->Read(&len, sizeof(unsigned int))) break;
-		if (br->Read(work, len)) break;
+		if (br->Read (&len, sizeof (unsigned int))) break;
+		if (br->Read (work, len)) break;
 		work[len] = 0;
 		name = work;
 
 		//Column復帰
-		column.clear();
-		if (br->Read(&len, sizeof(unsigned int)))  break;
+		column.clear ();
+		if (br->Read (&len, sizeof (unsigned int)))  break;
 		for (unsigned int i = 0; i < len; i++) {
-			Column* clm = new Column();
-			if (clm->LoadFromFile(br) < 0)  break;
-			column.push_back(clm);
+			Column* clm = new Column ();
+			if (clm->LoadFromFile (br) < 0)  break;
+			column.push_back (clm);
 		}
 
 		//Node復帰
-		node.clear();
-		if (br->Read(&len, sizeof(unsigned int))) break;
+		node.clear ();
+		if (br->Read (&len, sizeof (unsigned int))) break;
 		for (unsigned int i = 0; i < len; i++) {
-			Node* nd = new Node(column[i]->type);
-			if (nd->LoadFromFile(br) < 0)  break;
-			node.push_back(nd);
+			Node* nd = new Node (column[i]->type);
+			if (nd->LoadFromFile (br) < 0)  break;
+			node.push_back (nd);
 		}
 		//printf( "%s loaded\n", name.c_str() );
-		writeEnd();
+		writeEnd ();
 		return 0;
 	}
-	writeEnd();
+	writeEnd ();
 	return -1;
 }
 /////////////////////////////////////////////////////////////////////////////
 //保存
-void Table::SaveToFile(bufrd* br)
+void Table::SaveToFile (bufrd* br)
 {
 	//name保存
-	readStart();
-	auto len = name.length();
-	br->Write(&len, sizeof(unsigned int));
-	br->Write(name.c_str(), len);
+	readStart ();
+	auto len = name.length ();
+	br->Write (&len, sizeof (unsigned int));
+	br->Write (name.c_str (), len);
 
 	//Column保存
-	len = (int)column.size();
-	br->Write(&len, sizeof(unsigned int));
+	len = (int)column.size ();
+	br->Write (&len, sizeof (unsigned int));
 	for (auto i = 0U; i < len; i++) {
-		column[i]->SaveToFile(br);
+		column[i]->SaveToFile (br);
 	}
 
 	//Node保存
-	len = (int)node.size();
-	br->Write(&len, sizeof(unsigned int));
+	len = (int)node.size ();
+	br->Write (&len, sizeof (unsigned int));
 	for (auto i = 0U; i < len; i++) {
-		node[i]->SaveToFile(br);
+		node[i]->SaveToFile (br);
 	}
 	//printf( "%s saved\n", name.c_str() );
-	readEnd();
+	readEnd ();
 }
 ////////////////////////////////////////////////////////////////////////////
 //テーブル変更の有無を調べる
-bool Table::isChanged(void)
+bool Table::isChanged (void)
 {
 	//行更新
-	if (this->changed)
-	{
+	if (this->changed) {
 		return true;
 	}
-	for (unsigned int i = 0; i < node.size(); i++) {
+	for (unsigned int i = 0; i < node.size (); i++) {
 		if (node[i]->changed) {
 			return true;
 		}
@@ -1555,47 +1620,46 @@ bool Table::isChanged(void)
 ////////////////////////////////////////////////////////////////////////////
 //データベースクラス
 ////////////////////////////////////////////////////////////////////////////
-Database::Database(const wString& myname) {
+Database::Database (const wString& myname)
+{
 	//name = myname;
 	wString path = current_dir + DELIMITER + "database" + DELIMITER;
 	//load_from_file(path + name + ".db");
-	LoadFromFile(path + myname + ".db");
+	LoadFromFile (path + myname + ".db");
 	// 自分の名前を設定する
 	this->name = myname;
 	ref = 0;
 	changed = false;
 }
 ////////////////////////////////////////////////////////////////////////////
-Database::~Database(void)
+Database::~Database (void)
 {
-	this->Save();
+	this->Save ();
 }
 
 /// <summary>
 /// データベース、テーブルの永続化
 /// </summary>
 /// <param name=""></param>
-void Database::Save(void)
+void Database::Save (void)
 {
 	wString path = current_dir + DELIMITER + "database" + DELIMITER;
 	//フォルダ作成
-	if (!wString::directory_exists(path)) {
-		wString::create_dir(path);
+	if (!wString::directory_exists (path)) {
+		wString::create_dir (path);
 	}
 
 	//変更があればテーブル保存
-	for (auto const& x : tblList)
-	{
+	for (auto const& x : tblList) {
 		// テーブルを消された場合、全ファイル更新
-		if (x.second->isChanged() || this->changed)
-		{
+		if (x.second->isChanged () || this->changed) {
 			//bakファイル削除
-			if (wString::file_exists((path + name + ".db.bak")) == 0) {
-				wString::delete_file(path + name + ".db.bak");
+			if (wString::file_exists ((path + name + ".db.bak")) == 0) {
+				wString::delete_file (path + name + ".db.bak");
 			}
-			wString::rename_file(path + name + ".db", path + name + ".db.bak");
+			wString::rename_file (path + name + ".db", path + name + ".db.bak");
 			//保存(テーブルも保存される）
-			if (SaveToFile(path + name + ".db") == 0) {
+			if (SaveToFile (path + name + ".db") == 0) {
 			}
 			break;
 		}
@@ -1619,8 +1683,7 @@ void Database::Save(void)
 	//}
 	//テーブル保存
 	//map<wString,Table*>::iterator it;
-	for (auto const& x : tblList)
-	{
+	for (auto const& x : tblList) {
 		delete x.second;
 	}
 	//for (it = tblList.begin(); it != tblList.end(); it++) {
@@ -1629,7 +1692,7 @@ void Database::Save(void)
 }
 ////////////////////////////////////////////////////////////////////////////
 //-1:エラー
-int Database::SQL(const wString& sqltext, wString& retStr)
+int Database::SQL (const wString& sqltext, wString& retStr)
 {
 	condition        cond;
 	unsigned char    token[256];
@@ -1645,8 +1708,8 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 	vector<int>      limit;
 	Table* tbl;
 	view* vw;
-	strcpy(reinterpret_cast<char*>(sql), reinterpret_cast<char*>(sqltext.c_str()));
-	CMDS ret = getToken(sql, token);
+	strcpy (reinterpret_cast<char*>(sql), reinterpret_cast<char*>(sqltext.c_str ()));
+	CMDS ret = getToken (sql, token);
 	if (ret == CMDS::TXNONE || ret == CMDS::TXOTHER) {
 		return -1;
 	}
@@ -1655,103 +1718,103 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 	case  CMDS::TXSELECT://SELECT
 		//カラム名取得
 		for (;;) {
-			if (chkToken(sql, token2, ret, CMDS::TXARG)) { err("SELECT NO ARG ERROR");   return -1; }//ARG
+			if (chkToken (sql, token2, ret, CMDS::TXARG)) { err ("SELECT NO ARG ERROR");   return -1; }//ARG
 			//countの対応
-			if (stricmp(reinterpret_cast<char*>(token2), "count") == 0) {
-				if (chkToken(sql, token2, ret, CMDS::TXPS)) { err("SELECT NO ARG ERROR");   return -1; }//ARG
-				if (chkToken(sql, token2, ret, CMDS::TXARG)) { err("SELECT NO ARG ERROR");   return -1; }//ARG
-				if (chkToken(sql, token2, ret, CMDS::TXPE)) { err("SELECT NO ARG ERROR");   return -1; }//ARG
-				strcpy(reinterpret_cast<char*>(token2), "count(*)");
+			if (stricmp (reinterpret_cast<char*>(token2), "count") == 0) {
+				if (chkToken (sql, token2, ret, CMDS::TXPS)) { err ("SELECT NO ARG ERROR");   return -1; }//ARG
+				if (chkToken (sql, token2, ret, CMDS::TXARG)) { err ("SELECT NO ARG ERROR");   return -1; }//ARG
+				if (chkToken (sql, token2, ret, CMDS::TXPE)) { err ("SELECT NO ARG ERROR");   return -1; }//ARG
+				strcpy (reinterpret_cast<char*>(token2), "count(*)");
 			}
-			colnams.push_back(reinterpret_cast<char*>(token2));
+			colnams.push_back (reinterpret_cast<char*>(token2));
 
-			ret = getToken(sql, token);
+			ret = getToken (sql, token);
 			if (ret == CMDS::TXAS) {
-				if (chkToken(sql, token, ret, CMDS::TXARG)) { err("SELECT NO ARG ERROR");   return -1; }//ARG
+				if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("SELECT NO ARG ERROR");   return -1; }//ARG
 				//エイリアス登録
 				cond.clmalias[reinterpret_cast<char*>(token)] = reinterpret_cast<char*>(token2);
-				ret = getToken(sql, token);
+				ret = getToken (sql, token);
 			}
 			if (ret == CMDS::TXFROM)               break;
-			else if (ret != CMDS::TXCM) { err("SELECT SYNTAX ERROR");   return -1; }//","
+			else if (ret != CMDS::TXCM) { err ("SELECT SYNTAX ERROR");   return -1; }//","
 		}
 		//テーブル名取得
 		for (;;) {
-			if (chkToken(sql, token2, ret, CMDS::TXARG)) { err("SELECT NO TABLE ERROR"); return -1; }//table
-			tables.push_back(reinterpret_cast<char*>(token2));
-			ret = getToken(sql, token);
+			if (chkToken (sql, token2, ret, CMDS::TXARG)) { err ("SELECT NO TABLE ERROR"); return -1; }//table
+			tables.push_back (reinterpret_cast<char*>(token2));
+			ret = getToken (sql, token);
 			if (ret == CMDS::TXAS) {
-				if (chkToken(sql, token, ret, CMDS::TXARG)) { err("SELECT NO ARG ERROR");   return -1; }//ARG
+				if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("SELECT NO ARG ERROR");   return -1; }//ARG
 				//テーブルエイリアス登録
 				cond.tblalias[reinterpret_cast<char*>(token)] = reinterpret_cast<char*>(token2);
-				ret = getToken(sql, token);
+				ret = getToken (sql, token);
 			}
 			if (ret != CMDS::TXCM)                 break;
 		}
 		//WHERE取得
 		if (ret == CMDS::TXWHERE) {
-			cond.put(const_cast<char*>("AND"), CMDS::TXAND);           //初回は1にANDする
+			cond.put (const_cast<char*>("AND"), CMDS::TXAND);           //初回は1にANDする
 			for (;;) {
-				if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("SELECT NO ARG IN WHERE"); return -1; }//arg1
-				cond.put(reinterpret_cast<char*>(token), ret);
+				if (chkToken (sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err ("SELECT NO ARG IN WHERE"); return -1; }//arg1
+				cond.put (reinterpret_cast<char*>(token), ret);
 
-				if (chkToken(sql, token, ret, CMDS::TXOP)) { err("SELECT NO OPE IN WHERE"); return -1; }//op1
-				cond.put(reinterpret_cast<char*>(token), ret);
+				if (chkToken (sql, token, ret, CMDS::TXOP)) { err ("SELECT NO OPE IN WHERE"); return -1; }//op1
+				cond.put (reinterpret_cast<char*>(token), ret);
 
-				if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("SELECT NO ARG IN WHERE"); return -1; }//arg2
-				cond.put(reinterpret_cast<char*>(token), ret);
+				if (chkToken (sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err ("SELECT NO ARG IN WHERE"); return -1; }//arg2
+				cond.put (reinterpret_cast<char*>(token), ret);
 
-				if (chkToken(sql, token, ret, CMDS::TXAND, CMDS::TXOR)) break;
-				cond.put(reinterpret_cast<char*>(token), ret);
+				if (chkToken (sql, token, ret, CMDS::TXAND, CMDS::TXOR)) break;
+				cond.put (reinterpret_cast<char*>(token), ret);
 			}
 		}
 		//ORDER BY 取得
 		if (ret == CMDS::TXORDER) {
-			if (chkToken(sql, token, ret, CMDS::TXBY)) { err("SYNTAX ERROR IN ORDER BY"); return -1; }//arg1
-			if (chkToken(sql, token, ret, CMDS::TXARG)) { err("ORDER BY NO ARG IN WHERE"); return -1; }//arg1
-			order.push_back(reinterpret_cast<char*>(token));
-			if (!chkToken(sql, token, ret, CMDS::TXASC, CMDS::TXDESC)) {
+			if (chkToken (sql, token, ret, CMDS::TXBY)) { err ("SYNTAX ERROR IN ORDER BY"); return -1; }//arg1
+			if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("ORDER BY NO ARG IN WHERE"); return -1; }//arg1
+			order.push_back (reinterpret_cast<char*>(token));
+			if (!chkToken (sql, token, ret, CMDS::TXASC, CMDS::TXDESC)) {
 				orderTyp = (ret == CMDS::TXASC) ? orderType::ASC : orderType::DESC;
-				ret = getToken(sql, token);
+				ret = getToken (sql, token);
 			}
 		}
 		//LIMIT 取得
 		if (ret == CMDS::TXLIMIT) {
-			if (chkToken(sql, token, ret, CMDS::TXPRM)) { err("LIMIT NO ARG IN LIMIT"); return -1; }//arg
-			limit.push_back(atoi(reinterpret_cast<char*>(token)));
+			if (chkToken (sql, token, ret, CMDS::TXPRM)) { err ("LIMIT NO ARG IN LIMIT"); return -1; }//arg
+			limit.push_back (atoi (reinterpret_cast<char*>(token)));
 
-			ret = getToken(sql, token);
+			ret = getToken (sql, token);
 			if (ret == CMDS::TXCM) {
-				if (chkToken(sql, token, ret, CMDS::TXPRM)) { err("LIMIT NO ARG IN LIMIT"); return -1; }//arg
-				limit.push_back(atoi(reinterpret_cast<char*>(token)));
-				ret = getToken(sql, token);
+				if (chkToken (sql, token, ret, CMDS::TXPRM)) { err ("LIMIT NO ARG IN LIMIT"); return -1; }//arg
+				limit.push_back (atoi (reinterpret_cast<char*>(token)));
+				ret = getToken (sql, token);
 			}
 		}
 		//末尾の処理
 		if (ret != CMDS::TXED && ret != CMDS::TXNONE) {
-			err("SYNTAX ERROR IN SELECT");
+			err ("SYNTAX ERROR IN SELECT");
 			return -1;
 		}
 		//テーブル存在チェック
-		for (unsigned int i = 0; i < tables.size(); i++) {
-			if (tblList.count(tables[i]) == 0) {
-				err("Table not found");
+		for (unsigned int i = 0; i < tables.size (); i++) {
+			if (tblList.count (tables[i]) == 0) {
+				err ("Table not found");
 				return -1;
 			}
 		}
 		//テーブル取得
-		vw = new view(cond);
-		for (unsigned int i = 0; i < tables.size(); i++) {
+		vw = new view (cond);
+		for (unsigned int i = 0; i < tables.size (); i++) {
 			if (i == 0) {
-				vw->Copy(tblList[tables[i]]);
+				vw->Copy (tblList[tables[i]]);
 			}
 			else {
-				vw->Add(tblList[tables[i]]);
+				vw->Add (tblList[tables[i]]);
 			}
 		}
 		//WHERE実行
-		if (vw->cond.cond.size()) {
-			err("Is there more condition?");
+		if (vw->cond.cond.size ()) {
+			err ("Is there more condition?");
 			delete vw;
 			return -1;
 			//vw->Where(cond);
@@ -1759,69 +1822,68 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 		//関数系は別途やる。adhocで支持いれておく
 		if (colnams[0] == "count(*)") {
 			vw->flag = 1;
-			retStr = vw->toJSON();
+			retStr = vw->toJSON ();
 			delete vw;
 		}
 		else {
 			//orderby 実行
-			if (order.size()) {
-				vw->OrderBy(order[0], orderTyp);
+			if (order.size ()) {
+				vw->OrderBy (order[0], orderTyp);
 			}
 			//select実行
-			if (colnams.size() && colnams[0] != "*") {
-				vw->Select(colnams);
+			if (colnams.size () && colnams[0] != "*") {
+				vw->Select (colnams);
 			}
 			//limit実行
-			if (limit.size()) {
-				vw->Limit(limit);
+			if (limit.size ()) {
+				vw->Limit (limit);
 			}
-			retStr = vw->toJSON();
+			retStr = vw->toJSON ();
 			delete vw;
 		}
 		return 1;
 		//CREATE TABLE tableName (field number/string, field number/string);
 	case  CMDS::TXCREATE://CREATE
-		ret = getToken(sql, token);
+		ret = getToken (sql, token);
 		// CREATE TABLE
 		if (ret == CMDS::TXTBL) {
-			if (chkToken(sql, token, ret, CMDS::TXARG)) { err("CREATE TABLE NO TABLE ERROR"); return -1; }//tablename
-			tables.push_back(reinterpret_cast<char*>(token));
+			if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("CREATE TABLE NO TABLE ERROR"); return -1; }//tablename
+			tables.push_back (reinterpret_cast<char*>(token));
 
-			ret = getToken(sql, token);
+			ret = getToken (sql, token);
 			// CREATE TABLE(
 			if (ret == CMDS::TXPS) {
 				for (;;) {
-					if (chkToken(sql, token, ret, CMDS::TXARG)) { err("CREATE TABLE INVALID ARGS");   return -1; }//field name
-					if (chkToken(sql, token2, ret, CMDS::TXARG) || (stricmp(reinterpret_cast<char*>(token2), "number") != 0 && stricmp(reinterpret_cast<char*>(token2), "string") != 0))
-					{
-						err("CREATE TABLE INVALID ARGS");   return -1;
+					if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("CREATE TABLE INVALID ARGS");   return -1; }//field name
+					if (chkToken (sql, token2, ret, CMDS::TXARG) || (stricmp (reinterpret_cast<char*>(token2), "number") != 0 && stricmp (reinterpret_cast<char*>(token2), "string") != 0)) {
+						err ("CREATE TABLE INVALID ARGS");   return -1;
 					}//number/string
-					dataType typ = (stricmp(reinterpret_cast<char*>(token2), "number") == 0) ? dataType::NUMBER : dataType::STRING;
-					Column* clm = new Column(tables[0], reinterpret_cast<char*>(token), typ);
-					columns.push_back(clm);
-					ret = getToken(sql, token);
+					dataType typ = (stricmp (reinterpret_cast<char*>(token2), "number") == 0) ? dataType::NUMBER : dataType::STRING;
+					Column* clm = new Column (tables[0], reinterpret_cast<char*>(token), typ);
+					columns.push_back (clm);
+					ret = getToken (sql, token);
 					if (ret == CMDS::TXPE)          break;
-					else if (ret != CMDS::TXCM) { err("CREATE TABLE SYNTAX ERROR");   return -1; }//number/string
+					else if (ret != CMDS::TXCM) { err ("CREATE TABLE SYNTAX ERROR");   return -1; }//number/string
 				}
 				//テーブル作成
 				//チェック。既に同名のテーブルがないか？
-				if (tblList.count(tables[0])) {
-					for (unsigned int i = 0; i < columns.size(); i++) {
+				if (tblList.count (tables[0])) {
+					for (unsigned int i = 0; i < columns.size (); i++) {
 						delete columns[i];
 					}
-					err("Table already exists");
+					err ("Table already exists");
 					return -1;
 				}
-				Table* ntbl = new Table(tables[0], columns);//永続化
+				Table* ntbl = new Table (tables[0], columns);//永続化
 				ntbl->changed = true;
 				tblList[tables[0]] = ntbl;
-				for (unsigned int i = 0; i < columns.size(); i++) {
+				for (unsigned int i = 0; i < columns.size (); i++) {
 					delete columns[i];
 				}
 			}
 			// CREATE TABLE FROM
 			else if (ret == CMDS::TXFROM) {
-				if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("No file assigned");            return -1; }
+				if (chkToken (sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err ("No file assigned");            return -1; }
 
 				// 名前はSJIS。今後変化する可能性がある。
 				// FILE* rs = fopen(wString(reinterpret_cast<char*>(token)).nkfcnv("Ws").c_str(), "r");
@@ -1835,28 +1897,30 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 
 
 				//if (rs) {
-					char work[8192];
-					auto ret = wString::readLineCSV (fd, work, sizeof (work));
-					if (ret < 0) break;
+				char work[8192];
+				auto ret2 = wString::readLineCSV (fd, work, sizeof (work));
+				if (ret2 < 0) break;
+				//fgets(work, 4096, rs);
+				wString::rtrim_chr (work);
+				//while (*work && work[strlen (work) - 1] < ' ') work[strlen (work) - 1] = 0;
+				Table* ntbl = new Table (tables[0].c_str (), work);
+				//int num = 0;
+				while (1) {
+					memset (work, 0, sizeof (work));
 					//fgets(work, 4096, rs);
-					while (*work && work[strlen(work) - 1] < ' ') work[strlen(work) - 1] = 0;
-					Table* ntbl = new Table(tables[0].c_str(), work);
-					//int num = 0;
-					while (1) {
-						memset(work, 0, sizeof(work));
-						//fgets(work, 4096, rs);
-						auto ret = wString::readLineCSV (fd, work, sizeof (work));
-						if (ret < 0) break;
-						while (*work && work[strlen(work) - 1] < ' ') work[strlen(work) - 1] = 0;
-						if (strlen(work) == 0) break;
-						ntbl->Insert(reinterpret_cast<char*>(work));
-						//if ((num++ % 1000) == 0) {
-						//	printf("%d\n", num);
-						//}
-					}
-					close (fd);
-					// fclose(rs);
-					tblList[tables[0]] = ntbl;
+					auto ret3 = wString::readLineCSV (fd, work, sizeof (work));
+					if (ret3 < 0) break;
+					wString::rtrim_chr (work);
+					//while (*work && work[strlen (work) - 1] < ' ') work[strlen (work) - 1] = 0;
+					if (strlen (work) == 0) break;
+					ntbl->Insert (reinterpret_cast<char*>(work));
+					//if ((num++ % 1000) == 0) {
+					//	printf("%d\n", num);
+					//}
+				}
+				close (fd);
+				// fclose(rs);
+				tblList[tables[0]] = ntbl;
 				//}
 				//else
 				//{
@@ -1867,26 +1931,26 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 			break;
 		}
 		else if (ret == CMDS::TXDATABASE) {
-			if (chkToken(sql, token, ret, CMDS::TXARG)) { err("CREATE DATABASE NO TABLE ERROR"); return -1; }//tablename
-			if (catalog->dblist.count(reinterpret_cast<char*>(token))) { err("DATABASE ALREADY EXISTS");        return -1; }//dbname
+			if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("CREATE DATABASE NO TABLE ERROR"); return -1; }//tablename
+			if (catalog->dblist.count (reinterpret_cast<char*>(token))) { err ("DATABASE ALREADY EXISTS");        return -1; }//dbname
 			//token名でデータベース作成
-			catalog->DBCreate(wString(reinterpret_cast<char*>(token)));
+			catalog->DBCreate (wString (reinterpret_cast<char*>(token)));
 			break;
 		}
 		else {
-			err("What to do?");
+			err ("What to do?");
 			return 0;
 		}
 		//break;
 	case  CMDS::TXINSERT://INSERT INTO TABLENAME(fieldname1,fieldname2,..) VALUES(value1,value2,...);
-		if (chkToken(sql, token, ret, CMDS::TXINTO)) { err("INSERT SYNTAX ERROR"); return -1; }//INTO
-		if (chkToken(sql, token, ret, CMDS::TXARG)) { err("INSERT NO TABLE NAME"); return -1; }//TABLENAME
-		tables.push_back(reinterpret_cast<char*>(token));
-		if (chkToken(sql, token, ret, CMDS::TXPS)) { err("INSERT SYNTAX ERROR"); return -1; }//(
+		if (chkToken (sql, token, ret, CMDS::TXINTO)) { err ("INSERT SYNTAX ERROR"); return -1; }//INTO
+		if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("INSERT NO TABLE NAME"); return -1; }//TABLENAME
+		tables.push_back (reinterpret_cast<char*>(token));
+		if (chkToken (sql, token, ret, CMDS::TXPS)) { err ("INSERT SYNTAX ERROR"); return -1; }//(
 		for (;;) {
-			ret = getToken(sql, token);
+			ret = getToken (sql, token);
 			if (ret == CMDS::TXARG) {
-				colnams.push_back(reinterpret_cast<char*>(token));
+				colnams.push_back (reinterpret_cast<char*>(token));
 			}
 			else if (ret == CMDS::TXCM) {
 				continue;
@@ -1895,16 +1959,16 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 				break;
 			}
 			else {
-				err("INSERT INVALID FIELD NAME");
+				err ("INSERT INVALID FIELD NAME");
 				return -1;//Field Name
 			}
 		}
-		if (chkToken(sql, token, ret, CMDS::TXVALUES)) { err("INSERT SYNTAX ERROR"); return -1; }//VALUES
-		if (chkToken(sql, token, ret, CMDS::TXPS)) { err("INSERT SYNTAX ERROR"); return -1; }//(
+		if (chkToken (sql, token, ret, CMDS::TXVALUES)) { err ("INSERT SYNTAX ERROR"); return -1; }//VALUES
+		if (chkToken (sql, token, ret, CMDS::TXPS)) { err ("INSERT SYNTAX ERROR"); return -1; }//(
 		for (;;) {
-			ret = getToken(sql, token);
+			ret = getToken (sql, token);
 			if (ret == CMDS::TXARG || ret == CMDS::TXPRM) {
-				values.push_back(reinterpret_cast<char*>(token));
+				values.push_back (reinterpret_cast<char*>(token));
 			}
 			else if (ret == CMDS::TXCM) {
 				continue;
@@ -1913,124 +1977,123 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 				break;
 			}
 			else {
-				err("INSERT INVALID FIELD NAME");
+				err ("INSERT INVALID FIELD NAME");
 				return -1;//Field Name
 			}
 		}
 		//INSERT実行
 		//テーブル選択
-		if (tblList.count(tables[0]) == 0) {
-			err("TABLE NOT FOUND");
+		if (tblList.count (tables[0]) == 0) {
+			err ("TABLE NOT FOUND");
 			return -1;
 		}
-		if (tblList[tables[0]]->Insert(colnams, values)) {
+		if (tblList[tables[0]]->Insert (colnams, values)) {
 			return -1;
 		}
 		break;
 	case  CMDS::TXUPDATE://UPDATE TABLENAME SET field = value, field = value.. WHERE cond1,op1,cond2;
 		//テーブル名取得
-		if (chkToken(sql, token, ret, CMDS::TXARG)) { err("UPDATE NO TABLE ERROR"); return -1; }//table
-		tables.push_back(reinterpret_cast<char*>(token));
+		if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("UPDATE NO TABLE ERROR"); return -1; }//table
+		tables.push_back (reinterpret_cast<char*>(token));
 
-		if (chkToken(sql, token, ret, CMDS::TXSET)) { err("UPDATE SYNTAX ERROR");   return -1; }//SET
+		if (chkToken (sql, token, ret, CMDS::TXSET)) { err ("UPDATE SYNTAX ERROR");   return -1; }//SET
 		//カラム名取得
 		for (;;) {
-			if (chkToken(sql, token, ret, CMDS::TXARG)) { err("UPDATE NO ARG ERROR");   return -1; }//ARG
-			colnams.push_back(reinterpret_cast<char*>(token));
-			if (chkToken(sql, token, ret, CMDS::TXOP)) { err("UPDATE SYNTAX ERROR");   return -1; }//=
-			if (strcmp(reinterpret_cast<char*>(token), "=") != 0) { err("UPDATE SYNTAX ERROR");   return -1; }//=
+			if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("UPDATE NO ARG ERROR");   return -1; }//ARG
+			colnams.push_back (reinterpret_cast<char*>(token));
+			if (chkToken (sql, token, ret, CMDS::TXOP)) { err ("UPDATE SYNTAX ERROR");   return -1; }//=
+			if (strcmp (reinterpret_cast<char*>(token), "=") != 0) { err ("UPDATE SYNTAX ERROR");   return -1; }//=
 
-			if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("UPDATE NO VALUE ERROR"); return -1; }//ARG
-			values.push_back(reinterpret_cast<char*>(token));
-			ret = getToken(sql, token);
+			if (chkToken (sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err ("UPDATE NO VALUE ERROR"); return -1; }//ARG
+			values.push_back (reinterpret_cast<char*>(token));
+			ret = getToken (sql, token);
 			if (ret != CMDS::TXCM)                       break;
 		}
 		//WHERE取得
 		if (ret == CMDS::TXWHERE) {
-			cond.put(const_cast<char*>("AND"), CMDS::TXAND);               //初回は1にANDする
+			cond.put (const_cast<char*>("AND"), CMDS::TXAND);               //初回は1にANDする
 			for (;;) {
-				if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("UPDATE NO ARG IN WHERE"); return -1; }//arg1
-				cond.put(reinterpret_cast<char*>(token), ret);
+				if (chkToken (sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err ("UPDATE NO ARG IN WHERE"); return -1; }//arg1
+				cond.put (reinterpret_cast<char*>(token), ret);
 
-				if (chkToken(sql, token, ret, CMDS::TXOP)) { err("UPDATE NO OPE IN WHERE"); return -1; }//op1
-				cond.put(reinterpret_cast<char*>(token), ret);
+				if (chkToken (sql, token, ret, CMDS::TXOP)) { err ("UPDATE NO OPE IN WHERE"); return -1; }//op1
+				cond.put (reinterpret_cast<char*>(token), ret);
 
-				if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("UPDATE NO ARG IN WHERE"); return -1; }//arg2
-				cond.put(reinterpret_cast<char*>(token), ret);
+				if (chkToken (sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err ("UPDATE NO ARG IN WHERE"); return -1; }//arg2
+				cond.put (reinterpret_cast<char*>(token), ret);
 
-				if (chkToken(sql, token, ret, CMDS::TXAND, CMDS::TXOR)) break;
-				cond.put(reinterpret_cast<char*>(token), ret);
+				if (chkToken (sql, token, ret, CMDS::TXAND, CMDS::TXOR)) break;
+				cond.put (reinterpret_cast<char*>(token), ret);
 			}
 		}
 		//末尾の処理
 		if (ret != CMDS::TXED && ret != CMDS::TXNONE) {
-			err("UPDATE NO ARG IN WHERE");
+			err ("UPDATE NO ARG IN WHERE");
 			return -1;
 		}
 
 		//テーブル取得
 		tbl = tblList[tables[0]];
 		//where実行
-		tbl->Update(colnams, values, cond);
+		tbl->Update (colnams, values, cond);
 		break;
 	case  CMDS::TXDELETE://DELETE FROM TABLENAME WHERE cond1,op1,cond2
 		//テーブル名取得
-		if (chkToken(sql, token, ret, CMDS::TXFROM)) { err("DELETE SYNTAX ERROR");   return -1; }//table name
-		if (chkToken(sql, token, ret, CMDS::TXARG)) { err("DELETE NO TABLE ERROR"); return -1; }//table name
-		tables.push_back(reinterpret_cast<char*>(token));
+		if (chkToken (sql, token, ret, CMDS::TXFROM)) { err ("DELETE SYNTAX ERROR");   return -1; }//table name
+		if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("DELETE NO TABLE ERROR"); return -1; }//table name
+		tables.push_back (reinterpret_cast<char*>(token));
 
-		ret = getToken(sql, token);
+		ret = getToken (sql, token);
 		//WHERE取得
 		if (ret == CMDS::TXWHERE) {
-			cond.put(const_cast<char*>("AND"), CMDS::TXAND);                  //初回は1にANDする
+			cond.put (const_cast<char*>("AND"), CMDS::TXAND);                  //初回は1にANDする
 			for (;;) {
-				if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("DELETE NO ARG IN WHERE"); return -1; }//arg1
-				cond.put(reinterpret_cast<char*>(token), ret);
+				if (chkToken (sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err ("DELETE NO ARG IN WHERE"); return -1; }//arg1
+				cond.put (reinterpret_cast<char*>(token), ret);
 
-				if (chkToken(sql, token, ret, CMDS::TXOP)) { err("DELETE NO OPE IN WHERE"); return -1; }//op1
-				cond.put(reinterpret_cast<char*>(token), ret);
+				if (chkToken (sql, token, ret, CMDS::TXOP)) { err ("DELETE NO OPE IN WHERE"); return -1; }//op1
+				cond.put (reinterpret_cast<char*>(token), ret);
 
-				if (chkToken(sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err("DELETE NO ARG IN WHERE"); return -1; }//arg2
-				cond.put(reinterpret_cast<char*>(token), ret);
+				if (chkToken (sql, token, ret, CMDS::TXARG, CMDS::TXPRM)) { err ("DELETE NO ARG IN WHERE"); return -1; }//arg2
+				cond.put (reinterpret_cast<char*>(token), ret);
 
-				if (chkToken(sql, token, ret, CMDS::TXAND, CMDS::TXOR))  break;
-				cond.put(reinterpret_cast<char*>(token), ret);
+				if (chkToken (sql, token, ret, CMDS::TXAND, CMDS::TXOR))  break;
+				cond.put (reinterpret_cast<char*>(token), ret);
 			}
 		}
 		//末尾の処理
 		if (ret != CMDS::TXED && ret != CMDS::TXNONE) {
-			err("UPDATE NO ARG IN WHERE");
+			err ("UPDATE NO ARG IN WHERE");
 			return -1;
 		}
 
 		//テーブル取得
 		tbl = tblList[tables[0]];
 		//where実行
-		tbl->Delete(cond);
+		tbl->Delete (cond);
 		break;
 		//show databases
 		//show tables
 		//show tables form database
 	case CMDS::TXSHOW:
-		ret = getToken(sql, token);
+		ret = getToken (sql, token);
 		if (ret == CMDS::TXDATABASES) {
-			catalog->ShowCatalog(retStr);
+			catalog->ShowCatalog (retStr);
 			return 1;
 		}
 		else if (ret == CMDS::TXTABLES) {
-			ret = getToken(sql, token);
+			ret = getToken (sql, token);
 			if (ret == CMDS::TXFROM) {
-				if (chkToken(sql, token, ret, CMDS::TXARG)) {
-					err("NO DATABASE SET");
+				if (chkToken (sql, token, ret, CMDS::TXARG)) {
+					err ("NO DATABASE SET");
 					return -1;
 				}
 			}
 			else if (ret == CMDS::TXED || ret == CMDS::TXNONE) {
-				retStr.clear();
+				retStr.clear ();
 #ifdef CMDLINE
-				for (auto const& x : tblList)
-				{
-					retStr.cat_sprintf("%s\n", x.first.c_str());
+				for (auto const& x : tblList) {
+					retStr.cat_sprintf ("%s\n", x.first.c_str ());
 				}
 				//map<wString, Table*>::iterator it;
 				//for (it = tbllist.begin(); it != tbllist.end(); it++) {
@@ -2039,9 +2102,8 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 #else
 				retStr = "[";
 				int first = 1;
-				for (auto const& x : tblList)
-				{
-					retStr.cat_sprintf("%s\"%s\"", ((first) ? "" : ","), x.first.c_str());
+				for (auto const& x : tblList) {
+					retStr.cat_sprintf ("%s\"%s\"", ((first) ? "" : ","), x.first.c_str ());
 					first = 0;
 				}
 				//for (it = tblList.begin(); it != tblList.end(); it++) {
@@ -2054,50 +2116,50 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 			return 1;
 		}
 		else {
-			err("what to do?");
+			err ("what to do?");
 			return 0;
 		}
 	case CMDS::TXDROP:
-		ret = getToken(sql, token);
+		ret = getToken (sql, token);
 		if (ret == CMDS::TXTBL) {
-			if (chkToken(sql, token, ret, CMDS::TXARG)) { err("DROPTABLE NO TABLE ERROR"); return -1; }//tablename
+			if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("DROPTABLE NO TABLE ERROR"); return -1; }//tablename
 			//チェック。同名のテーブルがあるか？
-			if (!tblList.count(reinterpret_cast<char*>(token))) {
-				err("Table not exist");
+			if (!tblList.count (reinterpret_cast<char*>(token))) {
+				err ("Table not exist");
 				return -1;
 			}
 			Table* ntbl = tblList[reinterpret_cast<char*>(token)];
 			//ntbl->changed = true;
 			delete ntbl;
-			tblList.erase(reinterpret_cast<char*>(token));
+			tblList.erase (reinterpret_cast<char*>(token));
 			//this->Save();
 			//ＤＢに変更がありました。
 			this->changed = true;
 			break;
 		}
 		else if (ret == CMDS::TXDATABASE) {
-			if (chkToken(sql, token, ret, CMDS::TXARG)) { err("CREATE DATABASE NO TABLE ERROR"); return -1; }//tablename
+			if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("CREATE DATABASE NO TABLE ERROR"); return -1; }//tablename
 			//存在チェック
-			if (!catalog->dblist.count(reinterpret_cast<char*>(token))) {
-				err("Database not exist");
+			if (!catalog->dblist.count (reinterpret_cast<char*>(token))) {
+				err ("Database not exist");
 				return -1;
 			}
 			Database* db = catalog->dblist[reinterpret_cast<char*>(token)];
 			//使用してない時だけ消せる
 			if (db) {
 				if (db->ref > 0) {
-					err("Database in use");
+					err ("Database in use");
 					return -1;
 				}
 				delete db;
 			}
 
 			//カタログから消去
-			catalog->dblist.erase(reinterpret_cast<char*>(token));
+			catalog->dblist.erase (reinterpret_cast<char*>(token));
 			break;
 		}
 		else {
-			err("What to do?");
+			err ("What to do?");
 			return 0;
 		}
 		//break;
@@ -2108,73 +2170,72 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 	//ALTER TABLE TABLENAME DROP (COLUMN1, COLUMN2..);
 
 	case CMDS::TXALTER:
-		if (chkToken(sql, token, ret, CMDS::TXTBL)) { err("ALTER TABLE SYNTAX ERROR");   return -1; }//tablename
-		if (chkToken(sql, token, ret, CMDS::TXARG)) { err("ALTER TABLE NO TABLE ERROR"); return -1; }//tablename
-		tables.push_back(reinterpret_cast<char*>(token));
-		ret = getToken(sql, token);
+		if (chkToken (sql, token, ret, CMDS::TXTBL)) { err ("ALTER TABLE SYNTAX ERROR");   return -1; }//tablename
+		if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("ALTER TABLE NO TABLE ERROR"); return -1; }//tablename
+		tables.push_back (reinterpret_cast<char*>(token));
+		ret = getToken (sql, token);
 		//追加/変更
 		if (ret == CMDS::TXADD || ret == CMDS::TXMODIFY || ret == CMDS::TXDROP) {
 			CMDS nctyp = ret;
-			if (chkToken(sql, token, ret, CMDS::TXPS)) { err("ALTER TABLE SYNTAX ERROR");   return -1; }//field name
+			if (chkToken (sql, token, ret, CMDS::TXPS)) { err ("ALTER TABLE SYNTAX ERROR");   return -1; }//field name
 			for (;;) {
-				if (chkToken(sql, token, ret, CMDS::TXARG)) { err("ALTER TABLE INVALID ARGS"); return -1; }//field name
-				if (chkToken(sql, token2, ret, CMDS::TXARG) || (stricmp(reinterpret_cast<char*>(token2), "number") != 0 && stricmp(reinterpret_cast<char*>(token2), "string") != 0))
-				{
-					err("CREATE TABLE INVALID ARGS");   return -1;
+				if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("ALTER TABLE INVALID ARGS"); return -1; }//field name
+				if (chkToken (sql, token2, ret, CMDS::TXARG) || (stricmp (reinterpret_cast<char*>(token2), "number") != 0 && stricmp (reinterpret_cast<char*>(token2), "string") != 0)) {
+					err ("CREATE TABLE INVALID ARGS");   return -1;
 				}//number/string
-				dataType typ = (stricmp(reinterpret_cast<char*>(token2), "number") == 0) ? dataType::NUMBER : dataType::STRING;
-				Column* clm = new Column(tables[0], reinterpret_cast<char*>(token), typ);
-				columns.push_back(clm);
+				dataType typ = (stricmp (reinterpret_cast<char*>(token2), "number") == 0) ? dataType::NUMBER : dataType::STRING;
+				Column* clm = new Column (tables[0], reinterpret_cast<char*>(token), typ);
+				columns.push_back (clm);
 				//delete clm;
-				ret = getToken(sql, token);
+				ret = getToken (sql, token);
 				if (ret == CMDS::TXPE)          break;
-				else if (ret != CMDS::TXCM) { err("ALTER TABLE SYNTAX ERROR");   return -1; }
+				else if (ret != CMDS::TXCM) { err ("ALTER TABLE SYNTAX ERROR");   return -1; }
 			}
 			//ADD,MODIFY,DROPチェック処理
 			//テーブル取得
 			tbl = tblList[tables[0]];
 			vector<int> colpos;
-			for (unsigned int i = 0; i < columns.size(); i++) {
+			for (unsigned int i = 0; i < columns.size (); i++) {
 				//ADD 同じカラムない
 				//MODIFY　違うカラムない
 				int flag = 0;
-				for (unsigned int j = 0; j < tbl->column.size(); j++) {
-					if (tbl->column[j]->Compare(columns[i]->name, cond.clmalias, cond.tblalias)) {
-						if (nctyp == CMDS::TXADD) { err("ALTER TABLE DUPLEX COLUMN NAME");   return -1; }//field name
+				for (unsigned int j = 0; j < tbl->column.size (); j++) {
+					if (tbl->column[j]->Compare (columns[i]->name, cond.clmalias, cond.tblalias)) {
+						if (nctyp == CMDS::TXADD) { err ("ALTER TABLE DUPLEX COLUMN NAME");   return -1; }//field name
 						flag = 1;
-						colpos.push_back(j);
+						colpos.push_back (j);
 					}
 				}
 				if (flag == 0) {
-					if (nctyp == CMDS::TXMODIFY) { err("ALTER TABLE COLUMN NOT FOUND");   return -1; }//field name
+					if (nctyp == CMDS::TXMODIFY) { err ("ALTER TABLE COLUMN NOT FOUND");   return -1; }//field name
 				}
 			}
 			//ADD,MODIFY実行処理
 			if (nctyp == CMDS::TXADD) {
-				for (unsigned int i = 0; i < columns.size(); i++) {
-					tbl->column.push_back(columns[i]);
-					Node* nd = new Node(columns[i]->type);
+				for (unsigned int i = 0; i < columns.size (); i++) {
+					tbl->column.push_back (columns[i]);
+					Node* nd = new Node (columns[i]->type);
 					//個数を増やす
-					for (unsigned int j = 0; j < tbl->node[0]->size(); j++) {
-						nd->put("");
+					for (unsigned int j = 0; j < tbl->node[0]->size (); j++) {
+						nd->put ("");
 					}
-					tbl->node.push_back(nd);
+					tbl->node.push_back (nd);
 				}
 			}
 			else if (nctyp == CMDS::TXMODIFY) {
-				for (unsigned int i = 0; i < columns.size(); i++) {
+				for (unsigned int i = 0; i < columns.size (); i++) {
 					tbl->column[colpos[i]] = columns[i];
 					//ノードの変更
-					Node* nd = new Node(columns[i]->type);
+					Node* nd = new Node (columns[i]->type);
 					//nd->resize(tbl->node[colpos[i]].size());
-					for (unsigned int j = 0; j < tbl->node[colpos[i]]->size(); j++) {
-						nd->put(tbl->node[colpos[i]]->getNode(j, 1));
+					for (unsigned int j = 0; j < tbl->node[colpos[i]]->size (); j++) {
+						nd->put (tbl->node[colpos[i]]->getNode (j, 1));
 					}
 					//tbl->node[colpos[i]].changetype(columns[i]->type);
 					//消す
-					tbl->node.erase(tbl->node.begin() + colpos[i]);
+					tbl->node.erase (tbl->node.begin () + colpos[i]);
 					//挿入
-					tbl->node.insert(tbl->node.begin() + colpos[i], nd);
+					tbl->node.insert (tbl->node.begin () + colpos[i], nd);
 				}
 			}
 			//変更したことにする
@@ -2182,39 +2243,39 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 		}
 		else if (ret == CMDS::TXDROP) {
 			CMDS nctyp = ret;
-			if (chkToken(sql, token, ret, CMDS::TXPS)) { err("ALTER TABLE SYNTAX ERROR");   return -1; }//field name
+			if (chkToken (sql, token, ret, CMDS::TXPS)) { err ("ALTER TABLE SYNTAX ERROR");   return -1; }//field name
 			for (;;) {
-				if (chkToken(sql, token, ret, CMDS::TXARG)) { err("ALTER TABLE INVALID ARGS"); return -1; }//field name
-				colnams.push_back(reinterpret_cast<char*>(token));
-				ret = getToken(sql, token);
+				if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("ALTER TABLE INVALID ARGS"); return -1; }//field name
+				colnams.push_back (reinterpret_cast<char*>(token));
+				ret = getToken (sql, token);
 				if (ret == CMDS::TXPE)          break;
-				else if (ret != CMDS::TXCM) { err("ALTER TABLE SYNTAX ERROR");   return -1; }
+				else if (ret != CMDS::TXCM) { err ("ALTER TABLE SYNTAX ERROR");   return -1; }
 			}
 			//ADD,MODIFY,DROPチェック処理
 			//テーブル取得
 			tbl = tblList[tables[0]];
 			vector<int> colpos;
-			for (unsigned int i = 0; i < colnams.size(); i++) {
+			for (unsigned int i = 0; i < colnams.size (); i++) {
 				//DROP 違うカラムない
-				for (unsigned int j = 0; j < tbl->column.size(); j++) {
-					if (tbl->column[j]->Compare(colnams[i], cond.clmalias, cond.tblalias)) {
-						colpos.push_back(j);
+				for (unsigned int j = 0; j < tbl->column.size (); j++) {
+					if (tbl->column[j]->Compare (colnams[i], cond.clmalias, cond.tblalias)) {
+						colpos.push_back (j);
 					}
 					else {
-						err("ALTER TABLE COLUMN NOT FOUND");
+						err ("ALTER TABLE COLUMN NOT FOUND");
 						return -1;
 					}
 				}
 			}
 			//DROP実行処理
 			if (nctyp == CMDS::TXDROP) {   //TXDROP
-				for (int i = static_cast<int>(columns.size()) - 1; i >= 0; i--) {
-					tbl->column.erase(tbl->column.begin() + colpos[i]);
-					tbl->node.erase(tbl->node.begin() + colpos[i]);
+				for (int i = static_cast<int>(columns.size ()) - 1; i >= 0; i--) {
+					tbl->column.erase (tbl->column.begin () + colpos[i]);
+					tbl->node.erase (tbl->node.begin () + colpos[i]);
 				}
 			}
 			//カラム一時データ削除
-			for (unsigned int i = 0; i < columns.size(); i++) {
+			for (unsigned int i = 0; i < columns.size (); i++) {
 				delete columns[i];
 			}
 			//変更したことにする
@@ -2222,11 +2283,11 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 			//変更処理
 		}
 		else if (ret == CMDS::TXRENAME) {
-			ret = getToken(sql, token);
+			ret = getToken (sql, token);
 			//テーブル名変更
 			if (ret == CMDS::TXTO) {
-				if (chkToken(sql, token, ret, CMDS::TXARG)) { err("ALTER TABLE NO TABLE ERROR"); return -1; }//tablename
-				tables.push_back(reinterpret_cast<char*>(token));
+				if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("ALTER TABLE NO TABLE ERROR"); return -1; }//tablename
+				tables.push_back (reinterpret_cast<char*>(token));
 				//テーブル名変更処理
 				tbl = tblList[tables[0]];
 				tbl->name = tables[1];
@@ -2234,68 +2295,68 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 				tbl->node[0]->changed = true;
 			}
 			else if (ret == CMDS::TXCOLUMN) {
-				if (chkToken(sql, token, ret, CMDS::TXARG)) { err("ALTER TABLE NO TABLE ERROR"); return -1; }//tablename
-				colnams.push_back(reinterpret_cast<char*>(token));
-				if (chkToken(sql, token, ret, CMDS::TXTO)) { err("ALTER TABLE NO TABLE ERROR"); return -1; }//tablename
-				if (chkToken(sql, token, ret, CMDS::TXARG)) { err("ALTER TABLE NO TABLE ERROR"); return -1; }//tablename
-				colnams.push_back(reinterpret_cast<char*>(token));
+				if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("ALTER TABLE NO TABLE ERROR"); return -1; }//tablename
+				colnams.push_back (reinterpret_cast<char*>(token));
+				if (chkToken (sql, token, ret, CMDS::TXTO)) { err ("ALTER TABLE NO TABLE ERROR"); return -1; }//tablename
+				if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("ALTER TABLE NO TABLE ERROR"); return -1; }//tablename
+				colnams.push_back (reinterpret_cast<char*>(token));
 				//カラム名変更処理
 				tbl = tblList[tables[0]];
 				//カラム番号求める
-				for (unsigned int i = 0; i < columns.size(); i++) {
-					if (tbl->column[i]->Compare(colnams[0], cond.clmalias, cond.tblalias)) {
+				for (unsigned int i = 0; i < columns.size (); i++) {
+					if (tbl->column[i]->Compare (colnams[0], cond.clmalias, cond.tblalias)) {
 						tbl->column[i]->name = colnams[1];
 						return 0;
 					}
 				}
-				err("ALTER TABLE NO SUCH COLUMN");
+				err ("ALTER TABLE NO SUCH COLUMN");
 				return -1;
 			}
 			else {
-				err("ALTER TABLE SYNTAX ERRRO");
+				err ("ALTER TABLE SYNTAX ERRRO");
 				return -1;
 			}
 		}
 		break;
 		//DESC table_name;
 	case CMDS::TXDESC:
-		if (chkToken(sql, token, ret, CMDS::TXARG)) { err("DESC NO TABLE ERROR"); return -1; }//tablename
+		if (chkToken (sql, token, ret, CMDS::TXARG)) { err ("DESC NO TABLE ERROR"); return -1; }//tablename
 		//テーブル取得
-		if (tblList.count(reinterpret_cast<char*>(token)) == 0) {
-			err("DESC TABLE NAME NOT EXISTS ERROR");
+		if (tblList.count (reinterpret_cast<char*>(token)) == 0) {
+			err ("DESC TABLE NAME NOT EXISTS ERROR");
 			return -1;
 		}
 		tbl = tblList[reinterpret_cast<char*>(token)];
-		retStr.clear();
+		retStr.clear ();
 #ifdef CMDLINE
 		retStr = "name\ttype\n";
-		for (unsigned int i = 0; i < tbl->column.size(); i++) {
-			retStr.cat_sprintf("%s\t%s\n", tbl->column[i]->name.c_str(), (tbl->column[i]->type == STRING) ? "STRING" : "NUMBER");
+		for (unsigned int i = 0; i < tbl->column.size (); i++) {
+			retStr.cat_sprintf ("%s\t%s\n", tbl->column[i]->name.c_str (), (tbl->column[i]->type == STRING) ? "STRING" : "NUMBER");
 		}
 #else
 		retStr = "[{";
-		for (unsigned int i = 0; i < tbl->column.size(); i++) {
-			retStr.cat_sprintf("%s\"%s\":\"%s\"", ((i) ? "," : ""), tbl->column[i]->name.c_str(), (tbl->column[i]->type == dataType::STRING) ? "STRING" : "NUMBER");
+		for (unsigned int i = 0; i < tbl->column.size (); i++) {
+			retStr.cat_sprintf ("%s\"%s\":\"%s\"", ((i) ? "," : ""), tbl->column[i]->name.c_str (), (tbl->column[i]->type == dataType::STRING) ? "STRING" : "NUMBER");
 		}
 		retStr += "}]";
 #endif
 		return 1;
 	case CMDS::TXHELP:
 #ifdef CMDLINE
-		printf("SHOW DATABASES;\n"
-			"SHOW TABLES;\n"
-			"DESC table_name;\n"
-			"CREATE DATABASE database_name;\n"
-			"CREATE TABLE table_name(column_name1 number/string,...);\n"
-			"USE database_name;\n"
-			"DROP database_name;\n"
-			"DROP table_name;\n"
-			"ALTER TABLE TABLENAME ADD (COLUMN1 definition1,COLUMN2 definition2..);\n"
-			"ALTER TABLE TABLENAME MODIFY (COLUMN1 definition1,COLUMN2 definition2..);\n"
-			"ALTER TABLE TABLENAME DROP (COLUMN1, COLUMN2..);;\n"
-			"ALTER TABLE TABLENAME RENAME TO NEWTABLENAME;\n"
-			"ALTER TABLE TABLENAME RENAME COLUMN OLDCOLUMN TO NEWCOLUMN;\n"
-			"select/insert/update/delete..\n");
+		printf ("SHOW DATABASES;\n"
+				"SHOW TABLES;\n"
+				"DESC table_name;\n"
+				"CREATE DATABASE database_name;\n"
+				"CREATE TABLE table_name(column_name1 number/string,...);\n"
+				"USE database_name;\n"
+				"DROP database_name;\n"
+				"DROP table_name;\n"
+				"ALTER TABLE TABLENAME ADD (COLUMN1 definition1,COLUMN2 definition2..);\n"
+				"ALTER TABLE TABLENAME MODIFY (COLUMN1 definition1,COLUMN2 definition2..);\n"
+				"ALTER TABLE TABLENAME DROP (COLUMN1, COLUMN2..);;\n"
+				"ALTER TABLE TABLENAME RENAME TO NEWTABLENAME;\n"
+				"ALTER TABLE TABLENAME RENAME COLUMN OLDCOLUMN TO NEWCOLUMN;\n"
+				"select/insert/update/delete..\n");
 #else
 		retStr =
 			"["
@@ -2318,19 +2379,20 @@ int Database::SQL(const wString& sqltext, wString& retStr)
 #endif
 		break;
 	default:
-		err("What to do?");
+		err ("What to do?");
 		break;
 	}
 	return 0;
 }
 ////////////////////////////////////////////////////////////////////////////
-int Database::LoadFromFile(wString file) {
+int Database::LoadFromFile (wString file)
+{
 	//tableを全部読み込む
 	unsigned int max;
-	bufrd* br = new bufrd();
-	tblList.clear();
-	if (wString::file_exists(file)) {
-		if (br->ropen(file)) {
+	bufrd* br = new bufrd ();
+	tblList.clear ();
+	if (wString::file_exists (file)) {
+		if (br->ropen (file)) {
 			return -1;
 		}
 		//ファイルがない場合終了
@@ -2339,22 +2401,23 @@ int Database::LoadFromFile(wString file) {
 		return -1;
 	}
 	//テーブル個数取得
-	if (br->Read(&max, sizeof(unsigned int))) return -1;
+	if (br->Read (&max, sizeof (unsigned int))) return -1;
 	//テーブル取得
 	for (unsigned int i = 0; i < max; i++) {
-		Table* tbl = new Table();
-		if (tbl->LoadFromFile(br) < 0) {
-			err("table load error\n");
+		Table* tbl = new Table ();
+		if (tbl->LoadFromFile (br) < 0) {
+			err ("table load error\n");
 			return -1;
 		}
 		tblList[tbl->name] = tbl;
 	}
-	br->rclose();
+	br->rclose ();
 	delete br;
 	return 0;
 }
 ////////////////////////////////////////////////////////////////////////////
-int Database::SaveToFile(wString file) {
+int Database::SaveToFile (wString file)
+{
 	//テーブル保存
 	//int flag=0;
 	//map<wString,Table*>::iterator it;
@@ -2364,24 +2427,23 @@ int Database::SaveToFile(wString file) {
 	//変更ありなら保存
 
 	//if( flag ){
-	auto br = new bufrd();
-	if (br->wopen(file)) {
+	auto br = new bufrd ();
+	if (br->wopen (file)) {
 		return -1;
 	}
 	//名前はcatalogクラスで保存
 	//テーブル個数保存
-	auto max = (unsigned int)tblList.size();
-	br->Write(&max, sizeof(unsigned int));
+	auto max = (unsigned int)tblList.size ();
+	br->Write (&max, sizeof (unsigned int));
 	//テーブル保存
-	for (auto const& x : tblList)
-	{
-		x.second->SaveToFile(br);
+	for (auto const& x : tblList) {
+		x.second->SaveToFile (br);
 	}
 	//map<wString, Table*>::iterator nit;
 	//for (nit = tblList.begin(); nit != tblList.end(); nit++) {
 	//	nit->second->save_to_file(br);
 	//}
-	br->wclose();
+	br->wclose ();
 	delete br;
 	return 0;
 	//}
@@ -2399,33 +2461,35 @@ int Database::SaveToFile(wString file) {
 //}
 ////////////////////////////////////////////////////////////////////////////
 //データベースに接続する
-Database* DBCatalog::DBConnect(const wString& DBName) {
+Database* DBCatalog::DBConnect (const wString& DBName)
+{
 	Database* db = NULL;
 	//ここにクリティカルセクションを設定
 #ifdef linux
-	pthread_mutex_lock(&mutex);
+	pthread_mutex_lock (&mutex);
 #else
-	EnterCriticalSection(&cs);
+	EnterCriticalSection (&cs);
 #endif
-	if (dblist.count(DBName)) {
+	if (dblist.count (DBName)) {
 		//未登録
 		if (dblist[DBName] == NULL) {
-			dblist[DBName] = new Database(DBName);
+			dblist[DBName] = new Database (DBName);
 		}
 		dblist[DBName]->ref++;
 
 		db = dblist[DBName];
 	}
 #ifdef linux
-	pthread_mutex_unlock(&mutex);
+	pthread_mutex_unlock (&mutex);
 #else
-	LeaveCriticalSection(&cs);
+	LeaveCriticalSection (&cs);
 #endif
 	return db;
 }
 ////////////////////////////////////////////////////////////////////////////
 //データベースを閉じる
-int DBCatalog::DBClose(Database* db) {
+int DBCatalog::DBClose (Database* db)
+{
 	if (!db) {
 		return -1;
 	}
@@ -2435,8 +2499,7 @@ int DBCatalog::DBClose(Database* db) {
 	//	forceSave = false;
  //       db->Save();
 	//}
-	for (auto const& x : dblist)
-	{
+	for (auto const& x : dblist) {
 		if (x.second == db) {
 			//参照カウンタを減らす
 			if (db->ref > 0) {
@@ -2467,22 +2530,22 @@ int DBCatalog::DBClose(Database* db) {
 }
 ////////////////////////////////////////////////////////////////////////////
 //新規にDB作成
-Database* DBCatalog::DBCreate(const wString& DBName) {
-	if (dblist.count(DBName)) {
-		err("database already exists");
+Database* DBCatalog::DBCreate (const wString& DBName)
+{
+	if (dblist.count (DBName)) {
+		err ("database already exists");
 		return NULL;
 	}
-	dblist[DBName] = new Database(DBName);
+	dblist[DBName] = new Database (DBName);
 	return dblist[DBName];
 }
 ////////////////////////////////////////////////////////////////////////////
-unsigned int DBCatalog::ShowCatalog(wString& retStr)
+unsigned int DBCatalog::ShowCatalog (wString& retStr)
 {
-	retStr.clear();
+	retStr.clear ();
 #ifdef CMDLINE
-	for (auto const& x : dblist)
-	{
-		retStr.cat_sprintf("%s\n", x.first.c_str());
+	for (auto const& x : dblist) {
+		retStr.cat_sprintf ("%s\n", x.first.c_str ());
 	}
 	//map<wString, Database*>::iterator it;
 	//for (it = dblist.begin(); it != dblist.end(); it++) {
@@ -2491,64 +2554,61 @@ unsigned int DBCatalog::ShowCatalog(wString& retStr)
 #else
 	retStr = "[";
 	int lines = 0;
-	for (auto const& x : dblist)
-	{
-		retStr.cat_sprintf("%s\"%s\"", ((lines++) ? "," : ""), x.first.c_str());
+	for (auto const& x : dblist) {
+		retStr.cat_sprintf ("%s\"%s\"", ((lines++) ? "," : ""), x.first.c_str ());
 	}
 	//for (it = dblist.begin(); it != dblist.end(); it++) {
 	//	retStr.cat_sprintf("%s\"%s\"", ((lines++) ? "," : ""), (*it).first.c_str());
 	//}
 	retStr += "]";
 #endif
-	return (unsigned int)dblist.size();
+	return (unsigned int)dblist.size ();
 }
 ////////////////////////////////////////////////////////////////////////////
-int DBCatalog::LoadFromFile(void)
+int DBCatalog::LoadFromFile (void)
 {
 	unsigned int len;
 	unsigned int max;
 	char   name[1024] = {};
-	dblist.clear();
+	dblist.clear ();
 	//オープン
-	if (!wString::file_exists(CATFILE)) return 0;
-	auto fd = myopen(CATFILE, O_RDONLY | O_BINARY);
-	if (fd < 0)
-	{
-		debug_log_output("Database Catalog open error %s", CATFILE);
+	if (!wString::file_exists (CATFILE)) return 0;
+	auto fd = myopen (CATFILE, O_RDONLY | O_BINARY);
+	if (fd < 0) {
+		debug_log_output ("Database Catalog open error %s", CATFILE);
 		return -1;
 	}
 	//dbname read
-	if (read(fd, &max, sizeof(unsigned int)) != sizeof(unsigned int)) { err("can't read"); close(fd); return -1; }
+	if (read (fd, &max, sizeof (unsigned int)) != sizeof (unsigned int)) { err ("can't read"); close (fd); return -1; }
 	//read all database
 	for (unsigned int i = 0; i < max; i++) {
-		if (read(fd, &len, sizeof(unsigned int)) != sizeof(unsigned int)) { err("can't read len"); close(fd); return -1; }
-		if (read(fd, name, len) != (int)len) { err("can't read dbname"); close(fd); return -1; }
+		if (read (fd, &len, sizeof (unsigned int)) != sizeof (unsigned int)) { err ("can't read len"); close (fd); return -1; }
+		if (read (fd, name, len) != (int)len) { err ("can't read dbname"); close (fd); return -1; }
 		name[len] = 0;
 		//ロード時DBはNULL。Createで作成する
 		dblist[name] = NULL;
 	}
-	close(fd);
+	close (fd);
 	return 0;
 }
 //create database
 //use databaseを受け付ける
 ////////////////////////////////////////////////////////////////////////////
-int DBCatalog::SaveToFile(void)
+int DBCatalog::SaveToFile (void)
 {
 	//DBCatalog保存
 	wString path = current_dir + DELIMITER + CATFILE;
-	int fd = myopen(path, O_CREAT | O_TRUNC | O_WRONLY | O_BINARY, S_IREAD | S_IWRITE);
+	int fd = myopen (path, O_CREAT | O_TRUNC | O_WRONLY | O_BINARY, S_IREAD | S_IWRITE);
 	if (fd < 0) {
 		return -1;
 	}
 	//dbname保存
-	auto max = (unsigned int)dblist.size();
-	if (write(fd, &max, sizeof(unsigned int)) != sizeof(unsigned int)) { close(fd); return -1; }
-	for (auto const& x : dblist)
-	{
-		auto len = x.first.length();
-		if (write(fd, &len, sizeof(unsigned int)) != sizeof(unsigned int)) { close(fd); return -1; }
-		if (write(fd, x.first.c_str(), len) != (int)len) { close(fd); return -1; }
+	auto max = (unsigned int)dblist.size ();
+	if (write (fd, &max, sizeof (unsigned int)) != sizeof (unsigned int)) { close (fd); return -1; }
+	for (auto const& x : dblist) {
+		auto len = x.first.length ();
+		if (write (fd, &len, sizeof (unsigned int)) != sizeof (unsigned int)) { close (fd); return -1; }
+		if (write (fd, x.first.c_str (), len) != (int)len) { close (fd); return -1; }
 	}
 	//map<wString, Database*>::iterator it;
 	//for (it = dblist.begin(); it != dblist.end(); it++) {
@@ -2557,9 +2617,8 @@ int DBCatalog::SaveToFile(void)
 	//	if (write(fd, it->first.c_str(), len) != (int)len) { close(fd); return -1; }
 	//}
 	// ファイルクローズ
-	close(fd);
-	for (auto const& x : dblist)
-	{
+	close (fd);
+	for (auto const& x : dblist) {
 		if (x.second != NULL) {
 			delete x.second;
 		}
@@ -2572,108 +2631,104 @@ int DBCatalog::SaveToFile(void)
 	return 0;
 }
 ////////////////////////////////////////////////////////////////////////////
-DBCatalog::DBCatalog(void)
+DBCatalog::DBCatalog (void)
 {
 	//MUTEX初期化
 	refs = 0;
 #ifdef linux
 	pthread_mutexattr_t attr;
-	pthread_mutexattr_init(&attr);
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE_NP);
-	pthread_mutex_init(&mutex, &attr);
+	pthread_mutexattr_init (&attr);
+	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE_NP);
+	pthread_mutex_init (&mutex, &attr);
 #else
-	InitializeCriticalSection(&cs);
+	InitializeCriticalSection (&cs);
 #endif
 	//動的に作る
 	connects = new map<wString, Database*>;
-	dblist.clear();
+	dblist.clear ();
 	//強制保存しない
 	//forceSave = false;
-	if (LoadFromFile() < 0) {
-		err("DataBase Read Error");
+	if (LoadFromFile () < 0) {
+		err ("DataBase Read Error");
 	}
 }
 
-wString _DBConnect(const wString& database)
+wString _DBConnect (const wString& database)
 {
 	const static char material[] = "abcdefghijklmnopqrstuvwxyz0123456789";
 	Database* db;
-	db = catalog->DBConnect(database);
+	db = catalog->DBConnect (database);
 	if (db == NULL) {
 		return "";
 	}
 	//乱数生成
-	srand((unsigned)time(NULL));
+	srand ((unsigned)time (NULL));
 	unsigned char work[27] = {};
 	wString temp;
 	while (1) {
 		for (int i = 0; i < 26; i++) {
-			work[i] = material[rand() % (sizeof(material) - 1)];
+			work[i] = material[rand () % (sizeof (material) - 1)];
 		}
 		temp = reinterpret_cast<char*>(work);
 		//同じモノはダメ
-		if (connects->count(reinterpret_cast<char*>(work)) == 0) break;
+		if (connects->count (reinterpret_cast<char*>(work)) == 0) break;
 	}
 	(*connects)[reinterpret_cast<char*>(work)] = db;
 	return temp;
 }
-int _DBDisConnect(wString& key)
+int _DBDisConnect (wString& key)
 {
-	if (connects->count(key) > 0) {
+	if (connects->count (key) > 0) {
 		Database* db = (*connects)[key];
-		catalog->DBClose(db);
-		connects->erase(key);
+		catalog->DBClose (db);
+		connects->erase (key);
 		return 0;
 	}
 	return -1;
 }
-wString _DBSQL(const wString& key, wString& sql)
+wString _DBSQL (const wString& key, wString& sql)
 {
-	if (connects->count(key) > 0) {
+	if (connects->count (key) > 0) {
 		wString retStr;
 		Database* db = (*connects)[key];
-		int ret = db->SQL(sql, retStr);
+		int ret = db->SQL (sql, retStr);
 		char* msg = NULL;
 		switch (ret) {
 		case -1:
-			msg = err("");
+			msg = err ("");
 			if (*msg) {
 				retStr = msg;
 				return retStr;
 			}
-			else
-			{
+			else {
 				//return "ERROR:" + sql;
 				return "ERROR";
 			}
 		case 0:
-			msg = err("");
+			msg = err ("");
 			if (*msg) {
 				retStr = msg;
 				return retStr;
 			}
-			else
-			{
+			else {
 				return "OK";
 			}
 		default:
 			return retStr;
 		}
 	}
-	else
-	{
+	else {
 		return "ERROR KEY NOT FOUND";
 	}
 }
 ////////////////////////////////////////////////////////////////////////////
-DBCatalog::~DBCatalog(void)
+DBCatalog::~DBCatalog (void)
 {
 	refs--;
 	//connectはまあいいかな。
-	for (auto const& x : *connects)
-	{
+	for (auto const& x : *connects) {
 		wString nam = x.first;
-		_DBDisConnect(nam);
+		_DBDisConnect (nam);
 	}
 	//map<wString, Database*>::iterator it;
 	//for (it = connects->begin(); it != connects->end(); it++) {
@@ -2681,14 +2736,14 @@ DBCatalog::~DBCatalog(void)
 	//	_DBDisConnect(nam);
 	//}
 	delete connects;
-	SaveToFile();
+	SaveToFile ();
 }
 #if 0
 ////////////////////////////////////////////////////////////////////////////
-int main(int argc, char* argv[])
+int main (int argc, char* argv[])
 {
-	IGNORE_PARAMETER(argc);
-	IGNORE_PARAMETER(argv);
+	IGNORE_PARAMETER (argc);
+	IGNORE_PARAMETER (argv);
 #if 1
 	unsigned char cmd[1024];
 	unsigned char cmd2[1024];
@@ -2698,15 +2753,15 @@ int main(int argc, char* argv[])
 	//必要ならDBCreateでDB作成
 	//通常はDBConnectでDBに接続
 	//終了時または適宜textに書き込んで終了
-	debug_log_initialize("debug.log");
-	printf("Welcome to cybele msql. type help to show help. quit to terminate system.\n");
+	debug_log_initialize ("debug.log");
+	printf ("Welcome to cybele msql. type help to show help. quit to terminate system.\n");
 	//catalog = new DBCatalog();
 	Database* db;
-	if (catalog->dblist.size() == 0) {
-		db = catalog->DBCreate((char*)"_SYSTEM");
+	if (catalog->dblist.size () == 0) {
+		db = catalog->DBCreate ((char*)"_SYSTEM");
 	}
 	else {
-		db = catalog->DBConnect((char*)"_SYSTEM");
+		db = catalog->DBConnect ((char*)"_SYSTEM");
 	}
 	//FILE* rs = fopen( "sample_sql.txt","rt");
 
@@ -2721,43 +2776,43 @@ int main(int argc, char* argv[])
 
 
 	for (;;) {
-		gets((char*)cmd);
+		gets ((char*)cmd);
 		//fgets(cmd,1024,rs);
 		//while( cmd[strlen(cmd)-1]< ' ' ){
 		//    cmd[strlen(cmd)-1] = 0;
 		//}
 		//puts( cmd );
-		strcpy((char*)cmd2, (char*)cmd);
-		ret = getToken(cmd, token);
+		strcpy ((char*)cmd2, (char*)cmd);
+		ret = getToken (cmd, token);
 		if (ret == TXQUIT) break;
 		else if (ret == TXUSE) {
-			if (chkToken(cmd, token, ret, TXARG)) {
-				err("SYNTAX ERROR");
+			if (chkToken (cmd, token, ret, TXARG)) {
+				err ("SYNTAX ERROR");
 				continue;
 			}
-			Database* db1 = catalog->DBConnect((char*)token);
+			Database* db1 = catalog->DBConnect ((char*)token);
 			if (db1) {
-				catalog->DBClose(db);
+				catalog->DBClose (db);
 				db = db1;
-				printf("OK\n");
+				printf ("OK\n");
 			}
 			else {
-				printf("ERROR\n");
+				printf ("ERROR\n");
 			}
 		}
 		else {
 			wString retStr;
-			int ret = db->SQL((char*)cmd2, retStr);
+			int ret = db->SQL ((char*)cmd2, retStr);
 			switch (ret) {
 			case -1:
-				printf("ERROR\n");
+				printf ("ERROR\n");
 				break;
 			case 0:
-				printf("OK\n");
+				printf ("OK\n");
 				break;
 			case 1:
-				printf("%s", retStr.c_str());
-				printf("OK\n");
+				printf ("%s", retStr.c_str ());
+				printf ("OK\n");
 				break;
 			}
 			continue;
@@ -2773,15 +2828,15 @@ int main(int argc, char* argv[])
 	//CloseHandle(handle2);
 #else
 	//    wString::wStringInit();
-	debug_log_initialize("debug.log");
-	char* ret = Connect((unsigned char*)"test");
+	debug_log_initialize ("debug.log");
+	char* ret = Connect ((unsigned char*)"test");
 	if (ret) {
 		wString Database = ret;
-		wString res = (char*)SQL(Database, (unsigned char*)"select * from address limit 0,10;");
-		printf("%s\n", res.c_str());
-		DisConnect(Database);
+		wString res = (char*)SQL (Database, (unsigned char*)"select * from address limit 0,10;");
+		printf ("%s\n", res.c_str ());
+		DisConnect (Database);
 	}
-	int ch = getchar();
+	int ch = getchar ();
 #endif
 	return 0;
 }
