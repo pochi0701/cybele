@@ -1,0 +1,11 @@
+==配列関数==
+**[[JavaScript|目次]]**
+
+**Array.contains(object obj)**
+　配列がobjを含むならばtrueを返す
+
+**Array.remove(object obj)**
+　配列からobjを含む項目を削除する
+
+**Array.join(string separator)**
+　配列をseparatorでつないで文字列にする

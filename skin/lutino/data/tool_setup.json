@@ -1,6 +1,6 @@
 [
   {
-    "url": "/system/edit/wiki.jss?page=HomePage",
+    "url": "/system/wiki.jss?page=HomePage",
     "image": "<img src=\"/images/wiki.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"Information of system.\" data-bs-placement=\"top\">"
   },
   {
@@ -20,11 +20,11 @@
     "image": "<img src=\"/images/shutdown.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"Shutdown system.\" data-bs-placement=\"top\">"
   },
   {
-    "url": "/system/edit/sql.jss",
+    "url": "/system/sql.jss",
     "image": "<img src=\"/images/bbs.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"Launch SQL Browser.\" data-bs-placement=\"top\">"
   },
   {
-    "url": "/system/edit/ascii_code.html",
+    "url": "/system/ascii_code.html",
     "image": "<img src=\"/images/bbs.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"View ascii codes.\" data-bs-placement=\"top\">"
   }
 ]

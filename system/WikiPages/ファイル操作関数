@@ -1,0 +1,66 @@
+==ファイル操作関数==
+**[[JavaScript|目次]]**
+
+パスの区切りはwindowsでは\\、Linuxでは/に変換されます。
+ただしwindowsでのドライブ名はc:/users/name/のように表記してください。
+漢字のファイル名は内部はUTF-8なのでスクリプトでnkfconvするか、
+そのうちに内部自動変換に統一しますので、待っててください。
+
+**file_exists(string path)**
+　ファイルの存在チェック
+
+**dir_exists(string path)**
+　ディレクトリの存在チェック
+
+**dirname(string uri)**
+　uriのディレクトリ名を文字列として返す
+
+**basename(string uri)**
+　uriのファイル名のみを文字列として返す
+
+**scandir(string uri)**
+　uriのフォルダ情報をjson文字列として返す
+
+**extractFileExt(string uri)**
+　uriの拡張子情報を文字列として返す
+
+**file_stat(string path)**
+　ファイルの情報をJSON形式で取得する。
+
+**filedate(string path)**
+　ファイルの日付情報を文字列として取得する。
+
+**loadFromFile(string path)**
+　pathで示されるファイルを文字列として読み込む。
+　バイナリファイルを読み込む事ができる。
+   pathにはURLを指定できる。
+
+**loadFromCSV(string path)**
+　pathで示されるCSVファイルをJSON形式で読み込む
+
+**unlink(string path)**
+　pathで示されるファイルを削除する
+
+**touch(string path)**
+　pathで示されるファイルを更新する。
+　ファイルが存在しない場合にはファイルを作成する
+
+**rename(string pathf,string patht)**
+　ファイルをpathfからpathtへリネームする
+
+**mkdir(string path)**
+　pathで示されるディレクトリを作成する
+　多段階のディレクトリは作成できない
+
+
+**rmdir(string path)**
+　pathで示されるディレクトリを削除する
+　中身が空でないディレクトリは削除できない
+
+
+**saveToFile(string path,string data)**
+　pathで示されるファイルにdataを保存する
+
+
+**copy(pathFrom,pathTo)**
+　pathFromからpathToへファイルをコピーする

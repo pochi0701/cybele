@@ -1,0 +1,25 @@
+==JSON関連==
+**[[JavaScript|目次]]**
+
+**JSON.mp3id3tag(string path)**
+　概要：
+　　pathで示されるmp3ファイルの情報をJSON形式の文字列で返します。
+
+　戻り値：
+　　ファイルがmp3ではないか無効の場合は項目が空のJSON形式のデータが返ります。
+
+　例：
+　　var mp3data = eval(JSON.mp3id3tag("mp3file.mp3"));
+
+**JSON.stringify(object obj, string replacer)**
+　概要:
+　　objで示されるオブジェクトをJSON形式に変換し返します。
+　　replacerは現状では無効です。
+　戻り値:
+　　文字列が返ります。
+
+　例:
+　　var a={"a":1,"b":2,"c":3};
+　　var b=JSON.stringify(a,replacer);
+
+他にString.SQL、LoadFromCSVもＪＳＯＮを返す

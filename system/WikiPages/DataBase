@@ -1,0 +1,41 @@
+==DataBase==
+**[[JavaScript|目次]]**
+
+**DBConnect(string DBName)**
+　概要：
+　　DBNameで示されるデータベースに接続する。
+
+　戻り値：
+　　データベース接続文字列
+
+　例：
+　　var database = DBConnect("myDataBase");
+
+**String.DBDisConnect()**
+　概要:
+　　データベースを切断する。
+　戻り値:
+　　なし。
+
+　例:
+       database.DBDisConnect();
+
+**String.SQL(string sqltext)**
+   概要:
+       SQLを実行する。
+　戻り値:
+       結果。値の場合はjsonが返る。
+
+''SELECT arg1 WHERE arg2 ORDER BY arg3 LIMIT arg4''
+''CREATE TABLE tableName (field Number or String,...)''
+''INSERT INTO tableName(fieldname1, fieldname2,...) VALUES(value1,value2,...)''
+''UPDATE TABLENAME SET field = value, field = value.. WHERE cond1,op1,cond2''
+''DELETE FROM TABLENAME WHERE cond1,op1,cond2''
+''SHOW DATABASES/TABLES [FROM databaseName]''
+''DROP TABLE/DATABASE name''
+''ALTER TABLE TABLENAME ADD (COLUMN1 definition1,COLUMN2 definition2..)''
+''ALTER TABLE TABLENAME MODIFY (COLUMN1 definition1,COLUMN2 definition2..)''
+''ALTER TABLE TABLENAME RENAME TO NEWTABLENAME''
+''ALTER TABLE TABLENAME RENAME COLUMN OLDCOLUMN TO NEWCOLUMN''
+''ALTER TABLE TABLENAME DROP (COLUMN1, COLUMN2..);''
+

@@ -912,7 +912,6 @@ CMDS getData (unsigned char* data, unsigned char* token)
 	unsigned char* q = token;
 	//unsigned char  ch;
 	int quoted = 0;
-	int zatumi = 0;
 	//token
 	CMDS ret = CMDS::TXPRM;
 	//TRIM
@@ -982,9 +981,6 @@ CMDS getData (unsigned char* data, unsigned char* token)
 					break;
 				}
 
-			}
-			else {
-				zatumi++;
 			}
 			*q++ = *p++;
 		}
@@ -1662,6 +1658,17 @@ void Database::Save (void)
 			if (SaveToFile (path + name + ".db") == 0) {
 			}
 			break;
+		}
+	}
+	// テーブルがない場合にも保存する処理
+	if (tblList.size() == 0) {
+		//bakファイル削除
+		if (wString::file_exists((path + name + ".db.bak")) == 0) {
+			wString::delete_file(path + name + ".db.bak");
+		}
+		wString::rename_file(path + name + ".db", path + name + ".db.bak");
+		//保存(テーブルも保存される）
+		if (SaveToFile(path + name + ".db") == 0) {
 		}
 	}
 

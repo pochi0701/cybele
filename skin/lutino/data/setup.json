@@ -16,7 +16,7 @@
     "image": "<img src=\"images/transparent.png\" width=\"96\" height=\"96\" border=\"0\">"
   },
   {
-    "url": "/system/edit/help.html",
+    "url": "/system/help.html",
     "image": "<img src=\"images/help.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"programming manual.\" data-bs-placement=\"top\">"
   },
   {
@@ -28,7 +28,7 @@
     "image": ""
   },
   {
-    "url": "/system/edit/",
+    "url": "/system/",
     "image": "<img src=\"images/edit.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"Edit server code.\" data-bs-placement=\"top\">"
   },
   {

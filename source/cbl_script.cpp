@@ -53,7 +53,7 @@ unsigned int __stdcall batch(void* ptr)
 //    GetCurrentDirectory (256, cur_dir);
 //#endif
     //sprintf(script_filename, "%s%s%s", cur_dir, "/system/tools", "/setip.jss");
-    sprintf(script_filename, "%s%s%s", global_param.server_root, "/system/edit", "/setip.jss");
+    sprintf(script_filename, "%s%s%s", global_param.server_root, "/system", "/setip.jss");
 
     while(loop_flag){
         //イベントが合致したら指定jssを起動

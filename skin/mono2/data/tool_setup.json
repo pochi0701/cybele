@@ -1,6 +1,6 @@
 [
   {
-    "url": "/system/edit/wiki.jss?page=HomePage",
+    "url": "/system/wiki.jss?page=HomePage",
     "image": "<img src=\"/images/wiki.png\" width=\"96\" height=\"96\" border=\"0\" data-bs-toggle=\"tooltip\" title=\"Information of system.\" data-bs-placement=\"top\">"
   },
   {

@@ -41,7 +41,7 @@ url = _GET.url;
 </head>
 <body>
     <div class="container">
-        <input type="button" class="btn btn-primary" value="編集" accesskey="/" onClick="location.href='/system/edit/view.jss?root=<?print(url);?>';">
+        <input type="button" class="btn btn-primary" value="編集" accesskey="/" onClick="location.href='/system/view.jss?root=<?print(url);?>';">
         <input type="button" class="btn btn-primary" value="戻る" onClick="history.back();">
         <div id="md"></div>
         <script>
@@ -93,7 +93,7 @@ url = _GET.url;
                         return false;
                     })
                     .catch(function (error) {
-                        window.location.href = "/system/edit/view.jss?root="+url;
+                        window.location.href = "/system/view.jss?root="+url;
                         console.log(error);
                     });
             }

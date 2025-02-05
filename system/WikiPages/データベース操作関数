@@ -1,0 +1,100 @@
+==データベース操作関数==
+**[[JavaScript|目次]]**
+
+パスの区切りはwindowsでは\、Linuxでは/に変換されます。
+ただしwindowsでのドライブ名はc:/users/name/のように表記してください。
+漢字のファイル名は内部はUTF-8なのでスクリプトでnkfconvするか、
+そのうちに内部自動変換に統一しますので、待っててください。
+
+**String.Connect()**
+　Stringに格納されたデータベースに接続する。Stringは変数である必要がある。
+　接続後、接続ハンドルがStringに格納される。
+   例：
+   var database="test";
+   database.Connect();
+
+**String.DisConnect()**
+　接続されたデータベースとの連携を切断する。もしそのデータベースを使うユーザが一人であれば
+　データベースはファイルとして保存される。
+　例：
+  var database="sample";
+  database.Connect();
+  database.DisConnect();
+
+**String.SQL(string sqltext)**
+　接続されたデータベースにSQLを発行する。
+   結果はJSON形式で取得する。セキュリティ的に保護するものは現在用意されてないので
+　SQLインジェクション等には留意すること
+　例：
+  var database="sample";
+  database.Connect();
+  var result = database.SQL("select * from user;");
+  database.DisConnect();
+  result.dump();
+
+**SQL一覧**
+
+カラム名は``,"",~~~''~~~などで囲って良い
+テーブル名は,``,"",~~~''~~~などで囲って良い
+文字列は"",~~~''~~~のみで囲って良い
+条件式は [[テーブル名./テーブルエイリアス.]カラム名/数値/文字] [=/>/</>=/<=] [[テーブル名./テーブルエイリアス.]カラム名/数値/文字]
+
+**選択**
+SELECT  [[テーブル名.]カラム名..[AS ALIAS]|*|count(*)] FROM table_name1[ AS TABLE_ALILAS1][,table_name2..]
+    [where 条件式1 [[AND/OR] 条件式2..]
+    [ORDER BY カラム名 [ASC/DESC]] [LIMIT 行番号1[,行番号２]]
+
+**挿入**
+INSERT INTO テーブル名(カラム名1,...) VALUES(値1,...);
+※カラム名のリストはテーブルカラム一覧と合致してなければならない。
+
+**更新**
+UPDATE テーブル名 SET カラム名1 = 値1,[カラム名2=値2].. WHERE 条件式1 [[AND/OR] 条件式2]...
+
+**データ削除**
+DELETE FROM テーブル名 WHERE 条件式1 [[AND/OR] 条件式2]...
+
+**作成**
+CREATE DATABASE データベース名;
+データベースを作成する。データベース名は他のデータベース名と同じではない文字列
+
+CREATE TABLE テーブル名(カラム名1 number/string, カラム名2 number/string..);
+テーブルを現在使用中のデータベースに作成する。起動時には_SYSTEMというデータベースを使用している。
+よって何かしらのユーザ用データベースは前もって作成しておくこと。
+添付のmsql.exeにて対話的に作成可能
+
+CREATE TABLE テーブル名 FROM CSVFILE
+指定のCSVFILEからテーブルを作成し全データをINSERTする。カラムはすべて文字型となる。
+
+**抹消**
+DROP TABLE テーブル名;
+使用中のデータベースからテーブルを抹消する。
+データはファイルからも消える
+
+DROP DATABASE データベース名;
+現在使用してないデータベースを抹消する。
+データはデータベース名.dbのファイル名として残る
+次回同名のデータベースをクリエイトすると復活する
+
+**表示**
+SHOW DATABASES;
+現存するデータベース一覧を表示する
+
+SHOW TABLES;
+使用中のデータベースのテーブル一覧を表示する
+
+**変更(実装中)**
+ALTER TABLE テーブル名 ADD(カラム名1 number/string,[]...)
+指定のテーブルに指定のカラムを追加する
+
+ALTER TABLE テーブル名 MODIFY(カラム名1 number/string[]...)
+指定のテーブルの指定のカラムについて属性を変更する
+
+ALTER TABLE テーブル名 DROP(カラム名1,...)
+指定のテーブルの指定のカラムについて属性を変更する
+
+**データベース使用(コマンドラインのみ)**
+USE データベース名;
+指定のデータベースを使用する。
+
+
