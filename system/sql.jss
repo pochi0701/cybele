@@ -130,9 +130,6 @@
         {
             document.getElementById("sql").value = "select * from "+tables[dbidx][tableidx]+" limit 3;";
         }
-        function setDatabase(db) {
-            make_hidden("id", db, "SQL");
-        }
         var toggle = 0;
         function disp(txt) {
             if (toggle == 0) {
@@ -142,24 +139,6 @@
                 document.getElementById("dat").innerHTML = "";
             }
             toggle = 1 - toggle;
-        }
-
-        /**
-         * make_hidden : hiddenを作成する : Version 1.2
-         */
-        function make_hidden(name, value, formname) {
-            var q = document.createElement('input');
-            q.type = 'hidden';
-            q.name = name;
-            q.value = value;
-            if (formname) {
-                if (document.forms[formname] == undefined) {
-                    console.error("ERROR: form " + formname + " is not exists.");
-                }
-                document.forms[formname].appendChild(q);
-            } else {
-                document.forms[0].appendChild(q);
-            }
         }
         hpt  = `
         databaseを選択してテーブルをクリックするとテーブル一部表示のSQLが入力欄に設定されます。<br>
@@ -219,7 +198,7 @@
                 Databases<br>
                 <select id="database" class="form-select" aria-label="databases" onchange="selectChange(event);">
                     <?
-                    for( var i = 1 ; i < databases.length ; i++ ){
+                    for( var i = 0 ; i < databases.length ; i++ ){
                         //if( tables[i].length > 0){
                             print( '<option value="'+i+'"'+((i==db_id)?' selected':'')+'>'+databases[i]+'</option>\n' );
                         //}
