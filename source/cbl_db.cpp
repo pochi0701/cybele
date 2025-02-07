@@ -1894,7 +1894,8 @@ int Database::SQL (const wString& sqltext, wString& retStr)
 
 				// 名前はSJIS。今後変化する可能性がある。
 				// FILE* rs = fopen(wString(reinterpret_cast<char*>(token)).nkfcnv("Ws").c_str(), "r");
-				int fd = myopen (wString (reinterpret_cast<char*>(token)).nkfcnv ("Ws").c_str (), O_RDONLY | O_BINARY, S_IREAD);
+				// myopenでSJISにするのでここではSJISにしない
+				int fd = myopen (wString(reinterpret_cast<char*>(token)).c_str (), O_RDONLY | O_BINARY, S_IREAD);
 				if (fd < 0) {
 					//debug_log_output ("%s(%d):CREATE TABLE FROM (%s) Error.", __FILE__, __LINE__, token);
 					//return false;

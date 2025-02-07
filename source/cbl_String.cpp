@@ -933,7 +933,7 @@ bool wString::load_from_csv (const wString& FileName)
 		int ptr = 0;
 		int ptr2 = 0;
 		char* p;
-		char* comma = "";
+		char* comma = const_cast <char*>("");
 		while ((p = strtok_csv (s, ptr2)) != 0) {
 			if (is_number (p)) {
 				ptr += ::sprintf (t + ptr, "%s%s", comma, p);
@@ -944,7 +944,7 @@ bool wString::load_from_csv (const wString& FileName)
 				// lf ->"\n"
 				ptr += ::sprintf (t + ptr, "%s\"%s\"", comma, p);
 			}
-			comma = ",";
+			comma = const_cast <char*>(",");
 		}
 		if (first) {
 			first = 0;
