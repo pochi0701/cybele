@@ -18,17 +18,35 @@ var Cood = function(xx, yy) {
     this.x = xx;
     this.y = yy;
 };
-const ctx;
+let ctx;
 var GoalCHK=0;
 var change=0;
 
 var img;
-window.onload = function init(){
+        // onload イベント
+        window.onload = function() {
     ctx = document.getElementById('mainWindow').getContext('2d'); //描画するコンテキスト
     img = new Image();
-    img.src = "game.gif";
-    loadText();
-}
+    img.src = "./game.gif";
+            img.onload = function() {
+              loadText();
+            };
+            img.onerror = function() {
+                alert("画像読み込みに失敗しました。");
+            };
+                
+        };
+
+        // mousemove イベント
+        document.addEventListener('mousemove', function(event) {
+            mouseMove(event.clientX, event.clientY);
+        });
+
+        // mousedown イベント
+        document.addEventListener('mousedown', function(event) {
+            mouseDown();
+        });
+        
 function loadText(){
     GoalCHK = 0;
     if (window.XMLHttpRequest){

@@ -235,7 +235,7 @@
                                 print( '<tr>\n');
                                 print( '<th>'+(row+1)+'</th>\n');
                                 for( var col = 0 ; col < rset.length ; col++ ){
-                                    print( '<td>'+result[row][rset[col]]+'</td>\n');
+                                    print( '<td>'+htmlspecialchars(result[row][rset[col]])+'</td>\n');
                                 }
                                 print( '</tr>\n');
                             }
@@ -245,7 +245,7 @@
                             print( '<thead><tr><th>#</th><th>Items</th></tr></thead>\n' );
                             print( '<tbody>\n');
                             for( var row = 0 ; row < result.length ; row++ ){
-                                print( '<tr><th>'+(row+1)+'</th><td>'+result[row]+'</td></tr>\n');
+                                print( '<tr><th>'+(row+1)+'</th><td>'+htmlspecialchars(result[row])+'</td></tr>\n');
                             }
                         }
                         print( '</tbody>\n');

@@ -130,22 +130,22 @@ class Table
 {
 private:
 	int				ref;          //read thread数
-#ifdef linux
-	pthread_mutex_t mutex;        //クリティカルセッションmutex
-#else
-	CRITICAL_SECTION cs;          //クリティカルセクション
-#endif
+//#ifdef linux
+//	pthread_mutex_t mutex;        //クリティカルセッションmutex
+//#else
+//	CRITICAL_SECTION cs;          //クリティカルセクション
+//#endif
 public:
 	wString         name;         //テーブル名
 	vector<Column*> column;       //カラム
 	vector<Node*>   node;         //各ノード
 	vector<int>     index;        //orderby等のフィルタ
 	bool            changed;		// 変更されたか
-	//セッション管理
-	void readStart();
-	void readEnd();
-	void writeStart();
-	void writeEnd();
+	////セッション管理
+	//void readStart();
+	//void readEnd();
+	//void writeStart();
+	//void writeEnd();
 	//テンプレート
 	Table(void);
 	//CSVからテーブル作成
@@ -158,7 +158,7 @@ public:
 	//デストラクタ
 	~Table();
 	//テーブルデータ取得
-	vector<Node*> getTable(void);
+	//vector<Node*> getTable(void);
 	//テーブルインサート(CSV)
 	//カラム数が合ってない等チェックしてないので残りはNULLを追加
 	int Insert(const char* data);
@@ -208,11 +208,11 @@ class DBCatalog
 {
 private:
 	int refs;
-#ifdef linux
-	pthread_mutex_t mutex;        //クリティカルセッションmutex
-#else
-	CRITICAL_SECTION cs;          //クリティカルセクション
-#endif
+//#ifdef linux
+//	pthread_mutex_t mutex;        //クリティカルセッションmutex
+//#else
+//	CRITICAL_SECTION cs;          //クリティカルセクション
+//#endif
 public:
 	////////////////////////////////////////////////////////////////////////////
 	//データベースリスト

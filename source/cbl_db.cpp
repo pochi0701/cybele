@@ -31,6 +31,7 @@
 #include "cbl_db.h"
 #include "cbl_String.h"
 #include "cbl_tools.h"
+#include <mutex>
 using namespace std;
 /////////////////////////////////////////////////////////////////////////////
 //#ifndef IGNNRE_PARAMETER
@@ -94,6 +95,9 @@ map<wString, Database*>* connects;
 /////////////////////////////////////////////////////////////////////////////
 //カタログ
 DBCatalog* catalog;
+/////////////////////////////////////////////////////////////////////////////
+// mutex
+std::mutex mtx;
 /////////////////////////////////////////////////////////////////////////////
 //比較
 int compare (const wString& arg1, const wString& op, const wString& arg2, const dataType& type1, const dataType& type2)
@@ -180,9 +184,9 @@ public:
 	//デストラクタ。クリティカルセクション抜ける
 	~view (void)
 	{
-		for (unsigned int i = 0; i < Tables.size (); i++) {
-			Tables[i]->readEnd ();
-		}
+		//for (unsigned int i = 0; i < Tables.size (); i++) {
+		//	Tables[i]->readEnd ();
+		//}
 	}
 	//テーブル参照を記録
 	int Copy (Table* tbl)
@@ -191,7 +195,7 @@ public:
 		Tables.clear ();
 		Column.clear ();
 		Node.clear ();
-		tbl->readStart ();
+		//tbl->readStart ();
 		Tables.push_back (tbl);
 
 		int idx = (int)Tables.size () - 1;
@@ -355,7 +359,7 @@ public:
 	int Add (Table* tbl)
 	{
 		vector<char> mat;
-		tbl->readStart ();
+		//tbl->readStart ();
 		conditionMatTables (tbl, mat);
 		//ノード追加
 		vector<int> node;
@@ -1138,14 +1142,14 @@ Table::Table (void)
 	ref = 0;
 	changed = false;
 	//クリティカルセクション初期化
-#ifdef linux
-	pthread_mutexattr_t attr;
-	pthread_mutexattr_init (&attr);
-	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE_NP);
-	pthread_mutex_init (&mutex, &attr);
-#else
-	InitializeCriticalSection (&cs);
-#endif
+//#ifdef linux
+//	pthread_mutexattr_t attr;
+//	pthread_mutexattr_init (&attr);
+//	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE_NP);
+//	pthread_mutex_init (&mutex, &attr);
+//#else
+//	InitializeCriticalSection (&cs);
+//#endif
 }
 /////////////////////////////////////////////////////////////////////////////
 //CSVからテーブル作成
@@ -1155,15 +1159,15 @@ Table::Table (const char* myname, const char* mycolumn)
 	//クリティカルセクション初期化
 	ref = 0;
 	changed = false;
-#ifdef linux
-	pthread_mutexattr_t attr;
-	pthread_mutexattr_init (&attr);
-	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE_NP);
-	pthread_mutex_init (&mutex, &attr);
-#else
-	InitializeCriticalSection (&cs);
-#endif
-	writeStart ();
+//#ifdef linux
+//	pthread_mutexattr_t attr;
+//	pthread_mutexattr_init (&attr);
+//	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE_NP);
+//	pthread_mutex_init (&mutex, &attr);
+//#else
+//	InitializeCriticalSection (&cs);
+//#endif
+	//writeStart ();
 	name = myname;
 	//clmnsにCSVインサート
 	unsigned char work[4096] = {};
@@ -1173,7 +1177,7 @@ Table::Table (const char* myname, const char* mycolumn)
 		auto ret = getData (work, token);
 		if (ret != CMDS::TXPRM) {
 			err ("INVALID COLUMN NAME");
-			writeEnd ();
+			//writeEnd ();
 			return;
 		}
 		clmns.push_back (reinterpret_cast<char*>(token));
@@ -1197,7 +1201,7 @@ Table::Table (const char* myname, const char* mycolumn)
 		column.push_back (clm);
 		node.push_back (new Node (typs));
 	}
-	writeEnd ();
+	//writeEnd ();
 }
 /////////////////////////////////////////////////////////////////////////////
 //String配列からテーブル作成
@@ -1206,15 +1210,15 @@ Table::Table (const wString& myname, const vector<wString>& mycolumn)
 	//クリティカルセクション初期化
 	ref = 0;
 	changed = false;
-#ifdef linux
-	pthread_mutexattr_t attr;
-	pthread_mutexattr_init (&attr);
-	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE_NP);
-	pthread_mutex_init (&mutex, &attr);
-#else
-	InitializeCriticalSection (&cs);
-#endif
-	writeStart ();
+//#ifdef linux
+//	pthread_mutexattr_t attr;
+//	pthread_mutexattr_init (&attr);
+//	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE_NP);
+//	pthread_mutex_init (&mutex, &attr);
+//#else
+//	InitializeCriticalSection (&cs);
+//#endif
+	//writeStart ();
 	//name = myname;
 	for (unsigned int i = 0; i < mycolumn.size (); i++) {
 		//Column* clm = new Column(name, mycolumn[i]);
@@ -1222,7 +1226,7 @@ Table::Table (const wString& myname, const vector<wString>& mycolumn)
 		column.push_back (clm);
 		node.push_back (new Node (clm->type));
 	}
-	writeEnd ();
+	//writeEnd ();
 }
 /////////////////////////////////////////////////////////////////////////////
 //カラム情報からテーブル作成
@@ -1231,22 +1235,22 @@ Table::Table (const wString& myname, const vector<Column*>& mycolumn)
 	//クリティカルセクション初期化
 	ref = 0;
 	changed = false;
-#ifdef linux
-	pthread_mutexattr_t attr;
-	pthread_mutexattr_init (&attr);
-	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE_NP);
-	pthread_mutex_init (&mutex, &attr);
-#else
-	InitializeCriticalSection (&cs);
-#endif
-	writeStart ();
+//#ifdef linux
+//	pthread_mutexattr_t attr;
+//	pthread_mutexattr_init (&attr);
+//	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE_NP);
+//	pthread_mutex_init (&mutex, &attr);
+//#else
+//	InitializeCriticalSection (&cs);
+//#endif
+	//writeStart ();
 	name = myname;
 	for (unsigned int i = 0; i < mycolumn.size (); i++) {
 		Column* clm = new Column (mycolumn[i]);
 		column.push_back (clm);
 		node.push_back (new Node (clm->type));
 	}
-	writeEnd ();
+	//writeEnd ();
 }
 /////////////////////////////////////////////////////////////////////////////
 //デストラクタ
@@ -1258,60 +1262,60 @@ Table::~Table ()
 	for (unsigned int i = 0; i < node.size (); i++) {
 		delete node[i];
 	}
-#ifdef linux
-#else
-	//クリティカルセクション破棄
-	DeleteCriticalSection (&cs);
-#endif
+//#ifdef linux
+//#else
+//	//クリティカルセクション破棄
+//	DeleteCriticalSection (&cs);
+//#endif
 }
-/////////////////////////////////////////////////////////////////////////////
-void Table::readStart (void)
-{
-	//書き込みセッションはここで待つ
-#ifdef linux
-	pthread_mutex_lock (&mutex);
-#else
-	EnterCriticalSection (&cs);
-#endif
-	ref++;
-#ifdef linux
-	pthread_mutex_unlock (&mutex);
-#else
-	LeaveCriticalSection (&cs);
-#endif
-}
-/////////////////////////////////////////////////////////////////////////////
-void Table::readEnd (void)
-{
-	ref--;
-}
-/////////////////////////////////////////////////////////////////////////////
-void Table::writeStart (void)
-{
-	//読み込み終了待ち。
-	//読み込みが半端無く続くようであれば抜けづらいだろうが、まあいいか
-	while (ref) { Sleep (10); }
-#ifdef linux
-	pthread_mutex_lock (&mutex);
-#else
-	EnterCriticalSection (&cs);
-#endif
-}
-/////////////////////////////////////////////////////////////////////////////
-void Table::writeEnd (void)
-{
-#ifdef linux
-	pthread_mutex_unlock (&mutex);
-#else
-	LeaveCriticalSection (&cs);
-#endif
-}
+///////////////////////////////////////////////////////////////////////////////
+//void Table::readStart (void)
+//{
+//	//書き込みセッションはここで待つ
+//#ifdef linux
+//	pthread_mutex_lock (&mutex);
+//#else
+//	EnterCriticalSection (&cs);
+//#endif
+//	ref++;
+//#ifdef linux
+//	pthread_mutex_unlock (&mutex);
+//#else
+//	LeaveCriticalSection (&cs);
+//#endif
+//}
+///////////////////////////////////////////////////////////////////////////////
+//void Table::readEnd (void)
+//{
+//	ref--;
+//}
+///////////////////////////////////////////////////////////////////////////////
+//void Table::writeStart (void)
+//{
+//	//読み込み終了待ち。
+//	//読み込みが半端無く続くようであれば抜けづらいだろうが、まあいいか
+//	while (ref) { Sleep (10); }
+//#ifdef linux
+//	pthread_mutex_lock (&mutex);
+//#else
+//	EnterCriticalSection (&cs);
+//#endif
+//}
+///////////////////////////////////////////////////////////////////////////////
+//void Table::writeEnd (void)
+//{
+//#ifdef linux
+//	pthread_mutex_unlock (&mutex);
+//#else
+//	LeaveCriticalSection (&cs);
+//#endif
+//}
 /////////////////////////////////////////////////////////////////////////////
 //テーブルコピー
 void  Table::copy (Table* tbl)
 {
-	tbl->writeStart ();
-	writeStart ();
+	//tbl->writeStart ();
+	//writeStart ();
 	name = tbl->name;             //テーブル名
 	column.clear ();
 	for (unsigned int i = 0; i < tbl->column.size (); i++) {
@@ -1321,8 +1325,8 @@ void  Table::copy (Table* tbl)
 	for (unsigned int i = 0; i < tbl->node.size (); i++) {
 		node.push_back (new Node (tbl->node[i]));
 	}
-	writeEnd ();
-	tbl->writeEnd ();
+	//writeEnd ();
+	//tbl->writeEnd ();
 	//vector<int>     index;        //orderby等のフィルタ
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -1337,7 +1341,7 @@ int Table::Insert (const char* data)
 	vector<wString> tmp;
 	unsigned char work[4096] = {};
 	unsigned char token[1024];
-	writeStart ();
+	//writeStart ();
 	//実行開始
 	strcpy (reinterpret_cast<char*>(work), const_cast<char*>(data));
 	for (;;) {
@@ -1362,11 +1366,11 @@ int Table::Insert (const char* data)
 	}
 	if (tmp.size () != column.size ()) {
 		err ("Invalid number of column");
-		writeEnd ();
+		//writeEnd ();
 		return -1;
 	}
 	Insert (tmp);
-	writeEnd ();
+	//writeEnd ();
 	return 0;
 }
 //テーブルインサート
@@ -1376,12 +1380,12 @@ int Table::Insert (const vector<wString>& clm, const vector<wString>& data)
 		err ("Illigal number of data");
 		return -1;
 	}
-	writeStart ();
+	//writeStart ();
 	//TODO:カラムと合致したデータを投入すること
 	for (unsigned int i = 0; i < data.size (); i++) {
 		node[i]->put (data[i].c_str ());
 	}
-	writeEnd ();
+	//writeEnd ();
 	return 0;
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -1392,11 +1396,11 @@ int Table::Insert (const vector<wString>& data)
 		err ("Illigal number of data");
 		return -1;
 	}
-	writeStart ();
+	//writeStart ();
 	for (unsigned int i = 0; i < data.size (); i++) {
 		node[i]->put (data[i]);
 	}
-	writeEnd ();
+	//writeEnd ();
 	return 0;
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -1496,7 +1500,7 @@ int Table::Update (const vector<wString>& colnams, const vector<wString>& values
 	}
 	//合致しない更新カラムがあった場合
 	if (matcol.size () != colnams.size ()) { err ("undefined column name found"); return -1; }
-	writeStart ();
+	//writeStart ();
 	//条件配列生成
 	vector<char> mat;
 	if (condition_mat (cond, mat)) return -1;
@@ -1510,7 +1514,7 @@ int Table::Update (const vector<wString>& colnams, const vector<wString>& values
 			}
 		}
 	}
-	writeEnd ();
+	//writeEnd ();
 	return 0;
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -1520,7 +1524,7 @@ int Table::Delete (condition& cond)
 	//条件配列生成
 	vector<char> mat;
 	if (condition_mat (cond, mat)) return -1;
-	writeStart ();
+	//writeStart ();
 	//後ろから実行
 	for (int i = node[0]->size () - 1; i >= 0; i--) {
 		//条件が合致するなら
@@ -1531,7 +1535,7 @@ int Table::Delete (condition& cond)
 			}
 		}
 	}
-	writeEnd ();
+	//writeEnd ();
 	return 0;
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -1540,7 +1544,7 @@ int Table::LoadFromFile (bufrd* br)
 {
 	unsigned int len;
 	char work[1024];
-	writeStart ();
+	//writeStart ();
 	//name復帰
 	for (;;) {
 		if (br->Read (&len, sizeof (unsigned int))) break;
@@ -1566,10 +1570,10 @@ int Table::LoadFromFile (bufrd* br)
 			node.push_back (nd);
 		}
 		//printf( "%s loaded\n", name.c_str() );
-		writeEnd ();
+		//writeEnd ();
 		return 0;
 	}
-	writeEnd ();
+	//writeEnd ();
 	return -1;
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -1577,7 +1581,7 @@ int Table::LoadFromFile (bufrd* br)
 void Table::SaveToFile (bufrd* br)
 {
 	//name保存
-	readStart ();
+	//readStart ();
 	auto len = name.length ();
 	br->Write (&len, sizeof (unsigned int));
 	br->Write (name.c_str (), len);
@@ -1596,7 +1600,7 @@ void Table::SaveToFile (bufrd* br)
 		node[i]->SaveToFile (br);
 	}
 	//printf( "%s saved\n", name.c_str() );
-	readEnd ();
+	//readEnd ();
 }
 ////////////////////////////////////////////////////////////////////////////
 //テーブル変更の有無を調べる
@@ -2471,13 +2475,14 @@ int Database::SaveToFile (wString file)
 //データベースに接続する
 Database* DBCatalog::DBConnect (const wString& DBName)
 {
+	//std::lock_guard<std::mutex> lock(mtx); // スコープ終了までロック
 	Database* db = NULL;
 	//ここにクリティカルセクションを設定
-#ifdef linux
-	pthread_mutex_lock (&mutex);
-#else
-	EnterCriticalSection (&cs);
-#endif
+//#ifdef linux
+//	pthread_mutex_lock (&mutex);
+//#else
+//	EnterCriticalSection (&cs);
+//#endif
 	if (dblist.count (DBName)) {
 		//未登録
 		if (dblist[DBName] == NULL) {
@@ -2487,11 +2492,11 @@ Database* DBCatalog::DBConnect (const wString& DBName)
 
 		db = dblist[DBName];
 	}
-#ifdef linux
-	pthread_mutex_unlock (&mutex);
-#else
-	LeaveCriticalSection (&cs);
-#endif
+//#ifdef linux
+//	pthread_mutex_unlock (&mutex);
+//#else
+//	LeaveCriticalSection (&cs);
+//#endif
 	return db;
 }
 ////////////////////////////////////////////////////////////////////////////
@@ -2642,15 +2647,16 @@ int DBCatalog::SaveToFile (void)
 DBCatalog::DBCatalog (void)
 {
 	//MUTEX初期化
+	//std::lock_guard<std::mutex> lock(mtx); // スコープ終了までロック
 	refs = 0;
-#ifdef linux
-	pthread_mutexattr_t attr;
-	pthread_mutexattr_init (&attr);
-	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE_NP);
-	pthread_mutex_init (&mutex, &attr);
-#else
-	InitializeCriticalSection (&cs);
-#endif
+//#ifdef linux
+//	pthread_mutexattr_t attr;
+//	pthread_mutexattr_init (&attr);
+//	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE_NP);
+//	pthread_mutex_init (&mutex, &attr);
+//#else
+//	InitializeCriticalSection (&cs);
+//#endif
 	//動的に作る
 	connects = new map<wString, Database*>;
 	dblist.clear ();
@@ -2697,6 +2703,7 @@ int _DBDisConnect (wString& key)
 wString _DBSQL (const wString& key, wString& sql)
 {
 	if (connects->count (key) > 0) {
+		std::lock_guard<std::mutex> lock(mtx);
 		wString retStr;
 		Database* db = (*connects)[key];
 		int ret = db->SQL (sql, retStr);
