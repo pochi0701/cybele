@@ -786,35 +786,35 @@ public:
 #endif
 };
 
-#ifndef linux
-#define SJIS
-#endif
-#ifdef SJIS
-/************************************************************
-** <モジュールＩＤ> ：iskanji.h
-** <モジュール名称> ：シフトJIS漢字判定マクロ
-** <機能概要> ：シフトJIS漢字第１バイトまたは第２バイト
-** を判定する
-**
-** <Creator> ：k.kanamuro 2002/05/02
-*************************************************************/
-/** シフトJIS漢字第１バイト判定マクロ */
-
-#ifndef ISKANJI1
-#define ISKANJI1(c) \
-(((unsigned char)(c) > 0x80 && (unsigned char)(c) < 0xA0)\
-|| ((unsigned char)(c) > 0xCF && (unsigned char)(c) < 0xF0))
-#endif
-
-/*************************************************************/
-/** シフトJIS漢字第２バイト判定マクロ */
-
-#ifndef ISKANJI2
-#define ISKANJI2(c) \
-((unsigned char)(c) > 0x3F && (unsigned char)(c) < 0xFE \
-&& (unsigned char)(c) != 0x7F)
-#endif
-#endif
+//#ifndef linux
+//#define SJIS
+//#endif
+//#ifdef SJIS
+///************************************************************
+//** <モジュールＩＤ> ：iskanji.h
+//** <モジュール名称> ：シフトJIS漢字判定マクロ
+//** <機能概要> ：シフトJIS漢字第１バイトまたは第２バイト
+//** を判定する
+//**
+//** <Creator> ：k.kanamuro 2002/05/02
+//*************************************************************/
+///** シフトJIS漢字第１バイト判定マクロ */
+//
+//#ifndef ISKANJI1
+//#define ISKANJI1(c) \
+//(((unsigned char)(c) > 0x80 && (unsigned char)(c) < 0xA0)\
+//|| ((unsigned char)(c) > 0xCF && (unsigned char)(c) < 0xF0))
+//#endif
+//
+///*************************************************************/
+///** シフトJIS漢字第２バイト判定マクロ */
+//
+//#ifndef ISKANJI2
+//#define ISKANJI2(c) \
+//((unsigned char)(c) > 0x3F && (unsigned char)(c) < 0xFE \
+//&& (unsigned char)(c) != 0x7F)
+//#endif
+//#endif
 ////////////////////////////////////////////////////////////////////////////
 CMDS getToken (unsigned char* sql, unsigned char* token)
 {

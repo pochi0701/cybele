@@ -67,6 +67,9 @@ hello:
 
 # ターゲット 'install' の定義
 install: ../cybele
+	if [ -d /var/www/html ]; then
+	echo "Directory already exists. Remove folder /var/www before execute this command."
+	else
 	mkdir -p /var/www
 	mkdir -p /var/www/html
 	-killall cybele
@@ -78,5 +81,5 @@ install: ../cybele
 	cp -r ../skin /var/www
 	cp ../README.md /var/www
 	/var/www/cybele
-
+	fi
 # ヘッダーファイルの依存関係
