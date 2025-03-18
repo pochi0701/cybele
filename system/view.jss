@@ -6,8 +6,39 @@ var scriptp  = _SERVER.SCRIPT_FILENAME;
 var scriptn  = _SERVER.SCRIPT_NAME;
 //ユーザ限定処理
 //初回の処理
-if( root.length==0){
-    root = _SERVER.DOCUMENT_ROOT;
+if( root.length>0){
+    var fileName = basename(root);
+    var pathName = basename(dirname(root));
+    var no = basename(dirname(dirname(root)));
+    
+    var database;
+    var elm;
+    database = DBConnect("sample_database");
+    var tmp = database.SQL("select s.no as sno,s.content_no as scon,s.sub_no as ssub from content as c,subcontent as s where  s.file='"+fileName+"' and c.path='"+pathName+"' and c.content_no=s.content_no and c.no=s.no and c.no="+no+";");
+    if(tmp.startsWith("[")){
+        elm = eval(tmp);
+        if(elm.length > 0 && elm[0].sno != undefined){
+            // timeを文字化
+            dt = Date().toDateString("%Y%m%d%H%M%S");
+            database.SQL("update subcontent set done='100',execution='"+dt+"' where no = "+elm[0].sno+" and content_no= "+elm[0].scon+" and sub_no="+elm[0].ssub+";");
+            // 実施内容を取得
+            var tmp2 = database.SQL("select done from subcontent where no = "+elm[0].sno+" and content_no= "+elm[0].scon+";");
+            if(tmp2.startsWith("[")){
+                elm2 = eval(tmp2);
+                var all = elm2.length;
+                var cnt = 0;
+                for( i = 0 ; i < elm2.length ; i++ ){
+                    if( elm2[i].done > 0 ){
+                        cnt++;
+                    }
+                }
+                // 実施率
+                var rate = cnt*100/all;
+                var res = database.SQL("update subcontent set done='"+rate+"',execution='"+dt+"' where no = "+elm[0].sno+" and content_no= "+elm[0].scon+" and sub_no=1;");
+            }
+        }
+    }
+    database.DBDisConnect();   
 }
 //右端の/をなくす
 while( root[root.length-1] == "/" ){
@@ -42,14 +73,18 @@ if( sf == ""){
     </style>
 </head>
 <body onload="init();">
+    <div><?print(cnt*100/all);?></div>
+    <div><?print(pathName);?></div>
+        <div><?print(tmp);?></div>
+        <div><?print(elm[0].sno);?></div>
     <!-- EDITOR -->
-    <a href="#" onclick="saveCode();" title="Save File(AltS)" accesskey="S"><i class="fa fa-cloud-upload fa-lg"></i></a>
-    <a href="#" onclick="viewCode(filepath);" title="View File(AltV)" accesskey="V"><i class="fa fa-television fa-lg"></i></a>
-    <div id="editArea"></div>
+        <a href="#" onclick="saveCode();" title="Save File(AltS)" accesskey="S"><i class="fa fa-cloud-upload fa-lg"></i></a>
+        <a href="#" onclick="viewCode(filepath);" title="View File(AltV)" accesskey="V"><i class="fa fa-television fa-lg"></i></a>
+        <div id="editArea"></div>
 
     <!-- SCRIPTS //-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/ace.min.js" integrity="sha512-AGoM9vaICK6JL/xBUOBmP2khdtorQ4a7srtuqKGAtvF7/IzwDHd30lD0O3fk2b1V2aYXWKJLPWr3obywNxSEqw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.37.5/ace.min.js" integrity="sha512-YjQHlQGNexP37C52f9apwLx+lnJXu8Nbk/812nUhqZkaHPIiOCC3Jg0Q8lL7cZpLpMvFlLIxV8fgQ9fZCjqaWQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
     <script type="text/javascript">
         const extractFileExt = str => str.slice(str.lastIndexOf("."));
         const extractFileName = str => str.slice(str.lastIndexOf("/") + 1);

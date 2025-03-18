@@ -88,7 +88,7 @@ if( sf == ""){
 
     <!-- SCRIPTS //-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/ace.min.js" integrity="sha512-AGoM9vaICK6JL/xBUOBmP2khdtorQ4a7srtuqKGAtvF7/IzwDHd30lD0O3fk2b1V2aYXWKJLPWr3obywNxSEqw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.37.5/ace.min.js" integrity="sha512-YjQHlQGNexP37C52f9apwLx+lnJXu8Nbk/812nUhqZkaHPIiOCC3Jg0Q8lL7cZpLpMvFlLIxV8fgQ9fZCjqaWQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript">
         const extractFileExt = str => str.slice(str.lastIndexOf("."));
         const extractFileName = str => str.slice(str.lastIndexOf("/") + 1);

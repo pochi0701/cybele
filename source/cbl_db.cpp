@@ -113,13 +113,13 @@ int compare (const wString& arg1, const wString& op, const wString& arg2, const 
 			if (arg2[0] == '%') {
 				//部分一致
 				if (arg2[arg2.length () - 1] == '%') {
-					int res = arg1.find (arg2.substr (1, arg2.length () - 2));
+					int res = arg1.find (arg2.substr (1, arg2.length () - 3));
 					return res != wString::npos;
 				}
 				//後方一致
 				else {
 					//resが所定位置である検算が飛鳥
-					int res = arg1.find (arg2.substr (1, arg2.length () - 1));
+					int res = arg1.find (arg2.substr (1, arg2.length () - 2));
 					return res != wString::npos;
 				}
 				//前方一致または後方一致
@@ -127,7 +127,7 @@ int compare (const wString& arg1, const wString& op, const wString& arg2, const 
 			else {
 				//前方一致
 				if (arg2[arg2.length () - 1] == '%') {
-					int res = arg1.find (arg2.substr (1, arg2.length () - 1));
+					int res = arg1.find (arg2.substr (0, arg2.length () - 2));
 					return (res == 0);
 				}
 				//ワイルドカードなし
