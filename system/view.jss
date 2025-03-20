@@ -14,7 +14,8 @@ if( root.length>0){
     var database;
     var elm;
     database = DBConnect("sample_database");
-    var tmp = database.SQL("select s.no as sno,s.content_no as scon,s.sub_no as ssub from content as c,subcontent as s where  s.file='"+fileName+"' and c.path='"+pathName+"' and c.content_no=s.content_no and c.no=s.no and c.no="+no+";");
+    //var tmp = database.SQL("select s.no as sno,s.content_no as scon,s.sub_no as ssub from content as c,subcontent as s where s.file like '%"+fileName+"%' and c.path='"+pathName+"' and c.content_no=s.content_no and c.no=s.no and c.no="+no+";");
+    var tmp = database.SQL("select no as sno,content_no as scon,sub_no as ssub from subcontent where file like '%"+root+"';");
     if(tmp.startsWith("[")){
         elm = eval(tmp);
         if(elm.length > 0 && elm[0].sno != undefined){

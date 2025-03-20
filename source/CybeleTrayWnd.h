@@ -10,7 +10,7 @@ private:
 	HICON m_hIcon_main;
 	void    CblStart (void);
 	void    CblStop (void);
-	// exe起動時Cybeleスタートさせるかフラグ
+	// exe襍ｷ蜍墓凾Cybele繧ｹ繧ｿ繝ｼ繝医＆縺帙ｋ縺九ヵ繝ｩ繧ｰ
 	//bool    start_flag;
 	//bool    cbl_run_flag;
 	HANDLE  threadHandle;

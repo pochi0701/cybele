@@ -108,6 +108,7 @@ int compare (const wString& arg1, const wString& op, const wString& arg2, const 
 		else if (op == ">=") return arg1 >= arg2;
 		else if (op == "<") return arg1 < arg2;
 		else if (op == "<=") return arg1 <= arg2;
+		else if (op == "<>") return arg1 != arg2;
 		else if (op == "like") {
 			//部分一致または後方一致
 			if (arg2[0] == '%') {
@@ -146,6 +147,7 @@ int compare (const wString& arg1, const wString& op, const wString& arg2, const 
 		else if (op == ">=") return iarg1 >= iarg2;
 		else if (op == "<") return iarg1 < iarg2;
 		else if (op == "<=") return iarg1 <= iarg2;
+		else if (op == "<>") return iarg1 != iarg2;
 	}
 	else {
 		wString targ1 = arg1;
@@ -157,6 +159,7 @@ int compare (const wString& arg1, const wString& op, const wString& arg2, const 
 		else if (op == ">=") return targ1 >= targ2;
 		else if (op == "<") return targ1 < targ2;
 		else if (op == "<=") return targ1 <= targ2;
+		else if (op == "<>") return targ1 != targ2;
 	}
 	return 0;
 }

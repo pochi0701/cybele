@@ -1357,20 +1357,20 @@ CScriptVar* CScriptVar::mathsOp (CScriptVar* b, LEX_TYPES op)
 			int da = a->getInt ();
 			int db = b->getInt ();
 			switch (op) {
-			case LEX_TYPES::LEX_PLUS: return new CScriptVar (da + db);
-			case LEX_TYPES::LEX_MINUS: return new CScriptVar (da - db);
-			case LEX_TYPES::LEX_MUL:   return new CScriptVar (da * db);
-			case LEX_TYPES::LEX_DIV:   return new CScriptVar (da / db);
-			case LEX_TYPES::LEX_AND:   return new CScriptVar (da & db);
-			case LEX_TYPES::LEX_OR: return new CScriptVar (da | db);
-			case LEX_TYPES::LEX_XOR:   return new CScriptVar (da ^ db);
-			case LEX_TYPES::LEX_MOD:           return new CScriptVar (da % db);
-			case LEX_TYPES::LEX_EQUAL:     return new CScriptVar (da == db);
-			case LEX_TYPES::LEX_NEQUAL:    return new CScriptVar (da != db);
-			case LEX_TYPES::LEX_L_THAN:   return new CScriptVar (da < db);
-			case LEX_TYPES::LEX_LEQUAL:    return new CScriptVar (da <= db);
-			case LEX_TYPES::LEX_G_THAN:   return new CScriptVar (da > db);
-			case LEX_TYPES::LEX_GEQUAL:    return new CScriptVar (da >= db);
+			case LEX_TYPES::LEX_PLUS:  return new CScriptVar(da + db);
+			case LEX_TYPES::LEX_MINUS: return new CScriptVar(da - db);
+			case LEX_TYPES::LEX_MUL:   return new CScriptVar(da * db);
+			case LEX_TYPES::LEX_DIV:   return new CScriptVar((db != 0) ? (da / db) : 0);
+			case LEX_TYPES::LEX_AND:   return new CScriptVar(da & db);
+			case LEX_TYPES::LEX_OR:    return new CScriptVar(da | db);
+			case LEX_TYPES::LEX_XOR:   return new CScriptVar(da ^ db);
+			case LEX_TYPES::LEX_MOD:   return new CScriptVar(da % db);
+			case LEX_TYPES::LEX_EQUAL: return new CScriptVar(da == db);
+			case LEX_TYPES::LEX_NEQUAL:return new CScriptVar(da != db);
+			case LEX_TYPES::LEX_L_THAN:return new CScriptVar(da < db);
+			case LEX_TYPES::LEX_LEQUAL:return new CScriptVar(da <= db);
+			case LEX_TYPES::LEX_G_THAN:return new CScriptVar(da > db);
+			case LEX_TYPES::LEX_GEQUAL:return new CScriptVar(da >= db);
 			default: throw new CScriptException ("Operation " + CScriptLex::getTokenStr (op) + " not supported on the Int datatype");
 			}
 		}
@@ -1379,16 +1379,16 @@ CScriptVar* CScriptVar::mathsOp (CScriptVar* b, LEX_TYPES op)
 			double da = a->getDouble ();
 			double db = b->getDouble ();
 			switch (op) {
-			case LEX_TYPES::LEX_PLUS:  return new CScriptVar (da + db);
-			case LEX_TYPES::LEX_MINUS: return new CScriptVar (da - db);
-			case LEX_TYPES::LEX_MUL: return new CScriptVar (da * db);
-			case LEX_TYPES::LEX_DIV: return new CScriptVar (da / db);
-			case LEX_TYPES::LEX_EQUAL:     return new CScriptVar (da == db);
-			case LEX_TYPES::LEX_NEQUAL:    return new CScriptVar (da != db);
-			case LEX_TYPES::LEX_L_THAN:     return new CScriptVar (da < db);
-			case LEX_TYPES::LEX_LEQUAL:    return new CScriptVar (da <= db);
-			case LEX_TYPES::LEX_G_THAN:     return new CScriptVar (da > db);
-			case LEX_TYPES::LEX_GEQUAL:    return new CScriptVar (da >= db);
+			case LEX_TYPES::LEX_PLUS:  return new CScriptVar(da + db);
+			case LEX_TYPES::LEX_MINUS: return new CScriptVar(da - db);
+			case LEX_TYPES::LEX_MUL:   return new CScriptVar(da * db);
+			case LEX_TYPES::LEX_DIV:   return new CScriptVar((db != 0) ? (da / db) : 0);
+			case LEX_TYPES::LEX_EQUAL: return new CScriptVar(da == db);
+			case LEX_TYPES::LEX_NEQUAL:return new CScriptVar(da != db);
+			case LEX_TYPES::LEX_L_THAN:return new CScriptVar(da < db);
+			case LEX_TYPES::LEX_LEQUAL:return new CScriptVar(da <= db);
+			case LEX_TYPES::LEX_G_THAN:return new CScriptVar(da > db);
+			case LEX_TYPES::LEX_GEQUAL:return new CScriptVar(da >= db);
 			default: throw new CScriptException ("Operation " + CScriptLex::getTokenStr (op) + " not supported on the Double datatype");
 			}
 		}

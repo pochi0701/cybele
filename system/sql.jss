@@ -70,7 +70,7 @@
             result = undefined;
         }
         database.DBDisConnect();
-        //unlink(root + csv);
+        unlink(root + csv);
      }
    }
    
