@@ -81,11 +81,16 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     <script>
-  document.querySelectorAll('.accordion-body').forEach(function(item) {
-    item.addEventListener('click', function() {
-      window.location.href = item.getAttribute('data-url');
-    });
-  });
-</script>
-</body>
+      document.querySelectorAll('.accordion-body').forEach(function(item) {
+        item.addEventListener('click', function() {
+          window.location.href = item.getAttribute('data-url');
+        });
+      });
+      document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'visible') {
+           window.location.reload();
+        }
+      });
+    </script>
+  </body>
 </html>
