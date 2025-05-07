@@ -216,20 +216,6 @@ inline bool isAlpha (unsigned char ch)
 	return (cmap[ch] & 4);//((ch>='a') && (ch<='z')) || ((ch>='A') && (ch<='Z')) || ch=='_';
 }
 ////////////////////////////////////////////////////////////////////////////////
-//ID文字列になるかチェック
-//bool isIDString(const char *s) {
-//    if (!isAlpha(*s)){
-//        return false;
-//    }
-//    while (*s) {
-//        if (!(isAlpha(*s) || isNumeric(*s))){
-//            return false;
-//        }
-//        s++;
-//    }
-//    return true;
-//}
-////////////////////////////////////////////////////////////////////////////////
 //エラー時1行出力
 //char* oneLine(const char *s, int ptr,int end)
 //{
@@ -2528,7 +2514,8 @@ LEX_TYPES  CTinyJS::statement (bool& execute)
 	else if (lex->tk == LEX_TYPES::LEX_R_CONTINUE) {
 		lex->match (LEX_TYPES::LEX_R_CONTINUE);
 		lex->match (LEX_TYPES::LEX_SEMICOLON);
-		if (execute) {
+		if (execute)
+		{
 			return LEX_TYPES::LEX_R_CONTINUE;
 		}
 		else {
@@ -2670,7 +2657,7 @@ LEX_TYPES  CTinyJS::statement (bool& execute)
 		}
 		//int loopCount = TINYJS_LOOP_MAX_ITERATIONS;
 		//while (execute && loopCond && loopCount-- > 0) {
-		if (ret != LEX_TYPES::LEX_R_BREAK) {
+		if (ret != LEX_TYPES::LEX_R_BREAK)		 {
 			while (execute && loopCond) {
 				forCond->reset ();
 				lex = forCond;

@@ -23,18 +23,18 @@ if( root.length>0){
             dt = Date().toDateString("%Y%m%d%H%M%S");
             database.SQL("update subcontent set done='100',execution='"+dt+"' where no = "+elm[0].sno+" and content_no= "+elm[0].scon+" and sub_no="+elm[0].ssub+";");
             // 実施内容を取得
-            var tmp2 = database.SQL("select done from subcontent where no = "+elm[0].sno+" and content_no= "+elm[0].scon+";");
+            var tmp2 = database.SQL("select done from subcontent where no = "+elm[0].sno+" and content_no= "+elm[0].scon+" and sub_no > 1;");
             if(tmp2.startsWith("[")){
                 elm2 = eval(tmp2);
                 var all = elm2.length;
                 var cnt = 0;
                 for( i = 0 ; i < elm2.length ; i++ ){
                     if( elm2[i].done > 0 ){
-                        cnt++;
+                        cnt += Integer.parseInt(elm2[i].done);
                     }
                 }
                 // 実施率
-                var rate = cnt*100/all;
+                var rate = cnt/all;
                 var res = database.SQL("update subcontent set done='"+rate+"',execution='"+dt+"' where no = "+elm[0].sno+" and content_no= "+elm[0].scon+" and sub_no=1;");
             }
         }

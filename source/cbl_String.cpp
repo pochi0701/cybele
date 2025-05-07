@@ -748,6 +748,32 @@ int wString::load_from_file (const char* str)
 //---------------------------------------------------------------------------
 // ファイル読み込み
 //---------------------------------------------------------------------------
+wString wString::replace_env(const wString& path)
+{
+	//文字列から%%で囲まれた部分を抽出
+	wString result = path;
+	size_t start = 0;
+
+	while ((start = result.find('%', start)) != wString::npos) {
+		size_t end = result.find('%', start + 1);
+		if (end == wString::npos) {
+			break;  // 閉じる % がない場合は終了
+		}
+
+		wString varName = result.substr(start + 1, end - start - 1);
+		char* ptr  = getenv(varName.c_str());
+		wString varValue = ptr;
+
+		if (varValue.length()) {
+			varValue = varValue.nkfcnv("sW");
+			result.replace(start, end - start + 1, varValue);
+		}
+		else {
+			result.replace(start, end - start + 1, "");  // 未定義の環境変数は削除
+		}
+	}
+	return result;
+}
 
 /// <summary>
 /// ファイル読み込み
@@ -764,13 +790,14 @@ int wString::load_from_file (const wString& FileName)
 		*this = tmp;
 	}
 	else {
+		wString FileName2 = replace_env(FileName);
 #ifdef linux
-		handle = open (FileName.c_str (), O_RDONLY | S_IREAD);
+		handle = open (FileName2.c_str (), O_RDONLY | S_IREAD);
 #else
-		handle = myopen (FileName, O_RDONLY | O_BINARY, S_IREAD);
+		handle = myopen (FileName2, O_RDONLY | O_BINARY, S_IREAD);
 #endif
 		if (handle < 0) {
-			debug_log_output ("%s(%d):load_from_file(%s) Error.", __FILE__, __LINE__, FileName.c_str ());
+			debug_log_output ("%s(%d):load_from_file(%s) Error.", __FILE__, __LINE__, FileName2.c_str ());
 			return -1;
 		}
 		flen = lseek (handle, 0, SEEK_END);
@@ -971,13 +998,14 @@ int wString::save_to_file (const char* str)
 //---------------------------------------------------------------------------
 int wString::save_to_file (const wString& FileName)
 {
+	wString FileName2 = replace_env(FileName);
 #ifdef linux
-	int handle = myopen (FileName, O_CREAT | O_TRUNC | O_RDWR, S_IREAD | S_IWRITE);
+	int handle = myopen (FileName2, O_CREAT | O_TRUNC | O_RDWR, S_IREAD | S_IWRITE);
 #else
-	int handle = myopen (FileName, O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IREAD | S_IWRITE);
+	int handle = myopen (FileName2, O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IREAD | S_IWRITE);
 #endif
 	if (handle < 0) {
-		debug_log_output ("%s(%d):save_to_file(%s) Error.", __FILE__, __LINE__, FileName.c_str ());
+		debug_log_output ("%s(%d):save_to_file(%s) Error.", __FILE__, __LINE__, FileName2.c_str ());
 		return handle;
 	}
 	write (handle, String, len);
@@ -2685,6 +2713,7 @@ wString wString::http_get (const wString& url, off_t offset)
 			auto recv_len = recv (server_socket, ptr.String, ptr.capacity () - 1, 0);
 			ptr.String[recv_len] = 0;
 			ptr.len = recv_len;
+
 			//見つからない
 			hostPos = atoi (ptr.String + (ptr.Pos (" ") + 1));
 			if (hostPos < 200 || 300 <= hostPos) {
@@ -2693,10 +2722,7 @@ wString wString::http_get (const wString& url, off_t offset)
 			}
 			//content_length = atoi(buf.String+buf.Pos("Content-Length:" )+16);
 
-			//\r\n\r\nを探す
-			hostPos = ptr.Pos (HTTP_DELIMITER) + 4;//sizeof( HTTP_DELIMITER );//実体の先頭
-			recv_len -= hostPos;
-			buf = ptr.substr (hostPos, recv_len);
+			buf = ptr;
 			wString work (8000);
 			//転送する
 			while (loop_flag) {
@@ -2708,6 +2734,11 @@ wString wString::http_get (const wString& url, off_t offset)
 				work.len = recv_len;
 				//work.String[recv_len] = 0;
 				buf += work;
+			}
+			//\r\n\r\nを探して、それ移行をカット
+			hostPos = buf.Pos(HTTP_DELIMITER);//sizeof( HTTP_DELIMITER );//実体の先頭
+			if(hostPos != wString::npos){
+				buf = buf.substr(hostPos+4);
 			}
 		}
 		else {

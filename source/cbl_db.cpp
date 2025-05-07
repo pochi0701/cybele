@@ -478,13 +478,16 @@ public:
 					indexdt.push_back (getno (Node[k], tblno));
 					indexno.push_back (k);
 				}
-				tbl->node[j]->sort (indexdt, indexno, type);
-				//番号に沿ってNodeを入れ替え
-				node.resize (Node.size ());
-				for (unsigned int k = 0; k < indexno.size (); k++) {
-					node[k] = Node[indexno[k]];
+				// 0件はソートしない
+				if (indexdt.size() > 0) {
+					tbl->node[j]->sort(indexdt, indexno, type);
+					//番号に沿ってNodeを入れ替え
+					node.resize(Node.size());
+					for (unsigned int k = 0; k < indexno.size(); k++) {
+						node[k] = Node[indexno[k]];
+					}
+					copy(node.begin(), node.end(), Node.begin());
 				}
-				copy (node.begin (), node.end (), Node.begin ());
 				break;
 			}
 		}

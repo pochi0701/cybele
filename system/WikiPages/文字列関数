@@ -13,8 +13,8 @@ SJISに起因する問題には対応していません。
 　文字列の出現位置を返す
 　見つからなければ-1が返る
 
-**String.substring(int lo,int len)**
-　stringのloからlen文字分の部分文字列を返す
+**String.substring(int lo,int hi)**
+　stringのloからhiまでの部分文字列を返す。0開始で文字列長より大きい場合は文字列長とする。lo>hiなら順序を入れ替える。
 
 **String.charAt(int pos)**
 　文字列のpos位置の1文字を返す。全角文字非対応

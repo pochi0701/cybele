@@ -106,7 +106,7 @@ public:
 	//URL and encode
 	static char* linux_file_name(char* FileName);
 	static char* windows_file_name(char* FileName);
-	wString linux_file_name();
+	//wString linux_file_name();
 	wString windows_file_name();
 	wString         uri_encode(void);
 	wString         uri_decode(void);
@@ -156,6 +156,7 @@ public:
 	static wString  png_size(const wString& png_filename);
 	static wString  gif_size(const wString& gif_filename);
 	static wString  jpeg_size(const wString& jpeg_filename);
+	static wString  replace_env(const wString& path);
 	static int		readLineCSV (int fd, char* line_buf_p, int line_max);
 	wString  bios_uuid(void);
 	int             is_number (const char* str);
