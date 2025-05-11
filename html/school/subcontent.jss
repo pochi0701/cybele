@@ -14,14 +14,19 @@
     var tmp = database.SQL("select * from subcontent where no="+course_no+" and content_no="+content_no+" order by sub_no;");
     if(tmp.startsWith("[")){
         elm = eval(tmp);
-        //for(i = 0 ; i < elm.length ; i++){
-        //   tmp2 = database.SQL("select count(*) as cnt from subcontent where no="+course_no+" and content_no="+(i+1)+" and done=\"\";");
-        //   // 完了してないコンテンツの個数
-        //   num = eval(tmp2);
-        //   elm[i].cnt = num.cnt;
-        //}
     }
     database.DBDisConnect();
+    function formatDateTime(dt) {
+        // 入力された文字列を部分に分割
+        year = dt.substring(0, 4);
+        month = dt.substring(4, 6);
+        day = dt.substring(6, 8);
+        hours = dt.substring(8, 10);
+        minutes = dt.substring(10, 12);
+        seconds = dt.substring(12, 14);
+        // フォーマットされた文字列を返す
+        return year+"/"+month+"/"+day+" "+hours+":"+minutes+":"+seconds;
+    }
 ?>
 <!DOCTYPE html>
 <html>
@@ -47,23 +52,41 @@
         </div>
     </nav>
     <div class="container">
-    
-<h2><?print(content_name);?></h2>
+        <div class="row">
+            <div class="col">
+                <div class="btn bg-info btn-block">
+                    <a href="#" onclick="window.location.href='content.jss?no=<?print(course_no);?>';">コンテンツ一覧に戻る</a>
+                </div>
+            </div>
+        </div>
+        <h2><?print(content_name);?></h2>
         <div class="accordion" id="accordionPanelsStay">
             <?
             for(var i = 0 ; i<elm.length ; i++){
+                connect_char = (elm[i].file.indexOf("?")>=0)?"&":"?";
+                if(elm[i].file.startsWith('/')){
+                    path2 = "";
+                }else{
+                    path2 = path;
+                }
             print('<div class="accordion-item">');
             print('    <h2 class="accordion-header">');
             print('        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse'+i+'" aria-expanded="true" aria-controls="panelsStayOpen-collapse'+i+'">');
+                                   print( (i+1)+":");
                                print(htmlspecialchars(elm[i].name));
             print('        </button>');
             print('    </h2>');
             print('    <div id="panelsStayOpen-collapse'+i+'" class="accordion-collapse collapse show">');
-            print('        <div class="accordion-body"  data-url="'+path+elm[i].file+'?no='+elm[i].no+'&contentno='+elm[i].content_no+'&subno='+elm[i].sub_no+'">');
-            if(elm[i].done != "" ){
-                print('<span class="badge text-bg-info">実施済</span>');
+                print('        <div class="accordion-body"  data-url="'+path2+elm[i].file+connect_char+'no='+elm[i].no+'&contentno='+elm[i].content_no+'&subno='+elm[i].sub_no+'">');
+                if(elm[i].done == 100){
+                    print('<span class="badge text-bg-info">実施完了</span>');
+                    print('<span class="text-end">完了日：'+formatDateTime(elm[i].execution)+'</span>');
+                }else if(elm[i].done >= 1) {
+                    print('<span class="badge text-bg-warning">'+elm[i].done+'%完了</span>');
+                    print('<span class="text-end">実施日：'+formatDateTime(elm[i].execution)+' 【ここをクリックして実行】</span>');
             }else{
-                print('<span class="badge text-bg-danger">未実施</span>');
+                    print('<span class="badge text-bg-danger">未完了</span>');
+                    print('<span class="text-end">【ここをクリックして実行】</span>');
             }
             print('        </div>');
             print('    </div>');
@@ -76,14 +99,17 @@
     <script>
       document.querySelectorAll('.accordion-body').forEach(function(item) {
         item.addEventListener('click', function() {
-          window.location.href = item.getAttribute('data-url');
+          var uri = item.getAttribute('data-url');
+          if( uri != null ){
+            window.location.href = uri;
+          }
         });
       });
-      document.addEventListener('visibilitychange', function () {
-        if (document.visibilityState === 'visible') {
-           window.location.reload();
-        }
-      });
+      //document.addEventListener('visibilitychange', function () {
+      //  if (document.visibilityState === 'visible') {
+      //     window.location.reload();
+      //  }
+      //});
     </script>
   </body>
 </html>

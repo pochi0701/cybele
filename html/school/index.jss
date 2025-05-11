@@ -1,4 +1,7 @@
 <?  session_start();
+    var scriptn  = _SERVER.SCRIPT_NAME;
+    //if( FileExists(scriptn+"initSQL.jss")){
+    //}
     var course_no;
     var database;
     database = DBConnect("sample_database");
@@ -36,18 +39,18 @@
     </nav>
     <div class="container">
     
-            <h2>お知らせ</h2>
+        <h2>お知らせ</h2>
         <div class="accordion" id="accordionPanelsStayOpenExample" color="info">
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseNews" aria-expanded="true" aria-controls="panelsStayOpen-collapseNews">
-                        無料コンテンツ
+                        コンテンツについて
                     </button>
                 </h2>
                 <div id="panelsStayOpen-collapseNews" class="accordion-collapse collapse show">
                     <div class="accordion-body">
-                        Cybeleの使い方紹介は無料コンテンツとなっています。<br>
-                        ご自由にご利用ください。
+                        「Cybeleの使い方紹介」は無料コンテンツとなっています。<br>
+                        ご自由にご利用ください。タイトルの下部をクリックすると、コンテンツに移動します。
                     </div>
                 </div>
             </div>
@@ -57,6 +60,7 @@
         <h2>コース一覧</h2>
         <div class="accordion" id="accordionPanelsStayOpenExample">
             <?
+            //print(elm);
             for(var i = 0 ; i<elm.length ; i++){
             print('<div class="accordion-item">');
             print('    <h2 class="accordion-header">');
@@ -66,9 +70,12 @@
             print('    </h2>');
             print('    <div id="panelsStayOpen-collapse'+i+'" class="accordion-collapse collapse show">');
             print('        <div class="accordion-body"  data-url="content.jss?no='+elm[i].no+'">');
-            print(elm[0].detail+"<br>");
-            print("価格:"+elm[i].price+"<br>");
-            print("価格:"+elm[i].price+"<br>");
+            //print(elm[i].detail+"<br>");
+            if(elm[i].purchase.length>0){
+                print('購入済：<button class="btn btn-outline-primary href" href="'+elm[i].url+'" target="purchase">購入内容参照</button>');
+            }else{
+                print('未購入：<button class="btn btn-outline-primary href="'+elm[i].url+'" target="nopurchase">コンテンツ詳細、購入方法</a>');
+            }
             print('        </div>');
             print('    </div>');
             print('</div><br>');
@@ -78,16 +85,14 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     <script>
-      document.querySelectorAll('.accordion-body').forEach(function(item) {
-        item.addEventListener('click', function() {
-          window.location.href = item.getAttribute('data-url');
-        });
-      });
-      document.addEventListener('visibilitychange', function () {
-        if (document.visibilityState === 'visible') {
-           window.location.reload();
+  document.querySelectorAll('.accordion-body').forEach(function(item) {
+    item.addEventListener('click', function() {
+        var uri = item.getAttribute('data-url');
+        if( uri != null ){
+            window.location.href = uri;
         }
-      });
-    </script>
-  </body>
+    });
+  });
+</script>
+</body>
 </html>

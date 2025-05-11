@@ -7,7 +7,7 @@
     if(tmp.startsWith("[")){
         elm = eval(tmp);
         for(i = 0 ; i < elm.length ; i++){
-           tmp2 = database.SQL("select count(*) as cnt from subcontent where no="+course_no+" and content_no="+(i+1)+" and done=\"\";");
+           tmp2 = database.SQL("select count(*) as cnt from subcontent where no="+course_no+" and content_no="+(i+1)+" and done<100;");
            // 完了してないコンテンツの個数
            num = eval(tmp2);
            elm[i].cnt = num.cnt;
@@ -39,8 +39,14 @@
         </div>
     </nav>
     <div class="container">
-    
-            <h2>お知らせ</h2>
+        <div class="row">
+            <div class="col">
+                <div class="btn bg-info btn-block">
+                    <a href="#" onclick="window.location.href='index.jss';">コース一覧に戻る</a>
+                </div>
+            </div>
+        </div>
+        <h2>お知らせ</h2>
         <div class="accordion" id="accordionPanelsStayOpenNews">
             <div class="accordion-item">
                 <h2 class="accordion-header">
@@ -83,14 +89,17 @@
     <script>
       document.querySelectorAll('.accordion-body').forEach(function(item) {
         item.addEventListener('click', function() {
-          window.location.href = item.getAttribute('data-url');
+          var uri = item.getAttribute('data-url');
+          if( uri != null ){
+              window.location.href = uri;
+          }
         });
       });
-      document.addEventListener('visibilitychange', function () {
-        if (document.visibilityState === 'visible') {
-           window.location.reload();
-        }
-      });
+      //document.addEventListener('visibilitychange', function () {
+      //  if (document.visibilityState === 'visible') {
+      //     window.location.reload();
+      //  }
+      //});
     </script>
   </body>
 </html>
