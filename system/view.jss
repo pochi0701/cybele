@@ -123,7 +123,7 @@ if( sf == ""){
             const params = new URLSearchParams();
             params.append('path', path);
             params.append('code', code);
-            axios.post(`${scriptn}file_save.jss`, params)
+            axios.post(`${scriptn}common/file_save.jss`, params)
                 .then(function (response) {
                     console.log(response);
                     return false;
@@ -144,7 +144,7 @@ if( sf == ""){
         }
         // file load
         function loadFile(path) {
-            axios.get(`${scriptn}file_load.jss?path=${path}`)
+            axios.get(`${scriptn}common/file_load.jss?path=${path}`)
                 .then(function (response) {
                     // set code to editor
                     mycode = response.data;

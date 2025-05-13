@@ -67,9 +67,9 @@ if( sf == ""){
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="#" onClick="createDir();">フォルダ作成</a></li>
                         <li><a class="dropdown-item" href="#" onClick="createFile();">ファイル作成</a></li>
-                        <li><a class="dropdown-item" href="/system/lib.html" target="_lib">ライブラリ</a></li>
+                        <li><a class="dropdown-item" href="/system/lib/lib.html" target="_lib">ライブラリ</a></li>
                         <li><a class="dropdown-item" href="#" onClick="dl();">ダウンロード</a></li>
-                        <li><a class="dropdown-item" href="#" onClick="viewImages();">グラフィック表示</a></li>
+                        <li><a class="dropdown-item" href="#" onClick="viewImages();">画像一覧</a></li>
                         <li><a class="dropdown-item" href="#" onClick="expt();return false;">エクスポート</a></li>
                         <li><a class="dropdown-item" href="/" target="_top">Home</a></li>
                     </ul>
@@ -131,7 +131,7 @@ if( sf == ""){
                  // Tree表示
                 treeView("?root=" + extractFilePath(elm[this.lastIndexed].filepath));
             }else{
-                showMarkDown(scriptp+"develop.md");
+                showMarkDown(`${scriptp}common/develop.md`);
                 treeView("");
             }
             return false;
@@ -159,7 +159,7 @@ if( sf == ""){
         }
         function QRCode(path) {
             let path2 = path.substring(document_root.length, path.length);
-            path = scriptn+"qrcode.jss?url=" + path2;
+            path = `${scriptn}lib/qrcode.jss?url=${path2}`;
             myWin = window.open(encodeURI(path), path);
         }
         function openDir(url) {
@@ -209,12 +209,12 @@ if( sf == ""){
         function expt() {
             //zipを作って
             if (window.confirm(root + "を圧縮してダウンロードします。よろしいですか？")) {
-                window.open(scriptn+"zip.jss?path=" + root, "_zip");
+                window.open(`${scriptn}zip.jss?path=${root}` , "_zip");
             }
             return false;
         }
         function viewImages() {
-            window.open(scriptn+"viewImages.jss?path=" + root, "_images");
+            window.open(`${scriptn}viewImages.jss?path=${root}`, "_images");
             return false;
         }
         // EDITOR
@@ -233,7 +233,7 @@ if( sf == ""){
                 converter.setOption('tables', true);
             }
             doc="";
-            await axios.get(`${scriptn}file_load.jss?path=${path}`)
+            await axios.get(`${scriptn}common/file_load.jss?path=${path}`)
                 .then(function (response) {
                     doc = response.data;
                 })
@@ -254,7 +254,7 @@ if( sf == ""){
                 if( window.confirm(extractFileName(elm[this.lastIndexed].filepath)+"は変更されています。破棄してよろしいですか？") ){
                     elm.splice(this.lastIndexed,1);
                     if(elm.length == 0){
-                        showMarkDown(scriptp+"develop.md");
+                        showMarkDown(`${scriptp}common/develop.md`);
                     }else{
                         this.lastIndexed -= 1;
                         if(this.lastIndexed < 0){
@@ -269,7 +269,7 @@ if( sf == ""){
             }else{
                 elm.splice(this.lastIndexed,1);
                 if(elm.length == 0){
-                    showMarkDown(scriptp+"develop.md");
+                    showMarkDown(`${scriptp}common/develop.md`);
                 }else{
                     this.lastIndexed -= 1;
                     if(this.lastIndexed < 0){
@@ -353,7 +353,7 @@ if( sf == ""){
             const params = new URLSearchParams();
             params.append('path', path);
             params.append('code', code);
-            axios.post(`${scriptn}file_save.jss`, params)
+            axios.post(`${scriptn}common/file_save.jss`, params)
                 .then(function (response) {
                     console.log(response);
                     return false;
@@ -389,7 +389,7 @@ if( sf == ""){
         // file load
         function loadFile(path) {
             path = decodeURI(path);
-            axios.get(`${scriptn}file_load.jss?path=${path}`)
+            axios.get(`${scriptn}common/file_load.jss?path=${path}`)
                 .then(function (response) {
                     // check current data
                     checkEditData();
