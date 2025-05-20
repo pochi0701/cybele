@@ -15,9 +15,9 @@
     databases = eval(text);
     database.DBDisConnect();
     //databases = _SESSION.databases;
-    if( db_id == undefined ){
+    if( db_id === undefined ){
         db_id = _SESSION.db_id;
-        if( db_id == undefined ){
+        if( db_id === undefined ){
            _SESSION.db_id  = 1;
            db_id = _SESSION.db_id;
         }
@@ -39,7 +39,7 @@
 
    // UPLOAD
    var root = _SERVER.DOCUMENT_ROOT;
-   if( _POST != undefined ){
+   if( _POST !== undefined ){
      //s = Object.keys(_POST);  
      //for( var i=0 ; i<s.length ; i++ ){
      //    print( "["+s[i]+"] =>"+_POST[s[i]]+"<br>\n" );
@@ -47,7 +47,7 @@
      if( !root.endsWith("/")){
          root += "/";
      }
-     if( _POST.upload != undefined)
+     if( _POST.upload !== undefined)
      {
         // _POST.upload.filebodyの先頭を見る
         // BOMだったら先頭3バイト削除
@@ -91,7 +91,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     <script>
         var databases=[<?for(i=0;i<databases.length;i++){print((i>0)?',':'');print('"'+databases[i]+'"');}?>];
-        var cmd = "<?print((_GET.cmd==undefined)?"":_GET.cmd);?>";
+        var cmd = "<?print((_GET.cmd===undefined)?"":_GET.cmd);?>";
         var tables=[<?
                     for(i=0;i<databases.length;i++){
                         print((i>0)?',':'');
@@ -266,7 +266,7 @@
     </div>
     <script>
         // command injection
-        if(cmd != undefined && cmd.length > 0 ){
+        if(cmd !== undefined && cmd.length > 0 ){
             document.getElementById("sql").value = cmd;
             cmd = "";
         }

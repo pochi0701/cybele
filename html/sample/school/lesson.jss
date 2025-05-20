@@ -6,13 +6,13 @@
     var grd;
     var database;
     database = DBConnect("lesson");
-    if( _GET.unm != undefined ){
+    if( _GET.unm !== undefined ){
         unm = _GET.unm;
         pwd = _GET.pwd;
         _SESSION["unm"]=unm;
         _SESSION["pwd"]=pwd;
         var elm = eval(database.SQL("select * from student where name=\""+unm+"\";"));
-        if( elm != undefined ){
+        if( elm !== undefined ){
             uid = elm[0].id;
             grd = elm[0].grade;
             _SESSION["uid"]=uid;
@@ -20,7 +20,7 @@
         }else{
             header("Location: uncertification.html");
         }
-    }else if( _SESSION["uid"] != undefined ){
+    }else if( _SESSION["uid"] !== undefined ){
         uid = _SESSION["uid"];
         unm = _SESSION["unm"];
         pwd = _SESSION["pwd"];

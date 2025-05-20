@@ -6,7 +6,7 @@
 
     var database;
     //student検索
-    if( userName != undefined && grade != undefined ){
+    if( userName !== undefined && grade !== undefined ){
         database = DBConnect("lesson");
         student=eval(database.SQL("select id from student order by id desc limit 1"));
         maxid = student[0]["id"]+1;

@@ -22,7 +22,7 @@ var rent = _GET.rent;
 var search = _GET.search;
 //ユーザ限定処理
 //初回の処理
-if (root == undefined || root.length == 0) {
+if (root === undefined || root.length == 0) {
     root = _SERVER.DOCUMENT_ROOT;
 }
 //右端の/をなくす
@@ -31,7 +31,7 @@ while (root[root.length - 1] == "/") {
 }
 
 //ファイル削除
-if (del != undefined && del.length > 0) {
+if (del !== undefined && del.length > 0) {
     if (file_exists(del)) {
         unlink(del);
     } else if (dir_exists(del)) {
@@ -40,7 +40,7 @@ if (del != undefined && del.length > 0) {
         }
     }
 // リネーム
-} else if (renf != undefined && rent != undefined && renf.length > 0 && rent.length > 0) {
+} else if (renf !== undefined && rent !== undefined && renf.length > 0 && rent.length > 0) {
     if (file_exists(renf) && (!file_exists(rent))) {
         if(!rename(renf, rent)){
             print("<p class=\"text-danger\">"+renf+"は"+rent+"に変更できませんでした。</p>");
@@ -53,7 +53,7 @@ if (del != undefined && del.length > 0) {
         print("<p class=\"text-danger\">すでに同名のファイルが存在します</p>");
     }
 // パス名取得、作成
-} else if (dir_exists(root) && newDir != undefined && newDir.length > 0) {
+} else if (dir_exists(root) && newDir !== undefined && newDir.length > 0) {
     var path = root + "/" + newDir;
     if (!file_exists(path)) {
         if(!mkdir(path)){
@@ -62,7 +62,7 @@ if (del != undefined && del.length > 0) {
     }
     root = path;
     //ファイル名取得、作成
-} else if (dir_exists(root) && newFile != undefined && newFile.length > 0) {
+} else if (dir_exists(root) && newFile !== undefined && newFile.length > 0) {
     var path = root + "/" + newFile;
     if (!file_exists(path)) {
         if( !touch(path)){

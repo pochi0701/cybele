@@ -107,7 +107,7 @@ if( sf == ""){
         function setEditor(code,path)
         {
             // editorの設定
-            if (this.editor == undefined) {
+            if (this.editor === undefined) {
                 document.getElementById("editArea").innerHTML = "";
                 this.editor = ace.edit("editArea");
                 this.editor.setTheme("ace/theme/textmate");
@@ -138,7 +138,7 @@ if( sf == ""){
         }
         // display result of rendering code.
         function viewCode(path) {
-            if(path == undefined){
+            if(path === undefined){
                 return;
             }
             checkEditData();
@@ -221,14 +221,14 @@ if( sf == ""){
         async function showMarkDown(path) {
             this.lastIndexed = -1;
             this.filepath = undefined;
-            if(this.editor != undefined){
+            if(this.editor !== undefined){
                 this.editor.container.style.display = "none";
             }
             document.getElementById("searchLists").innerHTML = "";
             document.getElementById("markDown").innerHTML = "";
             // markdownをhtmlに変換する
             // コンバーターを作成する
-            if(converter == undefined){
+            if(converter === undefined){
                 converter = new showdown.Converter();
                 converter.setOption('tables', true);
             }
@@ -288,7 +288,7 @@ if( sf == ""){
             // list取得[{"filepath":filepath,"modify":false/true}]
             elm = getElements();
             this.filepath = elm[index].filepath;
-            if (this.lastIndexed != undefined) {
+            if (this.lastIndexed !== undefined) {
                 currentCode = this.editor.getValue()
                 if (elm[this.lastIndexed].code != currentCode) {
                     elm[this.lastIndexed].code = currentCode;
@@ -323,7 +323,7 @@ if( sf == ""){
         {
             try {
                 files = localStorage.getItem('files');
-                if( files != undefined && files != null ) {
+                if( files !== undefined && files != null ) {
                     elm = JSON.parse(files);
                 }else{
                     elm = [];
@@ -365,7 +365,7 @@ if( sf == ""){
 
         // save code to file.
         function saveCode() {
-            if(editor == undefined){
+            if(editor === undefined){
                 return false;
             }
             code = editor.getValue();

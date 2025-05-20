@@ -121,9 +121,12 @@ bool split(const char* pattern, wString& split1, wString& split2)
 	}
 }
 
-/********************************************************************************/
-// sentence文字列内のkey文字列をrep文字列で置換する。
-/********************************************************************************/
+/// <summary>
+/// sentence文字列内のkey文字列をrep文字列で置換する。
+/// </summary>
+/// <param name="sentence">置換元文字列</param>
+/// <param name="key">置換文字列</param>
+/// <param name="rep">置換後の文字列</param>
 void replace_character(char* sentence, const char* key, const char* rep)
 {
 	int klen = (int)strlen(key);
@@ -135,11 +138,11 @@ void replace_character(char* sentence, const char* key, const char* rep)
 	}
 	auto p = strstr(sentence, key);
 	if (klen == rlen) {
+		//前詰め置換そのままコピーすればいい
 		while (p != NULL) {
 			memcpy(static_cast<void*>(p), static_cast<const void*>(rep), rlen);
 			p = strstr(p + rlen, key);
 		}
-		//前詰め置換そのままコピーすればいい
 	}
 	else if (klen > rlen) {
 		num = klen - rlen;
@@ -739,8 +742,11 @@ void debug_log_initialize()
 //*************************************************
 void debug_log_output(const char* fmt, ...)
 {
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	static int        fd = -1;
+	if (!global_param.flag_debug_log_output) {
+		return;
+	}
 	char       buf[1024 * 5 + 1] = {};
 	char       work_buf[1024 * 4 + 1] = {};
 	char       date_and_time[80];
@@ -808,9 +814,9 @@ void debug_log_output(const char* fmt, ...)
 	//fd = -1;
 	return;
 	//DEBUGが定義されてない場合ログ出力しない
-#else
-	IGNORE_PARAMETER(fmt);
-#endif
+//#else
+//	IGNORE_PARAMETER(fmt);
+//#endif
 }
 //---------------------------------------------------------------------------
 char* path_sanitize(char* orig_dir, size_t dir_size)

@@ -5,7 +5,7 @@
 
     var database;
     //student検索
-    if( userName != undefined ){
+    if( userName !== undefined ){
         database = DBConnect("lesson");
         str = "delete from student where name='"+userName+"'";
         ret = database.SQL(str);

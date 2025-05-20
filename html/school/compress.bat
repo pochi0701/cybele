@@ -1,1 +1,1 @@
-tar cvzf lesson01.tgz 1
+tar cvzf lesson01.tgz 1 initSQL.jss

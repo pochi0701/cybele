@@ -1,6 +1,6 @@
 <?
     session_start();
-    if( _SESSION["uid"] != undefined ){
+    if( _SESSION["uid"] !== undefined ){
         uid = _SESSION["uid"];
         pwd = _SESSION["pwd"];
         grd = _SESSION["grd"];

@@ -106,7 +106,7 @@ typedef int socklen_t;
 #define	DEFAULT_CONF_FILENAME2	        "/usr/local/cybele/cbl.conf"
 #define	DEFAULT_CONF_FILENAME3	        "/etc/cbl.conf"
 
-#define	DEFAULT_FLAG_DEBUG_LOG_OUTPUT	TRUE
+#define	DEFAULT_FLAG_DEBUG_LOG_OUTPUT	FALSE
 #ifdef linux
 #define	DEFAULT_DEBUG_LOG_FILENAME	    "/tmp/cbl_debug.log"
 #else

@@ -4,7 +4,7 @@ var _url = _GET['_url'];
 var jsona = eval(loadFromFile(base+_url));
 var s = Object.keys(_GET);
 var ret = undefined;
-if (jsona.length == undefined)
+if (jsona.length === undefined)
 {
     var aaa = Object.keys(jsona);
     print(aaa[0]);

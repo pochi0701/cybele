@@ -1,12 +1,12 @@
 <?
     session_start();
-    if( _SESSION["uid"] != undefined ){
+    if( _SESSION["uid"] !== undefined ){
         uid = _SESSION["uid"];
         pwd = _SESSION["pwd"];
         grd = _SESSION["grd"];
         unm = _SESSION["unm"];
     }
-    if( uid == undefined ){
+    if( uid === undefined ){
        header("Location: http://neon.cx/");
     }
     var database;
@@ -15,7 +15,7 @@
     database = DBConnect("lesson");
     var mx1=1;
     var mx = eval(database.SQL("select id from history order by id desc limit 0,1;"));
-    if( mx != undefined ){
+    if( mx !== undefined ){
         mx1 = mx[0].id+1;
     }
     var dt = Date();
@@ -51,7 +51,7 @@ android = (ua.indexOf("Android")>0);
 
 //set target movie url
 url = _GET.url;
-if( url != undefined ){
+if( url !== undefined ){
   //get extension
   ext  = extractFileExt(url);
   

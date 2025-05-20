@@ -1,6 +1,6 @@
 <?
 url = _GET.url;
-if( url != undefined ){
+if( url !== undefined ){
   var name = eval(JSON.mp3id3tag(_SERVER.DOCUMENT_ROOT+url));
 }
 ?>
@@ -28,7 +28,7 @@ if( url != undefined ){
         android = (ua.indexOf("Android")>0);
 
         //set target movie url
-        if( url != undefined ){
+        if( url !== undefined ){
             print("TITLE  :"+name.title+"<br>\n");
             print("ALBUM  :"+name.album+"<br>\n");
             print("ARTIST :"+name.artist+"<br>\n");

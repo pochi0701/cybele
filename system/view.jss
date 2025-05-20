@@ -14,11 +14,10 @@ if( root.length>0){
     var database;
     var elm;
     database = DBConnect("sample_database");
-    //var tmp = database.SQL("select s.no as sno,s.content_no as scon,s.sub_no as ssub from content as c,subcontent as s where s.file like '%"+fileName+"%' and c.path='"+pathName+"' and c.content_no=s.content_no and c.no=s.no and c.no="+no+";");
     var tmp = database.SQL("select no as sno,content_no as scon,sub_no as ssub from subcontent where file like '%"+root+"';");
     if(tmp.startsWith("[")){
         elm = eval(tmp);
-        if(elm.length > 0 && elm[0].sno != undefined){
+        if(elm.length > 0 && elm[0].sno !== undefined){
             // timeを文字化
             dt = Date().toDateString("%Y%m%d%H%M%S");
             database.SQL("update subcontent set done='100',execution='"+dt+"' where no = "+elm[0].sno+" and content_no= "+elm[0].scon+" and sub_no="+elm[0].ssub+";");
@@ -103,7 +102,7 @@ if( sf == ""){
         }
         // display result of rendering code.
         function viewCode(path) {
-            if (path == undefined) {
+            if (path === undefined) {
                 return;
             }
             if(editor.getValue() != mycode){
@@ -135,7 +134,7 @@ if( sf == ""){
 
         // save code to file.
         function saveCode() {
-            if (editor == undefined) {
+            if (editor === undefined) {
                 return false;
             }
             mycode = editor.getValue();
@@ -149,7 +148,7 @@ if( sf == ""){
                     // set code to editor
                     mycode = response.data;
                     // editorの設定
-                    if (this.editor == undefined) {
+                    if (this.editor === undefined) {
                         document.getElementById("editArea").innerHTML = "";
                         this.editor = ace.edit("editArea");
                         this.editor.setTheme("ace/theme/textmate");

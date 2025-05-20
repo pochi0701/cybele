@@ -90,7 +90,7 @@ config.INTERNAL = { "VERBATIM": [], "ERRORS": [], "DATA": [] };
 //===========================================================================
 // initialise our style sheets
 function isset(object) {
-    return (!(object == undefined));
+    return (!(object === undefined));
 }
 function css(pagename) {
     //global config;

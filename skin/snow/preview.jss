@@ -19,7 +19,7 @@
 
       //set target movie url
       url = _GET.url;
-      if( url != undefined ){
+      if( url !== undefined ){
 
           //get extension
           ext  = extractFileExt(url);
