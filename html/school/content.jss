@@ -56,7 +56,7 @@
                 </h2>
                 <div id="panelsStayOpen-collapseNews" class="accordion-collapse collapse show">
                     <div class="accordion-body">
-                        Cybeleの使い方紹介は無料コンテンツとなっています。<br>
+                        Cybeleの使い方は無料コンテンツとなっています。<br>
                         ご自由にご利用ください。
                     </div>
                 </div>
@@ -68,33 +68,38 @@
         <div class="accordion" id="accordionPanelsStay">
             <?
             for(var i = 0 ; i<elm.length ; i++){
-            print('<div class="accordion-item">');
-            print('    <h2 class="accordion-header">');
-            print('        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse'+i+'" aria-expanded="true" aria-controls="panelsStayOpen-collapse'+i+'">');
+            print('<div class="accordion-item">\r\n');
+            print('    <h2 class="accordion-header">\r\n');
+            print('        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse'+i+'" aria-expanded="true" aria-controls="panelsStayOpen-collapse'+i+'">\r\n');
                                print(htmlspecialchars(elm[i].name));
-            print('        </button>');
-            print('    </h2>');
-            print('    <div id="panelsStayOpen-collapse'+i+'" class="accordion-collapse collapse show">');
-            print('        <div class="accordion-body"  data-url="subcontent.jss?no='+elm[i].no+'&contentno='+elm[i].content_no+'">');
-            print(elm[i].detail+"<br>");
-            print('残り課題 <span class="badge text-bg-danger">'+elm[i].cnt+'</span>');
-            print('        </div>');
-            print('    </div>');
-            print('</div>');
+            print('        </button>\r\n');
+            print('    </h2>\r\n');
+            print('    <div id="panelsStayOpen-collapse'+i+'" class="accordion-collapse collapse show">\r\n');
+            print('        <div class="accordion-body">\r\n');
+            print('<a class="btn btn-outline-primary" href="subcontent.jss?no='+elm[i].no+'&contentno='+elm[i].content_no+'">閲覧</a>\r\n');
+            print(elm[i].detail+"<br>\r\n");
+            if(elm[i].cnt > 0){
+                print('残り課題 <span class="badge text-bg-danger">'+elm[i].cnt+'</span>\r\n');
+            }else{
+                print('残り課題 <span class="badge text-bg-info">'+elm[i].cnt+'</span>\r\n');
+            }
+            print('        </div>\r\n');
+            print('    </div>\r\n');
+            print('</div>\r\n');
             }
             ?>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     <script>
-      document.querySelectorAll('.accordion-body').forEach(function(item) {
-        item.addEventListener('click', function() {
-          var uri = item.getAttribute('data-url');
-          if( uri != null ){
-              window.location.href = uri;
-          }
-        });
-      });
+      //document.querySelectorAll('.accordion-body').forEach(function(item) {
+      //  item.addEventListener('click', function() {
+      //    var uri = item.getAttribute('data-url');
+      //    if( uri != null ){
+      //        window.location.href = uri;
+      //    }
+      //  });
+      //});
       //document.addEventListener('visibilitychange', function () {
       //  if (document.visibilityState === 'visible') {
       //     window.location.reload();

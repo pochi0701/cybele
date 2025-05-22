@@ -1,7 +1,9 @@
 <?  session_start();
     var scriptn  = _SERVER.SCRIPT_NAME;
-    //if( FileExists(scriptn+"initSQL.jss")){
-    //}
+    var base = "http://"+_SERVER.SERVER_ADDR+":"+_SERVER.SERVER_PORT+dirname(scriptn)+"/initSQL.jss";
+    if(file_exists(_SERVER.DOCUMENT_ROOT+dirname(scriptn)+"/initSQL.jss")){
+        loadFromFile(base);
+    }
     var course_no;
     var database;
     database = DBConnect("sample_database");
@@ -62,37 +64,38 @@
             <?
             //print(elm);
             for(var i = 0 ; i<elm.length ; i++){
-            print('<div class="accordion-item">');
-            print('    <h2 class="accordion-header">');
-            print('        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse'+i+'" aria-expanded="true" aria-controls="panelsStayOpen-collapse'+i+'">');
+            print('<div class="accordion-item">\r\n');
+            print('    <h2 class="accordion-header">\r\n');
+            print('        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse'+i+'" aria-expanded="true" aria-controls="panelsStayOpen-collapse'+i+'">\r\n');
                                print(htmlspecialchars(elm[i].name));
-            print('        </button>');
-            print('    </h2>');
-            print('    <div id="panelsStayOpen-collapse'+i+'" class="accordion-collapse collapse show">');
-            print('        <div class="accordion-body"  data-url="content.jss?no='+elm[i].no+'">');
+            print('        </button>\r\n');
+            print('    </h2>\r\n');
+            print('    <div id="panelsStayOpen-collapse'+i+'" class="accordion-collapse collapse show">\r\n');
+            //print('        <div class="accordion-body"  data-url="content.jss?no='+elm[i].no+'">\r\n');
+            print('        <div class="accordion-body"  data-url="">\r\n');
             //print(elm[i].detail+"<br>");
             if(elm[i].purchase.length>0){
-                print('購入済：<button class="btn btn-outline-primary href" href="'+elm[i].url+'" target="purchase">購入内容参照</button>');
+                print('購入済：<a class="btn btn-outline-primary" href="content.jss?no='+elm[i].no+'">コンテンツを開く</a>\r\n');
             }else{
-                print('未購入：<button class="btn btn-outline-primary href="'+elm[i].url+'" target="nopurchase">コンテンツ詳細、購入方法</a>');
+                print('未購入：<a class="btn btn-outline-primary" href="get_content.jss?version='+elm[i].no+'">購入</a>\r\n');
             }
-            print('        </div>');
-            print('    </div>');
-            print('</div><br>');
+            print('        </div>\r\n');
+            print('    </div>\r\n');
+            print('</div><br>\r\n');
             }
             ?>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     <script>
-  document.querySelectorAll('.accordion-body').forEach(function(item) {
-    item.addEventListener('click', function() {
-        var uri = item.getAttribute('data-url');
-        if( uri != null ){
-            window.location.href = uri;
-        }
-    });
-  });
+  //document.querySelectorAll('.accordion-body').forEach(function(item) {
+  //  item.addEventListener('click', function() {
+  //      var uri = item.getAttribute('data-url');
+  //      if( uri != null ){
+  //          window.location.href = uri;
+  //      }
+  //  });
+  //});
 </script>
 </body>
 </html>

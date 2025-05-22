@@ -69,42 +69,42 @@
                 }else{
                     path2 = path;
                 }
-            print('<div class="accordion-item">');
-            print('    <h2 class="accordion-header">');
+            print('<div class="accordion-item">\r\n');
+            print('    <h2 class="accordion-header">\r\n');
             print('        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse'+i+'" aria-expanded="true" aria-controls="panelsStayOpen-collapse'+i+'">');
                                    print( (i+1)+":");
                                print(htmlspecialchars(elm[i].name));
-            print('        </button>');
-            print('    </h2>');
-            print('    <div id="panelsStayOpen-collapse'+i+'" class="accordion-collapse collapse show">');
-                print('        <div class="accordion-body"  data-url="'+path2+elm[i].file+connect_char+'no='+elm[i].no+'&contentno='+elm[i].content_no+'&subno='+elm[i].sub_no+'">');
+            print('        </button>\r\n');
+            print('    </h2>\r\n');
+            print('    <div id="panelsStayOpen-collapse'+i+'" class="accordion-collapse collapse show">\r\n');
+            print('        <div class="accordion-body">');
+                print('<a class="btn btn-outline-primary" href="'+path2+elm[i].file+connect_char+'no='+elm[i].no+'&contentno='+elm[i].content_no+'&subno='+elm[i].sub_no+'" target="_blank">閲覧</a>\r\n');
                 if(elm[i].done == 100){
-                    print('<span class="badge text-bg-info">実施完了</span>');
-                    print('<span class="text-end">完了日：'+formatDateTime(elm[i].execution)+'</span>');
+                    print('<span class="badge text-bg-info">実施完了</span>\r\n');
+                    print('<span class="text-end">完了日：'+formatDateTime(elm[i].execution)+'</span>\r\n');
                 }else if(elm[i].done >= 1) {
-                    print('<span class="badge text-bg-warning">'+elm[i].done+'%完了</span>');
-                    print('<span class="text-end">実施日：'+formatDateTime(elm[i].execution)+' 【ここをクリックして実行】</span>');
-            }else{
-                    print('<span class="badge text-bg-danger">未完了</span>');
-                    print('<span class="text-end">【ここをクリックして実行】</span>');
-            }
-            print('        </div>');
-            print('    </div>');
-            print('</div>');
+                    print('<span class="badge text-bg-warning">'+elm[i].done+'%完了</span>\r\n');
+                    print('<span class="text-end">実施日：'+formatDateTime(elm[i].execution)+'</span>\r\n');
+                }else{
+                    print('<span class="badge text-bg-danger">未完了</span>\r\n');
+                }
+            print('        </div>\r\n');
+            print('    </div>\r\n');
+            print('</div>\r\n');
             }
             ?>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     <script>
-      document.querySelectorAll('.accordion-body').forEach(function(item) {
-        item.addEventListener('click', function() {
-          var uri = item.getAttribute('data-url');
-          if( uri != null ){
-            window.location.href = uri;
-          }
-        });
-      });
+      //document.querySelectorAll('.accordion-body').forEach(function(item) {
+      //  item.addEventListener('click', function() {
+      //    var uri = item.getAttribute('data-url');
+      //    if( uri != null ){
+      //      window.location.href = uri;
+      //    }
+      //  });
+      //});
       //document.addEventListener('visibilitychange', function () {
       //  if (document.visibilityState === 'visible') {
       //     window.location.reload();
