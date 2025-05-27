@@ -13,7 +13,7 @@ if( root.length>0){
     
     var database;
     var elm;
-    database = DBConnect("sample_database");
+    database = DBConnect("_SYSTEM");
     var tmp = database.SQL("select no as sno,content_no as scon,sub_no as ssub from subcontent where file like '%"+root+"';");
     if(tmp.startsWith("[")){
         elm = eval(tmp);

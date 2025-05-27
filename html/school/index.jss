@@ -6,7 +6,7 @@
     }
     var course_no;
     var database;
-    database = DBConnect("sample_database");
+    database = DBConnect("_SYSTEM");
     var tmp = database.SQL("select * from course order by no;");
     var elm;
     if(tmp.startsWith("[") ){

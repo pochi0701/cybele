@@ -4,7 +4,7 @@
     var course_no = _GET.no;
     var content_no = _GET.contentno;
     var path = "/school/";//_SERVER.SCRIPT_NAME;
-    database = DBConnect("sample_database");
+    database = DBConnect("_SYSTEM");
     var tmp1 = database.SQL("select * from content where no="+course_no+" and content_no="+content_no+";");
     if(tmp1.startsWith("[")){
         elm1 = eval(tmp1);

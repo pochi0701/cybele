@@ -198,9 +198,9 @@
                 <select id="database" class="form-select" aria-label="databases" onchange="selectChange(event);">
                     <?
                     for( var i = 0 ; i < databases.length ; i++ ){
-                        //if( tables[i].length > 0){
+                        if( tables[i].length > 0){
                             print( '<option value="'+i+'"'+((i==db_id)?' selected':'')+'>'+databases[i]+'</option>\n' );
-                        //}
+                        }
                     }
                     ?>
                 </select>

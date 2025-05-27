@@ -2,7 +2,7 @@
     var database;
     var elm;
     var course_no = _GET.no;
-    database = DBConnect("sample_database");
+    database = DBConnect("_SYSTEM");
     var tmp = database.SQL("select * from content where no="+course_no+" order by content_no;");
     if(tmp.startsWith("[")){
         elm = eval(tmp);
